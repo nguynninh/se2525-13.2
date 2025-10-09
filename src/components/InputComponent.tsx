@@ -1,9 +1,11 @@
 import {
   View,
+  Text,
   TouchableOpacity,
   TextInput,
   StyleSheet,
   KeyboardType,
+  ViewStyle,
 } from 'react-native';
 import React, { ReactNode, useState } from 'react';
 import { appColors } from '../constants/appColors';
@@ -21,6 +23,8 @@ interface Props {
   allowClear?: boolean;
   type?: KeyboardType;
   onEnd?: () => void;
+  error?: string;
+  style?: ViewStyle;
 }
 
 const InputComponent = (props: Props) => {
@@ -34,11 +38,14 @@ const InputComponent = (props: Props) => {
     allowClear,
     type,
     onEnd,
+    error,
+    style,
   } = props;
 
   const [isShowPass, setIsShowPass] = useState(isPassword ?? false);
 
   return (
+    <View style={[styles.container, style]}>
     <View style={[styles.inputContainer]}>
       {affix ?? affix}
       <TextInput
@@ -71,12 +78,17 @@ const InputComponent = (props: Props) => {
         )}
       </TouchableOpacity>
     </View>
+      {error && <Text style={styles.errorText}>{error}</Text>}
+    </View>
   );
 };
 
 export default InputComponent;
 
 const styles = StyleSheet.create({
+  container: {
+  },
+
   inputContainer: {
     flexDirection: 'row',
     borderRadius: 12,
@@ -88,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     backgroundColor: appColors.white,
-    marginBottom: 19,
+    marginBottom: 0,
   },
 
   input: {
@@ -97,5 +109,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 14,
     color: appColors.text,
+  },
+
+  errorText: {
+    color: appColors.danger,
+    fontSize: 12,
+    marginTop: 2,
+    marginBottom: 2,
+    marginLeft: 4,
   },
 });

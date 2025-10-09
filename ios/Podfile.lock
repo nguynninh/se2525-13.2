@@ -1775,6 +1775,49 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSVG (15.14.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNSVG/common (= 15.14.0)
+    - Yoga
+  - RNSVG/common (15.14.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNWorklets (0.6.0):
     - DoubleConversion
     - glog
@@ -1924,6 +1967,7 @@ DEPENDENCIES:
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2077,6 +2121,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNWorklets:
     :path: "../node_modules/react-native-worklets"
   Yoga:
@@ -2155,6 +2201,7 @@ SPEC CHECKSUMS:
   RNLocalize: 2e5c0843d088d0baca4fb81d80018936303e7763
   RNReanimated: 31c46bd20d5a5ac01f9f66a2b6bf7d4cbc7262df
   RNScreens: 21653ad95ea24514c81076a7af524705cd0edc21
+  RNSVG: 05a9310dfd69f18a69f6aa7ba5ddaa44bf24fd1c
   RNWorklets: 3255905a3c9733027565a2cdfb0efedaff02842f
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: afd04ff05ebe0121a00c468a8a3c8080221cb14c

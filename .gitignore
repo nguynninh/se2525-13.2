@@ -45,6 +45,10 @@ npm-debug.log
 yarn-error.log
 pnpm-debug.log
 
+# Package managers lock files
+package-lock.json
+yarn.lock
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the

@@ -1656,7 +1656,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (4.1.2):
+  - RNReanimated (4.1.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1678,10 +1678,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 4.1.2)
+    - RNReanimated/reanimated (= 4.1.3)
     - RNWorklets
     - Yoga
-  - RNReanimated/reanimated (4.1.2):
+  - RNReanimated/reanimated (4.1.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1703,10 +1703,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 4.1.2)
+    - RNReanimated/reanimated/apple (= 4.1.3)
     - RNWorklets
     - Yoga
-  - RNReanimated/reanimated/apple (4.1.2):
+  - RNReanimated/reanimated/apple (4.1.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1818,7 +1818,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNWorklets (0.6.0):
+  - RNWorklets (0.6.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1840,9 +1840,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets (= 0.6.0)
+    - RNWorklets/worklets (= 0.6.1)
     - Yoga
-  - RNWorklets/worklets (0.6.0):
+  - RNWorklets/worklets (0.6.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1864,9 +1864,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets/apple (= 0.6.0)
+    - RNWorklets/worklets/apple (= 0.6.1)
     - Yoga
-  - RNWorklets/worklets/apple (0.6.0):
+  - RNWorklets/worklets/apple (0.6.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2199,10 +2199,10 @@ SPEC CHECKSUMS:
   RNCMaskedView: 4c5ee1c8667d56077246cc6d1977f77393923560
   RNGestureHandler: 40441ef32129430d603720d61845c4e3084cc70b
   RNLocalize: 2e5c0843d088d0baca4fb81d80018936303e7763
-  RNReanimated: 31c46bd20d5a5ac01f9f66a2b6bf7d4cbc7262df
+  RNReanimated: 0a31159f52d33d858ab1c289b866c59da7b46a05
   RNScreens: 21653ad95ea24514c81076a7af524705cd0edc21
   RNSVG: 05a9310dfd69f18a69f6aa7ba5ddaa44bf24fd1c
-  RNWorklets: 3255905a3c9733027565a2cdfb0efedaff02842f
+  RNWorklets: 5cd934d96a6d59931580ca7ff894477062d2b923
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: afd04ff05ebe0121a00c468a8a3c8080221cb14c
 

@@ -18,6 +18,7 @@
 		384AA189DC4A49F3AEC17CBB /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 82165DB50E134EC09765F8C3 /* MaterialIcons.ttf */; };
 		469556466E1846D996AFF1A3 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 042AB2080A264F139C19D758 /* MaterialCommunityIcons.ttf */; };
 		50482DA3D4DE4E3AA3EA6EA0 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AB28AAB53254BED9B7952CD /* FontAwesome5_Regular.ttf */; };
+		5854B124EF973551FB63FDA0 /* libPods-MobileApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05E67AB72FABA7501A221189 /* libPods-MobileApp.a */; };
 		5D5CAA3B1D5A1A94D58EBB49 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		6D0EEE4433C5410F889D39EC /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 71136F81AE4344ADA6D7218F /* AntDesign.ttf */; };
 		6E204721EFED4CF98D8C38FD /* FontAwesome6_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA33536B14964A71966AD1F1 /* FontAwesome6_Brands.ttf */; };
@@ -28,7 +29,6 @@
 		A243A3DA409649EDA3EEBA64 /* FontAwesome6_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4DFA5AF96E6340FE9320A859 /* FontAwesome6_Solid.ttf */; };
 		A77103C942324B95B766E121 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CF645ECA70C94124A63D9DC3 /* FontAwesome.ttf */; };
 		A7E0ACA28C8E47A8A4673C77 /* AirbnbCereal_W_Bd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 173E0284A83C4E5C9F2A8860 /* AirbnbCereal_W_Bd.otf */; };
-		AB13DC6B2E233B8D7C5F5BD8 /* libPods-MobileApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 276B288B0852201DE56D5A5E /* libPods-MobileApp.a */; };
 		AE57399C22D64109BB6D1C76 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 836AFAAD35FE467D871C0FD9 /* FontAwesome5_Brands.ttf */; };
 		B1A5A62A625248D59882BE3E /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C9F5DAAB0E34725B584AB4B /* FontAwesome5_Solid.ttf */; };
 		C97AAB0F24EF46BA975989C2 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9860684D7CBB4AC3BB63FDA9 /* Ionicons.ttf */; };
@@ -38,17 +38,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0134F166FA90C77777F5943A /* Pods-MobileApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileApp.debug.xcconfig"; path = "Target Support Files/Pods-MobileApp/Pods-MobileApp.debug.xcconfig"; sourceTree = "<group>"; };
 		02BB6F34E6714E32A5075590 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = ../assets/fonts/Fontisto.ttf; sourceTree = "<group>"; };
 		042AB2080A264F139C19D758 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = ../assets/fonts/MaterialCommunityIcons.ttf; sourceTree = "<group>"; };
+		05E67AB72FABA7501A221189 /* libPods-MobileApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		12F226CAA1044029A6542550 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = ../assets/fonts/Feather.ttf; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* MobileApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MobileApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MobileApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = MobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		150ABF7467919D1088B0C720 /* Pods-MobileApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileApp.release.xcconfig"; path = "Target Support Files/Pods-MobileApp/Pods-MobileApp.release.xcconfig"; sourceTree = "<group>"; };
 		173E0284A83C4E5C9F2A8860 /* AirbnbCereal_W_Bd.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_Bd.otf; path = ../assets/fonts/AirbnbCereal_W_Bd.otf; sourceTree = "<group>"; };
 		1AB28AAB53254BED9B7952CD /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = ../assets/fonts/FontAwesome5_Regular.ttf; sourceTree = "<group>"; };
-		276B288B0852201DE56D5A5E /* libPods-MobileApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C0A1E750121A228121696F4 /* Pods-MobileApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileApp.debug.xcconfig"; path = "Target Support Files/Pods-MobileApp/Pods-MobileApp.debug.xcconfig"; sourceTree = "<group>"; };
 		29D1F84CE4BE40BFB39436C3 /* AirbnbCereal_W_Lt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_Lt.otf; path = ../assets/fonts/AirbnbCereal_W_Lt.otf; sourceTree = "<group>"; };
 		3C9F5DAAB0E34725B584AB4B /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = ../assets/fonts/FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
 		3DFD73D5F1224E5DB2A2D884 /* AirbnbCereal_W_Md.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_Md.otf; path = ../assets/fonts/AirbnbCereal_W_Md.otf; sourceTree = "<group>"; };
@@ -68,7 +69,6 @@
 		A4621184140B46D2930CF763 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = ../assets/fonts/EvilIcons.ttf; sourceTree = "<group>"; };
 		B8FF0F6F678A49279FC8D954 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = ../assets/fonts/SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		CF645ECA70C94124A63D9DC3 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = ../assets/fonts/FontAwesome.ttf; sourceTree = "<group>"; };
-		D2AC3E148BD67B859220CAEE /* Pods-MobileApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileApp.release.xcconfig"; path = "Target Support Files/Pods-MobileApp/Pods-MobileApp.release.xcconfig"; sourceTree = "<group>"; };
 		EA33536B14964A71966AD1F1 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Brands.ttf; path = ../assets/fonts/FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -78,7 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB13DC6B2E233B8D7C5F5BD8 /* libPods-MobileApp.a in Frameworks */,
+				5854B124EF973551FB63FDA0 /* libPods-MobileApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				276B288B0852201DE56D5A5E /* libPods-MobileApp.a */,
+				05E67AB72FABA7501A221189 /* libPods-MobileApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -170,8 +170,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0134F166FA90C77777F5943A /* Pods-MobileApp.debug.xcconfig */,
-				D2AC3E148BD67B859220CAEE /* Pods-MobileApp.release.xcconfig */,
+				1C0A1E750121A228121696F4 /* Pods-MobileApp.debug.xcconfig */,
+				150ABF7467919D1088B0C720 /* Pods-MobileApp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -183,13 +183,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MobileApp" */;
 			buildPhases = (
-				E009A85E45FE08B678CB9147 /* [CP] Check Pods Manifest.lock */,
+				E59FB3036C3DEC497F26634B /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				A58D6146F2F0EEDDC4E60C51 /* [CP] Embed Pods Frameworks */,
-				1C1FDA4D50D03A8BDA7EDB64 /* [CP] Copy Pods Resources */,
+				C048DFC57C3A8E6982E6760C /* [CP] Embed Pods Frameworks */,
+				F18A935DE58DAC47522866C0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -284,24 +284,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		1C1FDA4D50D03A8BDA7EDB64 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A58D6146F2F0EEDDC4E60C51 /* [CP] Embed Pods Frameworks */ = {
+		C048DFC57C3A8E6982E6760C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -318,7 +301,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E009A85E45FE08B678CB9147 /* [CP] Check Pods Manifest.lock */ = {
+		E59FB3036C3DEC497F26634B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -340,6 +323,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F18A935DE58DAC47522866C0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileApp/Pods-MobileApp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -356,7 +356,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0134F166FA90C77777F5943A /* Pods-MobileApp.debug.xcconfig */;
+			baseConfigurationReference = 1C0A1E750121A228121696F4 /* Pods-MobileApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -384,7 +384,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2AC3E148BD67B859220CAEE /* Pods-MobileApp.release.xcconfig */;
+			baseConfigurationReference = 150ABF7467919D1088B0C720 /* Pods-MobileApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

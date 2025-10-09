@@ -1,5 +1,7 @@
 import { View, Text } from 'react-native';
-import { ButtonComponent } from '../../components';
+import { ButtonComponent, InputComponent } from '../../components';
+import { appColors } from '../../constants/appColors';
+import { Lock, Sms } from 'iconsax-react-native';
 
 const LoginScreen = () => {
   return (
@@ -12,6 +14,22 @@ const LoginScreen = () => {
         textAlignVertical: 'center',
         textAlign: 'center',
       }}>LoginScreen</Text>
+
+      <InputComponent
+        value={''}
+        placeholder="Email"
+        onChange={() => {}}
+        allowClear
+        affix={<Sms size={22} color={appColors.gray} />}
+      />
+      <InputComponent
+        value={''}
+        placeholder="Password"
+        onChange={() => {}}
+        isPassword
+        allowClear
+        affix={<Lock size={22} color={appColors.gray} />}
+      />
       <ButtonComponent
           disable={false}
           onPress={() => {}}

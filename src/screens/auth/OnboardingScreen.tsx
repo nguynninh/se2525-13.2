@@ -15,18 +15,18 @@ const OnboardingScreen = ({ navigation }: any) => {
   const onboardings = [
     {
       image: require('../../assets/images/onboarding-1.png'),
-      title: 'Find Favorite Items',
-      description: 'Find your favorite products that you want to buy easily',
+      title: t('common:onboarding1_title'),
+      description: t('common:onboarding1_description'),
     },
     {
       image: require('../../assets/images/onboarding-2.png'),
-      title: 'Easy and Safe Payment',
-      description: 'Pay for the products you buy safely and easily',
+      title: t('common:onboarding2_title'),
+      description: t('common:onboarding2_description'),
     },
     {
       image: require('../../assets/images/onboarding-3.png'),
-      title: 'Product Delivery',
-      description: 'Your product is delivered to your home safely and securely',
+      title: t('common:onboarding3_title'),
+      description: t('common:onboarding3_description'),
     },
   ];
 

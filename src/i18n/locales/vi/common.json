@@ -1,4 +1,10 @@
 {
     "skip": "Bỏ qua",
-    "next": "Tiếp theo"
+    "next": "Tiếp theo",
+    "onboarding1_title": "Tìm sản phẩm yêu thích",
+    "onboarding1_description": "Tìm kiếm các sản phẩm yêu thích mà bạn muốn mua một cách dễ dàng",
+    "onboarding2_title": "Thanh toán an toàn và dễ dàng",
+    "onboarding2_description": "Thanh toán cho các sản phẩm bạn mua một cách an toàn và dễ dàng",
+    "onboarding3_title": "Giao hàng sản phẩm",
+    "onboarding3_description": "Sản phẩm của bạn được giao đến tận nhà một cách an toàn và bảo mật"
 }

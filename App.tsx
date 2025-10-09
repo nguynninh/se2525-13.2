@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { SplashScreen } from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './src/navigators/AuthNavigator';
+import './src/i18n';
 
 const App = () => {
   const [isShowSplash, setIsShowSplash] = useState(true);
@@ -15,12 +16,12 @@ const App = () => {
   }, []);
 
   return (
-    isShowSplash 
+    isShowSplash
     ? <SplashScreen />
     : <NavigationContainer>
         <AuthNavigator />
     </NavigationContainer>
-  )
-}
+  );
+};
 
-export default App
+export default App;

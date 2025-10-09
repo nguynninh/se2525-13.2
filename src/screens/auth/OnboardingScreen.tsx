@@ -1,12 +1,15 @@
-import { Image, TouchableOpacity, View, Text } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 import Swiper from 'react-native-swiper';
 import { appColors } from '../../constants/appColors';
 import { appInfo } from '../../constants/appInfos';
 import { globalStyles } from '../../styles/globalStyles';
 import { TextComponent } from '../../components';
+import { useTranslation } from 'react-i18next';
 
 const OnboardingScreen = ({ navigation }: any) => {
+  const { t } = useTranslation(['common']);
+
   const [index, setIndex] = useState(0);
 
   const onboardings = [
@@ -105,7 +108,7 @@ const OnboardingScreen = ({ navigation }: any) => {
         ]}>
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
           <TextComponent
-            text="Skip"
+            text={t('common:skip')}
             color={appColors.gray}
           />
         </TouchableOpacity>
@@ -125,7 +128,7 @@ const OnboardingScreen = ({ navigation }: any) => {
               },
             ]}>
             <TextComponent
-              text="Next"
+              text={t('common:next')}
               color={appColors.white}
             />
           </View>

@@ -6,6 +6,7 @@ import { appInfo } from '../../constants/appInfos';
 import { globalStyles } from '../../styles/globalStyles';
 import { TextComponent } from '../../components';
 import { useTranslation } from 'react-i18next';
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const OnboardingScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['common']);
@@ -72,13 +73,14 @@ const OnboardingScreen = ({ navigation }: any) => {
               <TextComponent
                 text={item.title}
                 size={28}
-                font="bold"
+                font={fontFamilies.bold}
                 color={appColors.text}
                 styles={{ marginBottom: 12, textAlign: 'center' }}
               />
               <TextComponent
                 text={item.description}
                 size={16}
+                font={fontFamilies.regular}
                 color={appColors.text_decription}
                 styles={{
                   textAlign: 'center',
@@ -110,6 +112,7 @@ const OnboardingScreen = ({ navigation }: any) => {
           <TextComponent
             text={t('common:skip')}
             color={appColors.gray}
+            font={fontFamilies.medium}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -130,6 +133,7 @@ const OnboardingScreen = ({ navigation }: any) => {
             <TextComponent
               text={t('common:next')}
               color={appColors.white}
+              font={fontFamilies.medium}
             />
           </View>
         </TouchableOpacity>

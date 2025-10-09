@@ -15,6 +15,7 @@ const SpaceComponent = (props: Props) => {
         height,
       }}
     />
+    
   );
 };
 

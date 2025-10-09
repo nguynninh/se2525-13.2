@@ -3,6 +3,7 @@ export const appColors = {
     white: '#ffffff',
     white2: '#fcfcfc',
     text: '#120D26',
+    text_decription: '#4E4B66',
     gray: '#807A7A',
     gray2: '#DADADA',
     gray3: '#E4DFDF',

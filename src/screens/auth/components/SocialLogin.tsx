@@ -9,8 +9,11 @@ import {
 import { appColors } from '../../../constants/appColors';
 import { fontFamilies } from '../../../constants/fontFamilies';
 import { LoadingModal } from '../../../modals';
+import { useTranslation } from 'react-i18next';
 
 const SocialLogin = () => {
+    const { t } = useTranslation('auth');
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLoginWithGoogle = async () => {
@@ -37,7 +40,7 @@ const SocialLogin = () => {
                 onPress={handleLoginWithGoogle}
                 color={appColors.white}
                 textColor={appColors.text}
-                text="Login with Google"
+                text={t('auth:login_with_google')}
                 textFont={fontFamilies.regular}
                 iconFlex="left"
                 icon={<Google />}
@@ -47,7 +50,7 @@ const SocialLogin = () => {
                 type="primary"
                 color={appColors.white}
                 textColor={appColors.text}
-                text="Login with Facebook"
+                text={t('auth:login_with_facebook')}
                 textFont={fontFamilies.regular}
                 onPress={handleLoginWithFacebook}
                 iconFlex="left"

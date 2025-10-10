@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
+    ForgotPassword,
     LoginScreen,
     OnboardingScreen,
     SignUpScreen,
@@ -16,6 +17,7 @@ const AuthNavigator = () => {
             <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
             <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         </Stack.Navigator>
     );
 };

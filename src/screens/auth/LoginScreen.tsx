@@ -14,6 +14,7 @@ import { appColors } from '../../constants/appColors';
 import { Validate } from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
 import { Login } from '../../models/Login';
+import SocialLogin from './components/SocialLogin';
 
 const LoginScreen = ({ navigation }: any) => {
   const { t } = useTranslation('auth');
@@ -109,6 +110,7 @@ const LoginScreen = ({ navigation }: any) => {
           type="primary"
         />
       </SectionComponent>
+      <SocialLogin />
       <SectionComponent>
         <RowComponent justify="center">
           <TextComponent text={t('auth:no_account')} />

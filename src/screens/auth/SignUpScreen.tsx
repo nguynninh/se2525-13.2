@@ -1,6 +1,6 @@
 import { Image } from 'react-native';
 import {Lock, Sms, User} from 'iconsax-react-native';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {
   ButtonComponent,
   ContainerComponent,
@@ -145,10 +145,10 @@ const SignUpScreen = ({navigation}: any) => {
         </SectionComponent>
         <SectionComponent>
           <RowComponent justify="center">
-            <TextComponent text="Don’t have an account? " />
+            <TextComponent text={t('auth:already_have_account')} />
             <ButtonComponent
               type="link"
-              text="Sign in"
+              text={t('auth:login')}
               onPress={() => navigation.navigate('LoginScreen')}
             />
           </RowComponent>

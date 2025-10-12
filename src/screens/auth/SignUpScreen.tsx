@@ -1,6 +1,6 @@
-import { Image } from 'react-native';
+import { Image, Alert } from 'react-native';
+import { useState } from 'react';
 import {Lock, Sms, User} from 'iconsax-react-native';
-import {useState} from 'react';
 import {
   ButtonComponent,
   ContainerComponent,
@@ -15,19 +15,26 @@ import {LoadingModal} from '../../modals';
 import {Validate} from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
 import { SignUp } from '../../models/SignUp';
+import authenticationAPI from '../../apis/authApi';
+import { useDispatch } from 'react-redux';
+import { addAuth } from '../../redux/reducers/authReducer';
+import { addUser } from '../../redux/reducers/userReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreen = ({navigation}: any) => {
   const { t } = useTranslation('auth');
 
+  const dispatch = useDispatch();
+
   const [data, setData] = useState<SignUp>({
-    fullname: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState({
-    fullname: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -35,14 +42,14 @@ const SignUpScreen = ({navigation}: any) => {
 
   const validationErrorHandler = () => {
     const newError = {
-      fullname: '',
+      name: '',
       email: '',
       password: '',
       confirmPassword: '',
     };
 
-    if (!data.fullname) {
-      newError.fullname = t('auth:fullname_required');
+    if (!data.name) {
+      newError.name = t('auth:fullname_required');
     }
 
     if (!data.email) {
@@ -64,7 +71,7 @@ const SignUpScreen = ({navigation}: any) => {
     }
 
     setValidationError(newError);
-    return newError.fullname !== '' || newError.email !== '' || newError.password !== '' || newError.confirmPassword !== '';
+    return newError.name !== '' || newError.email !== '' || newError.password !== '' || newError.confirmPassword !== '';
   };
 
   const handleRegister = async () => {
@@ -72,6 +79,26 @@ const SignUpScreen = ({navigation}: any) => {
       return;
     }
 
+    try {
+      setIsLoading(true);
+      const res = await authenticationAPI.HandleAuthentication(
+        '/register',
+        { name: data.name, email: data.email, password: data.password },
+        'post',
+      );
+
+      dispatch(addAuth(res.data.auth));
+      dispatch(addUser(res.data.user));
+
+      await AsyncStorage.setItem(
+        'auth',
+        JSON.stringify(res.data.auth),
+      );
+    } catch (error) {
+      Alert.alert((error as Error).message || t('auth:login_failed'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,10 +123,10 @@ const SignUpScreen = ({navigation}: any) => {
           <TextComponent size={24} title text={t('auth:sign_up')} />
           <SpaceComponent height={21} />
           <InputComponent
-            value={data.fullname}
+            value={data.name}
             placeholder={t('auth:full_name')}
-            error={validationError.fullname}
-            onChange={val => setData(prev => ({ ...prev, fullname: val }))}
+            error={validationError.name}
+            onChange={val => setData(prev => ({ ...prev, name: val }))}
             allowClear
             affix={<User size={22} color={appColors.gray} />}
             style={{ marginBottom: 19 }}
@@ -138,6 +165,7 @@ const SignUpScreen = ({navigation}: any) => {
         <SpaceComponent height={16} />
         <SectionComponent>
           <ButtonComponent
+            disable={isLoading}
             onPress={handleRegister}
             text={t('auth:btn_sign_up')}
             type="primary"

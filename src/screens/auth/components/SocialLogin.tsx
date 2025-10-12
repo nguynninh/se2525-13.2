@@ -1,3 +1,4 @@
+import { Text, Button } from 'react-native';
 import { useState } from 'react';
 import { Facebook, Google } from '../../../assets/svgs';
 import {
@@ -10,14 +11,54 @@ import { appColors } from '../../../constants/appColors';
 import { fontFamilies } from '../../../constants/fontFamilies';
 import { LoadingModal } from '../../../modals';
 import { useTranslation } from 'react-i18next';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useDispatch } from 'react-redux';
+import { addAuth } from '../../../redux/reducers/authReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import authenticationAPI from '../../../apis/authApi';
+import { addUser } from '../../../redux/reducers/userReducer';
+
+GoogleSignin.configure({
+    webClientId:
+        '1042330913615-e7lf3qal7f5456ctv5jnp0900dt1q3ki.apps.googleusercontent.com',
+});
 
 const SocialLogin = () => {
     const { t } = useTranslation('auth');
 
+    const dispatch = useDispatch();
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLoginWithGoogle = async () => {
+        await GoogleSignin.hasPlayServices({
+            showPlayServicesUpdateDialog: true,
+        });
 
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            const user = userInfo.data?.user;
+
+            const res: any = await authenticationAPI.HandleAuthentication(
+                '/social-login',
+                {
+                    name: user?.name,
+                    email: user?.email,
+                    avatar: user?.photo,
+                },
+                'post',
+            );
+            console.log('res', res.data);
+
+            dispatch(addAuth(res.data.auth));
+            dispatch(addUser(res.data.user));
+
+            await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
+            await GoogleSignin.signOut();
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleLoginWithFacebook = async () => {

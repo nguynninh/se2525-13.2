@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }: any) => {
         data.isRemember ? JSON.stringify(res.data.auth) : data.email,
       );
     } catch (error) {
-      Alert.alert((error as Error).message || t('auth:login_failed'));
+      Alert.alert(t('auth:error'), (error as Error).message || t('auth:login_failed'));
     } finally {
       setIsLoading(false);
     }

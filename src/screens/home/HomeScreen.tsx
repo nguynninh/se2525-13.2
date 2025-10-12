@@ -1,12 +1,25 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, Button } from 'react-native';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { removeUser } from '../../redux/reducers/userReducer';
+import { removeAuth } from '../../redux/reducers/authReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const HomeScreen = () => {
-  return (
-    <View>
-      <Text>HomeScreen</Text>
-    </View>
-  )
-}
 
-export default HomeScreen
+  const dispatch = useDispatch();
+
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>HomeScreen</Text>
+      <Button title="Logout" onPress={() => {
+        dispatch(removeAuth({}));
+        dispatch(removeUser({}));
+        AsyncStorage.removeItem('auth');
+      }} />
+    </View>
+  );
+};
+
+export default HomeScreen;

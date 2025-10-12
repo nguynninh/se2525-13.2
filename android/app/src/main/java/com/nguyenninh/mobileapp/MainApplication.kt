@@ -1,4 +1,4 @@
-package com.mobileapp
+package com.nguyenninh.mobileapp
 
 import android.app.Application
 import com.facebook.react.PackageList

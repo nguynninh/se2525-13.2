@@ -73,5 +73,16 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>GIDClientID</key>
+		<string>1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70.apps.googleusercontent.com</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+			<string>com.googleusercontent.apps.1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70</string>
+			</array>
+		</dict>
+		</array>
 </dict>
 </plist>

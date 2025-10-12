@@ -13,10 +13,10 @@ const HomeScreen = () => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>HomeScreen</Text>
-      <Button title="Logout" onPress={() => {
+      <Button title="Logout" onPress={async () => {
         dispatch(removeAuth({}));
         dispatch(removeUser({}));
-        AsyncStorage.removeItem('auth');
+        await AsyncStorage.clear();
       }} />
     </View>
   );

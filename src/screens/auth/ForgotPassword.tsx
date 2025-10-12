@@ -8,21 +8,32 @@ import {
   SpaceComponent,
   TextComponent,
 } from '../../components';
-import { ArrowRight, Sms } from 'iconsax-react-native';
-import { appColors } from '../../constants/appColors';
-import { Validate } from '../../utils/validate';
-import { useTranslation } from 'react-i18next';
+import {ArrowRight, Sms} from 'iconsax-react-native';
+import {appColors} from '../../constants/appColors';
+import {Validate} from '../../utils/validate';
+import {useTranslation} from 'react-i18next';
 import authenticationAPI from '../../apis/authApi';
 
 const ForgotPassword = ({ navigation }: any) => {
-  const { t } = useTranslation('auth');
+  const {t} = useTranslation('auth');
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleCheckEmail = () => {
-    const isValidEmail = Validate.email(email);
-    return !isValidEmail ? true : false;
+    if (email === '') {
+      setErrorMessage(t('auth:email_required'));
+      return true;
+    }
+
+    if (!Validate.email(email)) {
+      setErrorMessage(t('auth:email_format_invalid'));
+      return true;
+    }
+
+    setErrorMessage('');
+    return false;
   };
 
   const handleForgotPassword = async () => {
@@ -57,6 +68,7 @@ const ForgotPassword = ({ navigation }: any) => {
           onChange={val => setEmail(val)}
           affix={<Sms size={20} color={appColors.gray} />}
           placeholder={t('auth:email_placeholder')}
+          error={errorMessage}
         />
       </SectionComponent>
       <SectionComponent>

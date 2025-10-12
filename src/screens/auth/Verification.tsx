@@ -16,22 +16,13 @@ import authenticationAPI from '../../apis/authApi';
 import { LoadingModal } from '../../modals';
 import { useDispatch } from 'react-redux';
 import { addAuth } from '../../redux/reducers/authReducer';
+import { addUser } from '../../redux/reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SignUp } from '../../models/SignUp';
 
 const Verification = ({ _navigation, route }: any) => {
   const { name, email, password } = route.params;
 
-  const [data, setData] = useState<SignUp>({
-    code: '',
-    name: name ?? '',
-    email: email ?? '',
-    password: password ?? '',
-  });
-
-  const [currentCode, setCurrentCode] = useState<string>('');
-  const [codeValues, setCodeValues] = useState<string[]>([]);
-  const [newCode, setNewCode] = useState('');
+  const [codeValues, setCodeValues] = useState<string[]>(['', '', '', '']);
   const [limit, setLimit] = useState(90);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -56,14 +47,6 @@ const Verification = ({ _navigation, route }: any) => {
     }
   }, [limit]);
 
-  useEffect(() => {
-    let item = '';
-
-    codeValues.forEach(val => (item += val));
-
-    setNewCode(item);
-  }, [codeValues]);
-
   const handleChangeCode = (val: string, index: number) => {
     const data = [...codeValues];
     data[index] = val;
@@ -73,57 +56,50 @@ const Verification = ({ _navigation, route }: any) => {
 
   const handleResendVerification = async () => {
     setCodeValues(['', '', '', '']);
-    setNewCode('');
 
-    const api = '/verification';
     setIsLoading(true);
     try {
-      const res: any = await authenticationAPI.HandleAuthentication(
-        api,
+      await authenticationAPI.HandleAuthentication(
+        '/verification',
         { email },
         'post',
       );
 
       setLimit(90);
-      setCurrentCode(res.data.code);
-      setIsLoading(false);
-
-      console.log(res.data.code);
+      Alert.alert('Success', 'Verification code sent successfully!');
     } catch (error) {
+      Alert.alert('Error', (error as Error).message || 'Failed to resend verification code');
+    } finally {
       setIsLoading(false);
-      Alert.alert('Can not resend verification code!!!');
     }
   };
 
   const handleVerification = async () => {
     if (limit > 0) {
-      if (parseInt(newCode, 10) !== parseInt(currentCode, 10)) {
-        setErrorMessage('Invalid code!!!');
-      } else {
-        setErrorMessage('');
+      setErrorMessage('');
 
-        const api = '/register';
-        const data = {
-          email,
-          password,
-          name: name ?? '',
-        };
-
-        try {
-          const res: any = await authenticationAPI.HandleAuthentication(
-            api,
-            data,
-            'post',
-          );
-          dispatch(addAuth(res.data));
-          await AsyncStorage.setItem('auth', JSON.stringify(res.data));
-        } catch (error) {
-          setErrorMessage('User has already exist!!!');
-          console.log(`Can not create new user ${error}`);
-        }
+      try {
+        setIsLoading(true);
+        const res: any = await authenticationAPI.HandleAuthentication(
+          '/register',
+          {
+            code: codeValues.join(''),
+            email,
+            password,
+            name,
+          },
+          'post',
+        );
+        dispatch(addAuth(res.data.auth));
+        dispatch(addUser(res.data.user));
+        await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
+      } catch (error) {
+        setErrorMessage('Invalid verification code or user already exists!');
+      } finally {
+        setIsLoading(false);
       }
     } else {
-      setErrorMessage('Time out verification code, please resend new code!!!');
+      setErrorMessage('Time out verification code, please resend new code!');
     }
   };
 
@@ -191,7 +167,7 @@ const Verification = ({ _navigation, route }: any) => {
       </SectionComponent>
       <SectionComponent styles={{ marginTop: 40 }}>
         <ButtonComponent
-          disable={newCode.length !== 4}
+          disable={codeValues.join('').length !== 4}
           onPress={handleVerification}
           text="Continue"
           type="primary"
@@ -202,7 +178,7 @@ const Verification = ({ _navigation, route }: any) => {
                 globalStyles.iconContainer,
                 {
                   backgroundColor:
-                    newCode.length !== 4 ? appColors.gray : appColors.primary,
+                    codeValues.join('').length !== 4 ? appColors.gray : appColors.primary,
                 },
               ]}>
               <ArrowRight size={18} color={appColors.white} />

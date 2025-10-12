@@ -14,13 +14,13 @@ import {appColors} from '../../constants/appColors';
 import {LoadingModal} from '../../modals';
 import {Validate} from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
-import { SignUpForm } from '../../models/SignUp';
+import { SignUp } from '../../models/SignUp';
 import authenticationAPI from '../../apis/authApi';
 
 const SignUpScreen = ({navigation}: any) => {
   const { t } = useTranslation('auth');
 
-  const [data, setData] = useState<SignUpForm>({
+  const [data, setData] = useState<SignUp>({
     name: '',
     email: '',
     password: '',

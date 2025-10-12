@@ -16,12 +16,18 @@ import { useTranslation } from 'react-i18next';
 import { Login } from '../../models/Login';
 import SocialLogin from './components/SocialLogin';
 import authenticationAPI from '../../apis/authApi';
+import { useDispatch } from 'react-redux';
+import { addAuth } from '../../redux/reducers/authReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { addUser } from '../../redux/reducers/userReducer';
 
 const LoginScreen = ({ navigation }: any) => {
   const { t } = useTranslation('auth');
   const [isLoading, setIsLoading] = useState(false);
 
-  const [data, setData] = useState<Login>({ email: '', password: '', isRemember: true });
+  const dispatch = useDispatch();
+
+  const [data, setData] = useState<Login>({ email: '', password: '', isRemember: false });
   const [valiationError, setValidationError] = useState({ email: '', password: '' });
 
   const validationErrorHandler = () => {
@@ -44,7 +50,7 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   const handleLogin = async () => {
-    if (validationErrorHandler()) {return;}
+    if (validationErrorHandler()) { return; }
 
     try {
       setIsLoading(true);
@@ -54,6 +60,13 @@ const LoginScreen = ({ navigation }: any) => {
         'post',
       );
 
+      dispatch(addAuth(res.data.auth));
+      dispatch(addUser(res.data.user));
+
+      await AsyncStorage.setItem(
+        'auth',
+        data.isRemember ? JSON.stringify(res.data.auth) : data.email,
+      );
     } catch (error) {
       console.log(error);
     } finally {

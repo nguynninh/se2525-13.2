@@ -28,7 +28,7 @@ const SocialLogin = () => {
         <SectionComponent>
             <TextComponent
                 styles={{ textAlign: 'center' }}
-                text="OR"
+                text={t('auth:or')}
                 color={appColors.gray4}
                 size={16}
                 font={fontFamilies.medium}

@@ -1,4 +1,4 @@
-import { Image, Switch } from 'react-native';
+import { Alert, Image, Switch } from 'react-native';
 import { useState } from 'react';
 import { Lock, Sms } from 'iconsax-react-native';
 import {
@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }: any) => {
         data.isRemember ? JSON.stringify(res.data.auth) : data.email,
       );
     } catch (error) {
-      console.log(error);
+      Alert.alert((error as Error).message || t('auth:login_failed'));
     } finally {
       setIsLoading(false);
     }

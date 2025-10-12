@@ -18,9 +18,12 @@ import { useDispatch } from 'react-redux';
 import { addAuth } from '../../redux/reducers/authReducer';
 import { addUser } from '../../redux/reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 const Verification = ({ _navigation, route }: any) => {
   const { name, email, password } = route.params;
+
+  const { t } = useTranslation('auth');
 
   const [codeValues, setCodeValues] = useState<string[]>(['', '', '', '']);
   const [limit, setLimit] = useState(90);
@@ -66,9 +69,9 @@ const Verification = ({ _navigation, route }: any) => {
       );
 
       setLimit(90);
-      Alert.alert('Success', 'Verification code sent successfully!');
+      Alert.alert(t('auth:success'), t('auth:verification_success'));
     } catch (error) {
-      Alert.alert('Error', (error as Error).message || 'Failed to resend verification code');
+      Alert.alert(t('auth:error'), (error as Error).message || t('auth:verification_error'));
     } finally {
       setIsLoading(false);
     }
@@ -94,22 +97,22 @@ const Verification = ({ _navigation, route }: any) => {
         dispatch(addUser(res.data.user));
         await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
       } catch (error) {
-        setErrorMessage('Invalid verification code or user already exists!');
+        setErrorMessage((error as Error).message || t('auth:invalid_verification_code'));
       } finally {
         setIsLoading(false);
       }
     } else {
-      setErrorMessage('Time out verification code, please resend new code!');
+      setErrorMessage(t('auth:verification_timeout'));
     }
   };
 
   return (
     <ContainerComponent back isImageBackground isScroll>
       <SectionComponent>
-        <TextComponent text="Verification" title />
+        <TextComponent text={t('auth:verification')} title />
         <SpaceComponent height={12} />
         <TextComponent
-          text={`We’ve send you the verification code on ${email.replace(
+          text={`${t('auth:verification_code_sent')} ${email.replace(
             /.{1,5}/,
             (m: any) => '*'.repeat(m.length),
           )}`}
@@ -169,7 +172,7 @@ const Verification = ({ _navigation, route }: any) => {
         <ButtonComponent
           disable={codeValues.join('').length !== 4}
           onPress={handleVerification}
-          text="Continue"
+          text={t('auth:continue')}
           type="primary"
           iconFlex="right"
           icon={
@@ -198,7 +201,7 @@ const Verification = ({ _navigation, route }: any) => {
       <SectionComponent>
         {limit > 0 ? (
           <RowComponent justify="center">
-            <TextComponent text="Re-send code in  " flex={0} />
+            <TextComponent text={t('auth:resend_code_in')} flex={0} />
             <TextComponent
               text={`${(limit - (limit % 60)) / 60}:${limit - (limit - (limit % 60))
                 }`}
@@ -210,7 +213,7 @@ const Verification = ({ _navigation, route }: any) => {
           <RowComponent>
             <ButtonComponent
               type="link"
-              text="Resend email verification"
+              text={t('auth:resend_email_verification')}
               onPress={handleResendVerification}
             />
           </RowComponent>

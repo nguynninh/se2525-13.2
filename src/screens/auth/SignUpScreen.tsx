@@ -85,7 +85,7 @@ const SignUpScreen = ({navigation}: any) => {
 
       navigation.navigate('Verification', data);
     } catch (error) {
-      Alert.alert((error as Error).message || t('auth:login_failed'));
+      Alert.alert(t('auth:error'), (error as Error).message || t('auth:login_failed'));
     } finally {
       setIsLoading(false);
     }

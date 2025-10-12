@@ -15,9 +15,11 @@ import { Validate } from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
 import { Login } from '../../models/Login';
 import SocialLogin from './components/SocialLogin';
+import authenticationAPI from '../../apis/authApi';
 
 const LoginScreen = ({ navigation }: any) => {
   const { t } = useTranslation('auth');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [data, setData] = useState<Login>({ email: '', password: '', isRemember: true });
   const [valiationError, setValidationError] = useState({ email: '', password: '' });
@@ -43,6 +45,20 @@ const LoginScreen = ({ navigation }: any) => {
 
   const handleLogin = async () => {
     if (validationErrorHandler()) {return;}
+
+    try {
+      setIsLoading(true);
+      const res = await authenticationAPI.HandleAuthentication(
+        '/login',
+        { email: data.email, password: data.password },
+        'post',
+      );
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -105,6 +121,7 @@ const LoginScreen = ({ navigation }: any) => {
       <SpaceComponent height={16} />
       <SectionComponent>
         <ButtonComponent
+          disable={isLoading}
           onPress={handleLogin}
           text={t('auth:btn_login')}
           type="primary"

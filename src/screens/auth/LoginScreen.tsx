@@ -50,7 +50,7 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   const handleLogin = async () => {
-    if (validationErrorHandler()) { return; }
+    if (validationErrorHandler()) {return;}
 
     try {
       setIsLoading(true);

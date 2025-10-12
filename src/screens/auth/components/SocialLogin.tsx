@@ -1,4 +1,3 @@
-import { Text, Button } from 'react-native';
 import { useState } from 'react';
 import { Facebook, Google } from '../../../assets/svgs';
 import {
@@ -21,6 +20,8 @@ import { addUser } from '../../../redux/reducers/userReducer';
 GoogleSignin.configure({
     webClientId:
         '1042330913615-e7lf3qal7f5456ctv5jnp0900dt1q3ki.apps.googleusercontent.com',
+    iosClientId:
+        '1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70.apps.googleusercontent.com',
 });
 
 const SocialLogin = () => {

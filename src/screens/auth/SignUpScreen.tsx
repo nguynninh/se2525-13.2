@@ -14,19 +14,13 @@ import {appColors} from '../../constants/appColors';
 import {LoadingModal} from '../../modals';
 import {Validate} from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
-import { SignUp } from '../../models/SignUp';
+import { SignUpForm } from '../../models/SignUp';
 import authenticationAPI from '../../apis/authApi';
-import { useDispatch } from 'react-redux';
-import { addAuth } from '../../redux/reducers/authReducer';
-import { addUser } from '../../redux/reducers/userReducer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreen = ({navigation}: any) => {
   const { t } = useTranslation('auth');
 
-  const dispatch = useDispatch();
-
-  const [data, setData] = useState<SignUp>({
+  const [data, setData] = useState<SignUpForm>({
     name: '',
     email: '',
     password: '',
@@ -81,19 +75,15 @@ const SignUpScreen = ({navigation}: any) => {
 
     try {
       setIsLoading(true);
-      const res = await authenticationAPI.HandleAuthentication(
-        '/register',
-        { name: data.name, email: data.email, password: data.password },
+      await authenticationAPI.HandleAuthentication(
+        '/verification',
+        { email: data.email },
         'post',
       );
 
-      dispatch(addAuth(res.data.auth));
-      dispatch(addUser(res.data.user));
+      setIsLoading(false);
 
-      await AsyncStorage.setItem(
-        'auth',
-        JSON.stringify(res.data.auth),
-      );
+      navigation.navigate('Verification', data);
     } catch (error) {
       Alert.alert((error as Error).message || t('auth:login_failed'));
     } finally {

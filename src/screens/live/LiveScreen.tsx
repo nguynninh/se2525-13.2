@@ -1,11 +1,11 @@
 import { View, Text } from 'react-native';
 
-const HomeScreen = () => {
+const LiveScreen = () => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>HomeScreen</Text>
+      <Text>LiveScreen</Text>
     </View>
   );
 };
 
-export default HomeScreen;
+export default LiveScreen;

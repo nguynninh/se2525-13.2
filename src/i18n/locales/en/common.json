@@ -1,4 +1,10 @@
 {
+    "home": "Home",
+    "sale": "Sale",
+    "scanner": "Scanner",
+    "live": "Live",
+    "profile": "Profile",
+
     "skip": "Skip",
     "next": "Next",
     "onboarding1_title": "Find Favorite Items",

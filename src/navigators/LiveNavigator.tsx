@@ -1,18 +1,16 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
-import TabNavigator from './TabNavigator';
+import { LiveScreen } from '../screens';
 
-const MainNavigator = () => {
+const LiveNavigator = () => {
   const Stack = createNativeStackNavigator();
-
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Main" component={TabNavigator} />
+      <Stack.Screen name="LiveScreen" component={LiveScreen} />
     </Stack.Navigator>
   );
 };
 
-export default MainNavigator;
+export default LiveNavigator;

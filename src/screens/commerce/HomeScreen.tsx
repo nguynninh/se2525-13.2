@@ -1,8 +1,8 @@
 import { View, StatusBar, Platform, TouchableOpacity } from 'react-native';
 import { globalStyles } from '../../styles/globalStyles';
-import { AvatarComponent, RowComponent, TextComponent } from '../../components';
+import { AvatarComponent, CircleComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
-import { Notification, ShoppingCart } from 'iconsax-react-native';
+import { Notification, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../redux/reducers/userReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
@@ -44,14 +44,42 @@ const HomeScreen = ({ navigation }: any) => {
               size={36}
               dot
               dotColor={appColors.success}
+              onPress={() => navigation.navigate('CartScreen')}
             />
             <AvatarComponent
               icon={<Notification variant="Bold" size={24} color={appColors.gray} />}
               size={36}
               count={3}
+              onPress={() => navigation.navigate('NotificationScreen')}
             />
           </RowComponent>
         </RowComponent>
+        <SpaceComponent height={10} />
+        <View style={customStyle.searchContainer}>
+          <InputComponent
+            value={''}
+            placeholder="Search events, categories..."
+            onChange={() => {}}
+            affix={<SearchNormal1 variant="TwoTone" size={22} color={appColors.gray} />}
+            suffix={
+              <RowComponent
+                onPress={() =>
+                  navigation.navigate('SearchScreen', {
+                    isFilter: true,
+                  })
+                }
+                styles={customStyle.searchFilter}>
+                <CircleComponent size={18.3} color={appColors.light_violet}>
+                  <Sort size={12} color={appColors.white} />
+                </CircleComponent>
+                <SpaceComponent width={8} />
+                <TextComponent text="Filters" color={appColors.white} />
+              </RowComponent>
+            }
+            disabled
+            onPress={() => navigation.navigate('SearchScreen')}
+          />
+        </View>
       </View>
     </View>
   );
@@ -80,16 +108,15 @@ const customStyle = {
     gap: 12,
   } as const,
 
-  headerAccountDot: {
-    backgroundColor: '#02E9FE',
-    width: 10,
-    height: 10,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#cbcaf7',
-    position: 'absolute',
-    top: -2,
-    right: -2,
+  searchContainer: {
+    flex: 1,
+  } as const,
+
+  searchFilter: {
+    backgroundColor: '#5D56F3',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 100,
   } as const,
 };
 

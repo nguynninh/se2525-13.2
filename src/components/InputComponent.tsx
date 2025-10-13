@@ -25,6 +25,8 @@ interface Props {
   onEnd?: () => void;
   error?: string;
   style?: ViewStyle;
+  disabled?: boolean;
+  onPress?: () => void;
 }
 
 const InputComponent = (props: Props) => {
@@ -40,6 +42,8 @@ const InputComponent = (props: Props) => {
     onEnd,
     error,
     style,
+    disabled,
+    onPress,
   } = props;
 
   const [isShowPass, setIsShowPass] = useState(isPassword ?? false);
@@ -58,6 +62,9 @@ const InputComponent = (props: Props) => {
         keyboardType={type ?? 'default'}
         autoCapitalize="none"
         onEndEditing={onEnd}
+        editable={!disabled}
+        selectTextOnFocus={!disabled}
+        onTouchStart={onPress}
       />
       {suffix ?? suffix}
       <TouchableOpacity

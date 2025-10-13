@@ -12,11 +12,11 @@ interface Props {
     shape?: 'circle' | 'square';
     border?: [number, string, string];
     styles?: any;
-    onClick?: () => void;
+    onPress?: () => void;
 }
 
 const AvatarComponent = (props: Props) => {
-    const { imageUrl, icon, size, dot, dotColor, count, shape, border, styles, onClick } = props;
+    const { imageUrl, icon, size, dot, dotColor, count, shape, border, styles, onPress } = props;
 
     const globalStyle = {
         container: {
@@ -75,7 +75,7 @@ const AvatarComponent = (props: Props) => {
     };
 
     return (
-        <View style={[globalStyle.container, styles]} onTouchEnd={onClick}>
+        <View style={[globalStyle.container, styles]} onTouchEnd={onPress}>
             {imageUrl ? (
                 <Image
                     source={{ uri: imageUrl }}

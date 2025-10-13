@@ -1,4 +1,4 @@
-import HomeScreen from './home/HomeScreen';
+import HomeScreen from './commerce/HomeScreen';
 import LoginScreen from './auth/LoginScreen';
 import SignUpScreen from './auth/SignUpScreen';
 import ForgotPassword from './auth/ForgotPassword';
@@ -9,6 +9,9 @@ import SaleScreen from './sale/SaleScreen';
 import ScannerScreen from './scanner/ScannerScreen';
 import LiveScreen from './live/LiveScreen';
 import ProfileScreen from './profile/ProfileScreen';
+import NotificationScreen from './profile/NotificationScreen';
+import SearchScreen from './commerce/SearchScreen';
+import CartScreen from './commerce/CartScreen';
 
 export {
     HomeScreen,
@@ -22,4 +25,7 @@ export {
     ScannerScreen,
     LiveScreen,
     ProfileScreen,
+    SearchScreen,
+    NotificationScreen,
+    CartScreen,
 };

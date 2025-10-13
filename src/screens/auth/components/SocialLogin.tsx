@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import { useState } from 'react';
 import { Facebook, Google } from '../../../assets/svgs';
 import {

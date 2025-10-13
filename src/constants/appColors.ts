@@ -11,4 +11,7 @@ export const appColors = {
     gray5: '#d9d9d9',
     link: '#5669FF',
     danger: '#e74c3c',
+    secondary: '#F5F5F5',
+    success: '#2ecc71',
+    warning: '#f1c40f',
 };

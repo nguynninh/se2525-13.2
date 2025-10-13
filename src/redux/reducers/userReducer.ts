@@ -4,12 +4,14 @@ interface UserState {
     id: string;
     email: string;
     name: string;
+    avatar?: string;
 }
 
 const initialState: UserState = {
     id: '',
     email: '',
     name: '',
+    avatar: '',
 };
 
 const userSlice = createSlice({

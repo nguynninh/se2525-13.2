@@ -1,11 +1,10 @@
-import { Platform, Text } from 'react-native';
+import { Platform } from 'react-native';
 import { ReactNode } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import ProfileNavigator from './ProfileNavigator';
 import { appColors } from '../constants/appColors';
 import {
-  AddSquare,
   Home2,
   Scanning,
   TrendUp,

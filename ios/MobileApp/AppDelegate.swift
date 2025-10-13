@@ -2,6 +2,9 @@ import UIKit
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
+import AuthenticationServices
+import SafariServices
+import FBSDKCoreKit
 
 @main
 class AppDelegate: RCTAppDelegate {
@@ -13,7 +16,16 @@ class AppDelegate: RCTAppDelegate {
     // They will be passed down to the ViewController used by React Native.
     self.initialProps = [:]
 
+    ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    if ApplicationDelegate.shared.application(app, open: url, options: options) {
+      return true
+    }
+    return super.application(app, open: url, options: options)
   }
 
   override func sourceURL(for bridge: RCTBridge) -> URL? {

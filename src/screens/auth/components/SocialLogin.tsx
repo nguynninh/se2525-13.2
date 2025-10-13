@@ -16,6 +16,7 @@ import { addAuth } from '../../../redux/reducers/authReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authenticationAPI from '../../../apis/authApi';
 import { addUser } from '../../../redux/reducers/userReducer';
+import { LoginManager, Profile, Settings } from 'react-native-fbsdk-next';
 
 GoogleSignin.configure({
     webClientId:
@@ -23,6 +24,7 @@ GoogleSignin.configure({
     iosClientId:
         '1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70.apps.googleusercontent.com',
 });
+Settings.setAppID('375135140938503');
 
 const SocialLogin = () => {
     const { t } = useTranslation('auth');
@@ -50,7 +52,6 @@ const SocialLogin = () => {
                 },
                 'post',
             );
-            console.log('res', res.data);
 
             dispatch(addAuth(res.data.auth));
             dispatch(addUser(res.data.user));
@@ -58,12 +59,47 @@ const SocialLogin = () => {
             await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
             await GoogleSignin.signOut();
         } catch (error) {
-            console.log(error);
+            return;
         }
     };
 
     const handleLoginWithFacebook = async () => {
+        try {
+            const result = await LoginManager.logInWithPermissions([
+                'public_profile',
+            ]);
 
+            if (result.isCancelled) {
+                return;
+            } else {
+                const profile = await Profile.getCurrentProfile();
+
+                if (profile) {
+                    setIsLoading(true);
+
+                    const res: any = await authenticationAPI.HandleAuthentication(
+                        '/social-login',
+                        {
+                            name: profile.name,
+                            givenName: profile.firstName,
+                            familyName: profile.lastName,
+                            email: profile.userID,
+                            photo: profile.imageURL,
+                        },
+                        'post',
+                    );
+
+                    dispatch(addAuth(res.data.auth));
+                    dispatch(addUser(res.data.user));
+
+                    await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
+
+                    setIsLoading(false);
+                }
+            }
+        } catch (error) {
+            return;
+        }
     };
 
     return (

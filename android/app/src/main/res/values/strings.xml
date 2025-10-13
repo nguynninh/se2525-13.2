@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MobileApp</string>
+    <string name="facebook_app_id">375135140938503</string><string name="facebook_client_token">4427eb0b6485e787867616edd62aeea6</string>
 </resources>

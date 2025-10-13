@@ -74,15 +74,33 @@
 		<string>Zocial.ttf</string>
 	</array>
 	<key>GIDClientID</key>
-		<string>1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70.apps.googleusercontent.com</string>
-		<key>CFBundleURLTypes</key>
-		<array>
+	<string>1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-			<string>com.googleusercontent.apps.1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70</string>
+				<string>com.googleusercontent.apps.1042330913615-tc1kh1pms55mk9t0fj7n2a7q27vi6n70</string>
 			</array>
 		</dict>
-		</array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb375135140938503</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>375135140938503</string>
+	<key>FacebookClientToken</key>
+	<string>4427eb0b6485e787867616edd62aeea6</string>
+	<key>FacebookDisplayName</key>
+	<string>Mobile App</string>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>fbapi</string>
+	<string>fb-messenger-share-api</string>
+	</array>
 </dict>
 </plist>

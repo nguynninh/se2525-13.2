@@ -1,4 +1,5 @@
-import { View, StatusBar, Platform, TouchableOpacity } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text } from 'react-native';
+import { useEffect, useState, useMemo } from 'react';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, CircleComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
@@ -24,6 +25,37 @@ const HomeScreen = ({ navigation }: any) => {
       return t('home:night');
     }
   };
+
+  const searchPlaceholders = useMemo(() => [
+    t('home:search_placeholder'),
+    t('home:search_placeholder1'),
+    t('home:search_placeholder2'),
+    t('home:search_placeholder3'),
+    t('home:search_placeholder4'),
+  ], [t]);
+
+  const [searchPlaceholder, setSearchPlacehoder] = useState('');
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  useEffect(() => {
+    const current = searchPlaceholders[phraseIndex];
+    let charIndex = 0;
+
+    const interval = setInterval(() => {
+      setSearchPlacehoder(current.slice(0, charIndex + 1));
+      charIndex++;
+
+      if (charIndex === current.length) {
+        clearInterval(interval);
+
+        setTimeout(() => {
+          setPhraseIndex(prev => (prev + 1) % searchPlaceholders.length);
+          setSearchPlacehoder('');
+        }, 1500);
+      }
+    }, 80);
+
+    return () => clearInterval(interval);
+  }, [phraseIndex, searchPlaceholders]);
 
   return (
     <View style={[globalStyles.container, customStyle.container]}>
@@ -58,8 +90,8 @@ const HomeScreen = ({ navigation }: any) => {
         <View style={customStyle.searchContainer}>
           <InputComponent
             value={''}
-            placeholder="Search events, categories..."
-            onChange={() => {}}
+            placeholder={searchPlaceholder}
+            onChange={() => { }}
             affix={<SearchNormal1 variant="TwoTone" size={22} color={appColors.gray} />}
             suffix={
               <RowComponent
@@ -69,11 +101,11 @@ const HomeScreen = ({ navigation }: any) => {
                   })
                 }
                 styles={customStyle.searchFilter}>
-                <CircleComponent size={18.3} color={appColors.light_violet}>
-                  <Sort size={12} color={appColors.white} />
+                <CircleComponent size={20.3} color={appColors.white}>
+                  <Sort size={12} color={appColors.text} />
                 </CircleComponent>
                 <SpaceComponent width={8} />
-                <TextComponent text="Filters" color={appColors.white} />
+                <TextComponent text={t('home:search_filter')} font={fontFamilies.regular} color={appColors.text} size={14} />
               </RowComponent>
             }
             disabled
@@ -113,7 +145,7 @@ const customStyle = {
   } as const,
 
   searchFilter: {
-    backgroundColor: '#5D56F3',
+    backgroundColor: appColors.gray5,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 100,

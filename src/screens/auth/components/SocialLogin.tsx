@@ -57,7 +57,6 @@ const SocialLogin = () => {
             dispatch(addUser(res.data.user));
 
             await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
-            await GoogleSignin.signOut();
         } catch (error) {
             return;
         }

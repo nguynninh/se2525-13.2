@@ -1,18 +1,16 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
-import TabNavigator from './TabNavigator';
+import { SaleScreen } from '../screens';
 
-const MainNavigator = () => {
+const SaleNavigator = () => {
   const Stack = createNativeStackNavigator();
-
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Main" component={TabNavigator} />
+      <Stack.Screen name="SaleScreen" component={SaleScreen} />
     </Stack.Navigator>
   );
 };
 
-export default MainNavigator;
+export default SaleNavigator;

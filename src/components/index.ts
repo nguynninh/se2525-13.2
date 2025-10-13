@@ -5,6 +5,7 @@ import InputComponent from './InputComponent';
 import RowComponent from './RowComponent';
 import ContainerComponent from './ContainerComponent';
 import SectionComponent from './SectionComponent';
+import CircleComponent from './CircleComponent';
 
 export {
     SpaceComponent,
@@ -14,4 +15,5 @@ export {
     RowComponent,
     ContainerComponent,
     SectionComponent,
+    CircleComponent,
 };

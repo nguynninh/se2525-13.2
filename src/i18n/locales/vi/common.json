@@ -1,4 +1,10 @@
 {
+    "home": "Nhà",
+    "sale": "Sale",
+    "scanner": "Quét",
+    "live": "Live",
+    "profile": "Tôi",
+
     "skip": "Bỏ qua",
     "next": "Tiếp theo",
     "onboarding1_title": "Tìm sản phẩm yêu thích",

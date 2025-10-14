@@ -21,58 +21,18 @@ const HomeScreen = ({ navigation }: any) => {
         {},
         'get'
       );
-      console.log('Banner response:', response.data.banners);
-      if (response.data.banners && response.data.banners.length > 0) {
-        setBanner(response.data.banners);
-      } else {
-        // Fallback dummy data for testing
-        setBanner([
-          {
-            id: '1',
-            imageUrl: 'https://via.placeholder.com/400x180/FF6B6B/FFFFFF?text=Banner+1',
-          },
-          {
-            id: '2',
-            imageUrl: 'https://via.placeholder.com/400x180/4ECDC4/FFFFFF?text=Banner+2',
-          },
-          {
-            id: '3',
-            imageUrl: 'https://via.placeholder.com/400x180/45B7D1/FFFFFF?text=Banner+3',
-          },
-        ]);
-      }
+
+      response && setBanner(response.data.banners);
     } catch (error) {
-      console.log('Banner fetch error:', error);
-      // Fallback dummy data when API fails
-      setBanner([
-        {
-          id: '1',
-          imageUrl: 'https://via.placeholder.com/400x180/FF6B6B/FFFFFF?text=Banner+1',
-        },
-        {
-          id: '2',
-          imageUrl: 'https://via.placeholder.com/400x180/4ECDC4/FFFFFF?text=Banner+2',
-        },
-        {
-          id: '3',
-          imageUrl: 'https://via.placeholder.com/400x180/45B7D1/FFFFFF?text=Banner+3',
-        },
-      ]);
+      setBanner([]);
     }
   };
   useEffect(() => {
     fetchBanners();
   }, []);
 
-  // Debug log để kiểm tra banner data
-  useEffect(() => {
-    console.log('Banner state changed:', banner);
-  }, [banner]);
-
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
-
-  // Auto scroll effect
   useEffect(() => {
     if (banner.length > 1) {
       const interval = setInterval(() => {
@@ -220,9 +180,7 @@ const HomeScreen = ({ navigation }: any) => {
                           resizeMode="cover"
                         />
                       ) : (
-                        <View style={customStyle.placeholderImage}>
-                          {/* Fallback khi không có imageUrl */}
-                        </View>
+                        <View style={customStyle.placeholderImage}/>
                       )}
                     </View>
                   );
@@ -360,6 +318,15 @@ const customStyle = {
     height: 8,
     borderRadius: 4,
     marginHorizontal: 4,
+  } as const,
+
+  placeholderImage: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: appColors.gray5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
   } as const,
 };
 

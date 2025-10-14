@@ -22,7 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addUser } from '../../redux/reducers/userReducer';
 
 const LoginScreen = ({ navigation }: any) => {
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation(['auth', 'common']);
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }: any) => {
         data.isRemember ? JSON.stringify(res.data.auth) : data.email,
       );
     } catch (error) {
-      Alert.alert(t('auth:error'), (error as Error).message || t('auth:login_failed'));
+      Alert.alert(t('common:error'), (error as Error).message || t('auth:login_failed'));
     } finally {
       setIsLoading(false);
     }

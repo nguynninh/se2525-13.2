@@ -18,7 +18,7 @@ import { SignUp } from '../../models/SignUp';
 import authenticationAPI from '../../apis/authApi';
 
 const SignUpScreen = ({navigation}: any) => {
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation(['auth', 'common']);
 
   const [data, setData] = useState<SignUp>({
     name: '',
@@ -85,7 +85,7 @@ const SignUpScreen = ({navigation}: any) => {
 
       navigation.navigate('Verification', data);
     } catch (error) {
-      Alert.alert(t('auth:error'), (error as Error).message || t('auth:login_failed'));
+      Alert.alert(t('common:error'), (error as Error).message || t('auth:login_failed'));
     } finally {
       setIsLoading(false);
     }

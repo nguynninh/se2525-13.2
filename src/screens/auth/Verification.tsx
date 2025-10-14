@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 const Verification = ({ _navigation, route }: any) => {
   const { name, email, password } = route.params;
 
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation(['auth', 'common']);
 
   const [codeValues, setCodeValues] = useState<string[]>(['', '', '', '']);
   const [limit, setLimit] = useState(90);
@@ -69,9 +69,9 @@ const Verification = ({ _navigation, route }: any) => {
       );
 
       setLimit(90);
-      Alert.alert(t('auth:success'), t('auth:verification_success'));
+      Alert.alert(t('common:success'), t('auth:verification_success'));
     } catch (error) {
-      Alert.alert(t('auth:error'), (error as Error).message || t('auth:verification_error'));
+      Alert.alert(t('common:error'), (error as Error).message || t('auth:verification_error'));
     } finally {
       setIsLoading(false);
     }

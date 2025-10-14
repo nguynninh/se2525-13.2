@@ -12,5 +12,12 @@
     "onboarding2_title": "Thanh toán an toàn và dễ dàng",
     "onboarding2_description": "Thanh toán cho các sản phẩm bạn mua một cách an toàn và dễ dàng",
     "onboarding3_title": "Giao hàng sản phẩm",
-    "onboarding3_description": "Sản phẩm của bạn được giao đến tận nhà một cách an toàn và bảo mật"
+    "onboarding3_description": "Sản phẩm của bạn được giao đến tận nhà một cách an toàn và bảo mật",
+    "fetch_info_error": "Không thể lấy thông tin người dùng",
+
+    "success": "Thành công",
+    "failed": "Thất bại",
+    "error": "Lỗi",
+    "warning": "Cảnh báo",
+    "info": "Thông tin"
 }

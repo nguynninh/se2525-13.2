@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, CircleComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
-import { Notification, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
+import { Camera, Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../redux/reducers/userReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
@@ -33,9 +33,9 @@ const HomeScreen = ({ navigation }: any) => {
     t('home:search_placeholder3'),
     t('home:search_placeholder4'),
   ], [t]);
-
   const [searchPlaceholder, setSearchPlacehoder] = useState('');
   const [phraseIndex, setPhraseIndex] = useState(0);
+  const [searchIcon, setSearchIcon] = useState(true);
   useEffect(() => {
     const current = searchPlaceholders[phraseIndex];
     let charIndex = 0;
@@ -52,10 +52,17 @@ const HomeScreen = ({ navigation }: any) => {
           setSearchPlacehoder('');
         }, 1500);
       }
-    }, 80);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [phraseIndex, searchPlaceholders]);
+
+  useEffect(() => {
+    const iconInterval = setInterval(() => {
+      setSearchIcon(prev => !prev);
+    }, 5000);
+    return () => clearInterval(iconInterval);
+  }, []);
 
   return (
     <View style={[globalStyles.container, customStyle.container]}>
@@ -92,7 +99,14 @@ const HomeScreen = ({ navigation }: any) => {
             value={''}
             placeholder={searchPlaceholder}
             onChange={() => { }}
-            affix={<SearchNormal1 variant="TwoTone" size={22} color={appColors.gray} />}
+            affix={
+              searchIcon ? (
+                <SearchNormal1 size={18} color={appColors.gray} />
+              ) : (
+                <ScanBarcode size={18} color={appColors.gray}
+                  onPress={() => navigation.navigate('ScannerScreen')} />
+              )
+            }
             suffix={
               <RowComponent
                 onPress={() =>

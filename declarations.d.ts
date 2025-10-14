@@ -8,4 +8,7 @@ declare module '*.svg' {
 
 declare module '@env' {
   export const BASE_URL: string;
+  export const PRODUCTION: string;
+  export const EMVIRONMENT: string;
+  export const PORT: string;
 }

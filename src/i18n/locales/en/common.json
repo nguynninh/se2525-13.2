@@ -4,6 +4,13 @@
     "scanner": "Scanner",
     "live": "Live",
     "profile": "Profile",
+    "my_profile": "My Profile",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "sign_out": "Sign Out",
+    "help_fqa": "Help & FAQ",
+    "contact_us": "Contact Us",
 
     "skip": "Skip",
     "next": "Next",

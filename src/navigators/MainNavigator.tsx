@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TabNavigator from './TabNavigator';
 import { useDispatch } from 'react-redux';
 import handleAPI from '../apis/handleApi';
 import { addUser } from '../redux/reducers/userReducer';
+import DrawerNavigator from './DrawerNavigator';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -28,7 +28,7 @@ const MainNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Main" component={TabNavigator} />
+      <Stack.Screen name="Main" component={DrawerNavigator} />
     </Stack.Navigator>
   );
 };

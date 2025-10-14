@@ -1,30 +1,14 @@
 import { View, StatusBar, Platform, TouchableOpacity } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import { globalStyles } from '../../styles/globalStyles';
-import { AvatarComponent, CircleComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
+import { AvatarComponent, InputComponent, RowComponent, SpaceComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
-import { Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
-import { useSelector } from 'react-redux';
-import { userSelector } from '../../redux/reducers/userReducer';
-import { fontFamilies } from '../../constants/fontFamilies';
+import { Add, HambergerMenu, Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
 import { useTranslation } from 'react-i18next';
+import { useDrawerStatus } from '@react-navigation/drawer';
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
-  const user = useSelector(userSelector);
-
-  const getTimeBasedGreeting = () => {
-    const currentHour = new Date().getHours();
-    if (currentHour >= 5 && currentHour < 12) {
-      return t('home:morning');
-    } else if (currentHour >= 12 && currentHour < 17) {
-      return t('home:afternoon');
-    } else if (currentHour >= 17 && currentHour < 21) {
-      return t('home:evening');
-    } else {
-      return t('home:night');
-    }
-  };
 
   const searchPlaceholders = useMemo(() => [
     t('home:search_placeholder'),
@@ -68,37 +52,40 @@ const HomeScreen = ({ navigation }: any) => {
     <View style={[globalStyles.container, customStyle.container]}>
       <View style={{ paddingHorizontal: 16 }}>
         <RowComponent styles={customStyle.headerAccount}>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
-            <RowComponent styles={customStyle.headerLeft}>
-              <AvatarComponent imageUrl={user.avatar} size={40} border={[2, 'solid', appColors.gray]} />
-              <View style={{ gap: 3 }}>
-                <TextComponent text={getTimeBasedGreeting()} font={fontFamilies.semiBold} color={appColors.gray} size={14} />
-                <TextComponent text={user.name || t('home:new_user')} font={fontFamilies.bold} color={appColors.text} size={16} />
+          <AvatarComponent
+            shape="square"
+            size={45}
+            icon={useDrawerStatus() === 'open' ? (
+              <View style={{ transform: [{ rotate: '45deg' }] }}>
+                <Add size={32} color={appColors.text} />
               </View>
-            </RowComponent>
-          </TouchableOpacity>
+            ) : (
+              <HambergerMenu size={26} color={appColors.text} />
+            )}
+            onPress={() => navigation.openDrawer()}/>
           <RowComponent styles={customStyle.headerAccountRight}>
             <AvatarComponent
               icon={<ShoppingCart variant="Bold" size={24} color={appColors.gray} />}
-              size={36}
+              size={40}
               dot
               dotColor={appColors.success}
               onPress={() => navigation.navigate('CartScreen')}
             />
             <AvatarComponent
-              icon={<Notification variant="Bold" size={24} color={appColors.gray} />}
-              size={36}
+              icon={<Notification variant="Bold" size={26} color={appColors.gray} />}
+              size={40}
               count={3}
               onPress={() => navigation.navigate('NotificationScreen')}
             />
           </RowComponent>
         </RowComponent>
-        <SpaceComponent height={10} />
-        <View style={customStyle.searchContainer}>
+        <SpaceComponent height={1} />
+        <RowComponent styles={customStyle.searchContainer}>
           <InputComponent
             value={''}
             placeholder={searchPlaceholder}
             onChange={() => { }}
+            height={45}
             affix={
               searchIcon ? (
                 <SearchNormal1 size={18} color={appColors.gray} />
@@ -107,25 +94,22 @@ const HomeScreen = ({ navigation }: any) => {
                   onPress={() => navigation.navigate('ScannerScreen')} />
               )
             }
-            suffix={
-              <RowComponent
-                onPress={() =>
-                  navigation.navigate('SearchScreen', {
-                    isFilter: true,
-                  })
-                }
-                styles={customStyle.searchFilter}>
-                <CircleComponent size={20.3} color={appColors.white}>
-                  <Sort size={12} color={appColors.text} />
-                </CircleComponent>
-                <SpaceComponent width={8} />
-                <TextComponent text={t('home:search_filter')} font={fontFamilies.regular} color={appColors.text} size={14} />
-              </RowComponent>
-            }
             disabled
             onPress={() => navigation.navigate('SearchScreen')}
+            style={customStyle.searchInput}
           />
-        </View>
+          <AvatarComponent
+            shape="square"
+            icon={<Sort size={20} color={appColors.text} />}
+            size={45}
+            styles={customStyle.searchFilter}
+            onPress={() =>
+              navigation.navigate('SearchScreen', {
+                isFilter: true,
+              })
+            }
+          />
+        </RowComponent>
       </View>
     </View>
   );
@@ -155,6 +139,12 @@ const customStyle = {
   } as const,
 
   searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  } as const,
+
+  searchInput: {
     flex: 1,
   } as const,
 
@@ -162,7 +152,6 @@ const customStyle = {
     backgroundColor: appColors.gray5,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 100,
   } as const,
 };
 

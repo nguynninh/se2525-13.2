@@ -21,6 +21,7 @@ interface Props {
   suffix?: ReactNode;
   isPassword?: boolean;
   allowClear?: boolean;
+  height?: number;
   type?: KeyboardType;
   onEnd?: () => void;
   error?: string;
@@ -38,6 +39,7 @@ const InputComponent = (props: Props) => {
     placeholder,
     isPassword,
     allowClear,
+    height,
     type,
     onEnd,
     error,
@@ -53,7 +55,7 @@ const InputComponent = (props: Props) => {
     <View style={[styles.inputContainer]}>
       {affix ?? affix}
       <TextInput
-        style={[styles.input, globalStyles.text]}
+        style={[styles.input, globalStyles.text, { minHeight: height ?? 56 }]}
         value={value}
         placeholder={placeholder ?? ''}
         onChangeText={val => onChange(val)}
@@ -102,7 +104,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: appColors.gray3,
     width: '100%',
-    minHeight: 56,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,

@@ -5,3 +5,7 @@ declare module '*.svg' {
 
   export default content;
 }
+
+declare module '@env' {
+  export const BASE_URL: string;
+}

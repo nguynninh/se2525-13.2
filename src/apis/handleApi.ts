@@ -1,24 +1,32 @@
+import { appInfo } from '../constants/appInfos';
+import { authSelector } from '../redux/reducers/authReducer';
+import store from '../redux/store';
 import axiosClient from './axiosClient';
 
 class HandleAPI {
+  private getAccessToken = () => {
+    return authSelector(store.getState())?.access_token || '';
+  };
+
   handleApi = async (
     url: string,
     data?: any,
-    method: 'get' | 'post' | 'put' | 'delete' = 'get',
-    token?: string,
+    method: 'get' | 'post' | 'put' | 'delete' = 'get'
   ) => {
     try {
-      const response = await axiosClient(url, {
+      const accessToken = this.getAccessToken();
+      const requestData = (data === null || data === undefined || (typeof data === 'object' && Object.keys(data).length === 0)) ? undefined : data;
+      const response = await axiosClient(`${appInfo.BASE_URL}${url}`, {
         method,
-        data,
+        data: requestData,
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
       return response;
     } catch (error: any) {
-      throw new Error(error?.message || 'Request failed');
+      throw new Error(error?.message);
     }
   };
 }

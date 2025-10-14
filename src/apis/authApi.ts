@@ -1,7 +1,7 @@
 import axiosClient from './axiosClient';
 
 class AuthAPI {
-    HandleAuthentication = async (
+    handleAuthentication = async (
         url: string,
         data?: any,
         method?: 'get' | 'post' | 'put' | 'delete',
@@ -14,4 +14,4 @@ class AuthAPI {
 }
 
 const authenticationAPI = new AuthAPI();
-export default authenticationAPI;
+export default authenticationAPI.handleAuthentication;

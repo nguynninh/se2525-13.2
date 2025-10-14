@@ -15,8 +15,8 @@ import { CircleComponent, TextComponent } from '../components';
 import { globalStyles } from '../styles/globalStyles';
 import SaleNavigator from './SaleNavigator';
 import ScannerNavigator from './ScannerNavigator';
-import ExploreNavigator from './ExploreNavigator';
 import LiveNavigator from './LiveNavigator';
+import CommerceNavigator from './CommerceNavigator';
 
 const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
@@ -37,6 +37,21 @@ const TabNavigator = () => {
       default:
         return routeName;
     }
+  };
+
+  const tabBarLabel = (routeName: string, focused: boolean) => {
+    return routeName === 'Scanner' ? null : (
+      <TextComponent
+        text={getTabLabel(routeName)}
+        flex={0}
+        size={12}
+        color={focused ? appColors.primary : appColors.gray5}
+        // eslint-disable-next-line react-native/no-inline-styles
+        styles={{
+          marginBottom: Platform.OS === 'android' ? 12 : 0,
+        }}
+      />
+    );
   };
 
   return (
@@ -85,21 +100,9 @@ const TabNavigator = () => {
         tabBarIconStyle: {
           marginTop: 8,
         },
-        tabBarLabel({focused}) {
-          return route.name === 'Scanner' ? null : (
-            <TextComponent
-              text={getTabLabel(route.name)}
-              flex={0}
-              size={12}
-              color={focused ? appColors.primary : appColors.gray5}
-              styles={{
-                marginBottom: Platform.OS === 'android' ? 12 : 0,
-              }}
-            />
-          );
-        },
+        tabBarLabel: ({ focused }) => tabBarLabel(route.name, focused),
       })}>
-      <Tab.Screen name="Home" component={ExploreNavigator} />
+      <Tab.Screen name="Home" component={CommerceNavigator} />
       <Tab.Screen name="Sale" component={SaleNavigator} />
       <Tab.Screen name="Scanner" component={ScannerNavigator} />
       <Tab.Screen name="Live" component={LiveNavigator} />

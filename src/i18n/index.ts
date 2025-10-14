@@ -4,18 +4,22 @@ import * as RNLocalize from 'react-native-localize';
 
 import en_common from './locales/en/common.json';
 import en_auth from './locales/en/auth.json';
+import en_home from './locales/en/home.json';
 
 import vi_common from './locales/vi/common.json';
 import vi_auth from './locales/vi/auth.json';
+import vi_home from './locales/vi/home.json';
 
 const resources = {
   en: {
     common: en_common,
     auth: en_auth,
+    home: en_home,
   },
   vi: {
     common: vi_common,
     auth: vi_auth,
+    home: vi_home,
   },
 };
 
@@ -40,6 +44,7 @@ i18n
     ns: [
         'common',
         'auth',
+        'home',
     ],
     defaultNS: 'common',
     interpolation: { escapeValue: false },

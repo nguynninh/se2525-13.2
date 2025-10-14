@@ -12,18 +12,18 @@ import { ArrowRight } from 'iconsax-react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { globalStyles } from '../../styles/globalStyles';
-import authenticationAPI from '../../apis/authApi';
 import { LoadingModal } from '../../modals';
 import { useDispatch } from 'react-redux';
 import { addAuth } from '../../redux/reducers/authReducer';
 import { addUser } from '../../redux/reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import handleAuthentication from '../../apis/authApi';
 
 const Verification = ({ _navigation, route }: any) => {
   const { name, email, password } = route.params;
 
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation(['auth', 'common']);
 
   const [codeValues, setCodeValues] = useState<string[]>(['', '', '', '']);
   const [limit, setLimit] = useState(90);
@@ -62,16 +62,16 @@ const Verification = ({ _navigation, route }: any) => {
 
     setIsLoading(true);
     try {
-      await authenticationAPI.HandleAuthentication(
+      await handleAuthentication(
         '/verification',
         { email },
         'post',
       );
 
       setLimit(90);
-      Alert.alert(t('auth:success'), t('auth:verification_success'));
+      Alert.alert(t('common:success'), t('auth:verification_success'));
     } catch (error) {
-      Alert.alert(t('auth:error'), (error as Error).message || t('auth:verification_error'));
+      Alert.alert(t('common:error'), (error as Error).message || t('auth:verification_error'));
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +83,7 @@ const Verification = ({ _navigation, route }: any) => {
 
       try {
         setIsLoading(true);
-        const res: any = await authenticationAPI.HandleAuthentication(
+        const res: any = await handleAuthentication(
           '/register',
           {
             code: codeValues.join(''),

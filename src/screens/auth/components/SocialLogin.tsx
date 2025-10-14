@@ -14,9 +14,9 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useDispatch } from 'react-redux';
 import { addAuth } from '../../../redux/reducers/authReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import authenticationAPI from '../../../apis/authApi';
 import { addUser } from '../../../redux/reducers/userReducer';
 import { LoginManager, Profile, Settings } from 'react-native-fbsdk-next';
+import handleAuthentication from '../../../apis/authApi';
 
 GoogleSignin.configure({
     webClientId:
@@ -43,7 +43,7 @@ const SocialLogin = () => {
             const userInfo = await GoogleSignin.signIn();
             const user = userInfo.data?.user;
 
-            const res: any = await authenticationAPI.HandleAuthentication(
+            const res: any = await handleAuthentication(
                 '/social-login',
                 {
                     name: user?.name,
@@ -76,7 +76,7 @@ const SocialLogin = () => {
                 if (profile) {
                     setIsLoading(true);
 
-                    const res: any = await authenticationAPI.HandleAuthentication(
+                    const res: any = await handleAuthentication(
                         '/social-login',
                         {
                             name: profile.name,

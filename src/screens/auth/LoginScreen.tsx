@@ -15,14 +15,14 @@ import { Validate } from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
 import { Login } from '../../models/Login';
 import SocialLogin from './components/SocialLogin';
-import authenticationAPI from '../../apis/authApi';
 import { useDispatch } from 'react-redux';
 import { addAuth } from '../../redux/reducers/authReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addUser } from '../../redux/reducers/userReducer';
+import handleAuthentication from '../../apis/authApi';
 
 const LoginScreen = ({ navigation }: any) => {
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation(['auth', 'common']);
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -54,7 +54,7 @@ const LoginScreen = ({ navigation }: any) => {
 
     try {
       setIsLoading(true);
-      const res = await authenticationAPI.HandleAuthentication(
+      const res = await handleAuthentication(
         '/login',
         { email: data.email, password: data.password },
         'post',
@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }: any) => {
         data.isRemember ? JSON.stringify(res.data.auth) : data.email,
       );
     } catch (error) {
-      Alert.alert(t('auth:error'), (error as Error).message || t('auth:login_failed'));
+      Alert.alert(t('common:error'), (error as Error).message || t('auth:login_failed'));
     } finally {
       setIsLoading(false);
     }

@@ -12,10 +12,10 @@ import {ArrowRight, Sms} from 'iconsax-react-native';
 import {appColors} from '../../constants/appColors';
 import {Validate} from '../../utils/validate';
 import {useTranslation} from 'react-i18next';
-import authenticationAPI from '../../apis/authApi';
+import handleAuthentication from '../../apis/authApi';
 
 const ForgotPassword = ({ navigation }: any) => {
-  const {t} = useTranslation('auth');
+  const {t} = useTranslation(['auth', 'common']);
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +41,7 @@ const ForgotPassword = ({ navigation }: any) => {
 
     setIsLoading(true);
     try {
-      await authenticationAPI.HandleAuthentication(
+      await handleAuthentication(
         '/forgot-password',
         { email },
         'post',
@@ -50,7 +50,7 @@ const ForgotPassword = ({ navigation }: any) => {
       Alert.alert(t('auth:send_mail'), t('auth:check_email_inbox'));
       navigation.navigate('LoginScreen');
     } catch (error) {
-      Alert.alert(t('auth:error'), (error as Error).message || t('auth:forgot_password_error'));
+      Alert.alert(t('common:error'), (error as Error).message || t('auth:forgot_password_error'));
     } finally {
       setIsLoading(false);
     }

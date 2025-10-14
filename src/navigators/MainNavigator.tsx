@@ -1,9 +1,26 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import { useEffect } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
+import { useDispatch } from 'react-redux';
+import handleAPI from '../apis/handleApi';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getMyInfo();
+  }, []);
+
+  const getMyInfo = async () => {
+    try {
+      const res = await handleAPI('/user/me', null, 'get');
+
+      res && dispatch(res.data.user);
+    } catch (error) {
+    }
+  };
 
   return (
     <Stack.Navigator

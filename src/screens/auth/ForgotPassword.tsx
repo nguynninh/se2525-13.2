@@ -12,7 +12,7 @@ import {ArrowRight, Sms} from 'iconsax-react-native';
 import {appColors} from '../../constants/appColors';
 import {Validate} from '../../utils/validate';
 import {useTranslation} from 'react-i18next';
-import authenticationAPI from '../../apis/authApi';
+import handleAuthentication from '../../apis/authApi';
 
 const ForgotPassword = ({ navigation }: any) => {
   const {t} = useTranslation(['auth', 'common']);
@@ -41,7 +41,7 @@ const ForgotPassword = ({ navigation }: any) => {
 
     setIsLoading(true);
     try {
-      await authenticationAPI.HandleAuthentication(
+      await handleAuthentication(
         '/forgot-password',
         { email },
         'post',

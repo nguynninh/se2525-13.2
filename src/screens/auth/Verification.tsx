@@ -12,13 +12,13 @@ import { ArrowRight } from 'iconsax-react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { globalStyles } from '../../styles/globalStyles';
-import authenticationAPI from '../../apis/authApi';
 import { LoadingModal } from '../../modals';
 import { useDispatch } from 'react-redux';
 import { addAuth } from '../../redux/reducers/authReducer';
 import { addUser } from '../../redux/reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import handleAuthentication from '../../apis/authApi';
 
 const Verification = ({ _navigation, route }: any) => {
   const { name, email, password } = route.params;
@@ -62,7 +62,7 @@ const Verification = ({ _navigation, route }: any) => {
 
     setIsLoading(true);
     try {
-      await authenticationAPI.HandleAuthentication(
+      await handleAuthentication(
         '/verification',
         { email },
         'post',
@@ -83,7 +83,7 @@ const Verification = ({ _navigation, route }: any) => {
 
       try {
         setIsLoading(true);
-        const res: any = await authenticationAPI.HandleAuthentication(
+        const res: any = await handleAuthentication(
           '/register',
           {
             code: codeValues.join(''),

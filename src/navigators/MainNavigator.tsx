@@ -3,12 +3,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import { useDispatch } from 'react-redux';
 import handleAPI from '../apis/handleApi';
-import { useTranslation } from 'react-i18next';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
 
-  const {t} = useTranslation('common');
   const dispatch = useDispatch();
 
   useEffect(() => {

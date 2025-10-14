@@ -1,9 +1,9 @@
-import { View, StatusBar, Platform, TouchableOpacity, Text } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, CircleComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
-import { Camera, Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
+import { Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../redux/reducers/userReducer';
 import { fontFamilies } from '../../constants/fontFamilies';

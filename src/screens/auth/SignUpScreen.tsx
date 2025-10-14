@@ -15,7 +15,7 @@ import {LoadingModal} from '../../modals';
 import {Validate} from '../../utils/validate';
 import { useTranslation } from 'react-i18next';
 import { SignUp } from '../../models/SignUp';
-import authenticationAPI from '../../apis/authApi';
+import handleAuthentication from '../../apis/authApi';
 
 const SignUpScreen = ({navigation}: any) => {
   const { t } = useTranslation(['auth', 'common']);
@@ -75,7 +75,7 @@ const SignUpScreen = ({navigation}: any) => {
 
     try {
       setIsLoading(true);
-      await authenticationAPI.HandleAuthentication(
+      await handleAuthentication(
         '/verification',
         { email: data.email },
         'post',

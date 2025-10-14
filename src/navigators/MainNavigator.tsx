@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import { useDispatch } from 'react-redux';
 import handleAPI from '../apis/handleApi';
+import { addUser } from '../redux/reducers/userReducer';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -15,9 +16,9 @@ const MainNavigator = () => {
 
   const getMyInfo = async () => {
     try {
-      const res = await handleAPI('/user/me', null, 'get');
+      const res = await handleAPI('/users/me', {}, 'get');
 
-      res && dispatch(res.data.user);
+      res && dispatch(addUser(res.data.user));
     } catch (error) {
     }
   };

@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   const dispatch = useDispatch();
 
-  const [data, setData] = useState<Login>({ email: '', password: '', isRemember: false });
+  const [data, setData] = useState<Login>({ email: '', password: '', isRemember: true });
   const [valiationError, setValidationError] = useState({ email: '', password: '' });
 
   const validationErrorHandler = () => {

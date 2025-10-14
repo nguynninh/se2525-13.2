@@ -7,6 +7,7 @@ import ContainerComponent from './ContainerComponent';
 import SectionComponent from './SectionComponent';
 import CircleComponent from './CircleComponent';
 import AvatarComponent from './AvatarComponent';
+import DrawerCustom from './DrawerCustom';
 
 export {
     SpaceComponent,
@@ -18,4 +19,5 @@ export {
     SectionComponent,
     CircleComponent,
     AvatarComponent,
+    DrawerCustom,
 };

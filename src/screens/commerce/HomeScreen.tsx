@@ -1,14 +1,96 @@
-import { View, StatusBar, Platform, TouchableOpacity } from 'react-native';
-import { useEffect, useState, useMemo } from 'react';
+import { View, StatusBar, Platform, Image, ScrollView } from 'react-native';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, InputComponent, RowComponent, SpaceComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { Add, HambergerMenu, Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
 import { useTranslation } from 'react-i18next';
 import { useDrawerStatus } from '@react-navigation/drawer';
+import handleApi from '../../apis/handleApi';
+import { Banner } from '../../models/Banner';
+import { appInfo } from '../../constants/appInfos';
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
+
+  const [banner, setBanner] = useState<Banner[]>([]);
+  const fetchBanners = async () => {
+    try {
+      const response = await handleApi(
+        '/banners',
+        {},
+        'get'
+      );
+      console.log('Banner response:', response.data.banners);
+      if (response.data.banners && response.data.banners.length > 0) {
+        setBanner(response.data.banners);
+      } else {
+        // Fallback dummy data for testing
+        setBanner([
+          {
+            id: '1',
+            imageUrl: 'https://via.placeholder.com/400x180/FF6B6B/FFFFFF?text=Banner+1',
+          },
+          {
+            id: '2',
+            imageUrl: 'https://via.placeholder.com/400x180/4ECDC4/FFFFFF?text=Banner+2',
+          },
+          {
+            id: '3',
+            imageUrl: 'https://via.placeholder.com/400x180/45B7D1/FFFFFF?text=Banner+3',
+          },
+        ]);
+      }
+    } catch (error) {
+      console.log('Banner fetch error:', error);
+      // Fallback dummy data when API fails
+      setBanner([
+        {
+          id: '1',
+          imageUrl: 'https://via.placeholder.com/400x180/FF6B6B/FFFFFF?text=Banner+1',
+        },
+        {
+          id: '2',
+          imageUrl: 'https://via.placeholder.com/400x180/4ECDC4/FFFFFF?text=Banner+2',
+        },
+        {
+          id: '3',
+          imageUrl: 'https://via.placeholder.com/400x180/45B7D1/FFFFFF?text=Banner+3',
+        },
+      ]);
+    }
+  };
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
+  // Debug log để kiểm tra banner data
+  useEffect(() => {
+    console.log('Banner state changed:', banner);
+  }, [banner]);
+
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  // Auto scroll effect
+  useEffect(() => {
+    if (banner.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentBannerIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % banner.length;
+          if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({
+              x: nextIndex * (appInfo.sizes.WIDTH - 32),
+              animated: true,
+            });
+          }
+          return nextIndex;
+        });
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }
+  }, [banner.length]);
 
   const searchPlaceholders = useMemo(() => [
     t('home:search_placeholder'),
@@ -50,7 +132,7 @@ const HomeScreen = ({ navigation }: any) => {
 
   return (
     <View style={[globalStyles.container, customStyle.container]}>
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={customStyle.content}>
         <RowComponent styles={customStyle.headerAccount}>
           <AvatarComponent
             shape="square"
@@ -62,7 +144,7 @@ const HomeScreen = ({ navigation }: any) => {
             ) : (
               <HambergerMenu size={26} color={appColors.text} />
             )}
-            onPress={() => navigation.openDrawer()}/>
+            onPress={() => navigation.openDrawer()} />
           <RowComponent styles={customStyle.headerAccountRight}>
             <AvatarComponent
               icon={<ShoppingCart variant="Bold" size={24} color={appColors.gray} />}
@@ -79,7 +161,7 @@ const HomeScreen = ({ navigation }: any) => {
             />
           </RowComponent>
         </RowComponent>
-        <SpaceComponent height={1} />
+        <SpaceComponent height={2} />
         <RowComponent styles={customStyle.searchContainer}>
           <InputComponent
             value={''}
@@ -110,6 +192,60 @@ const HomeScreen = ({ navigation }: any) => {
             }
           />
         </RowComponent>
+        <SpaceComponent height={10} />
+        <View style={customStyle.swiperContainer}>
+          {banner && banner.length > 0 && (
+            <>
+              <ScrollView
+                ref={scrollViewRef}
+                horizontal={true}
+                pagingEnabled={true}
+                showsHorizontalScrollIndicator={false}
+                style={customStyle.fallbackSwiper}
+                onScroll={(event) => {
+                  const contentOffset = event.nativeEvent.contentOffset;
+                  const index = Math.round(contentOffset.x / (appInfo.sizes.WIDTH - 32));
+                  setCurrentBannerIndex(index);
+                }}
+                scrollEventThrottle={16}>
+                {banner.map((item: Banner, index: number) => {
+                  return (
+                    <View
+                      key={`banner-${item.id || index}`}
+                      style={customStyle.bannerItem}>
+                      {item.imageUrl ? (
+                        <Image
+                          source={{ uri: item.imageUrl }}
+                          style={customStyle.bannerImage}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <View style={customStyle.placeholderImage}>
+                          {/* Fallback khi không có imageUrl */}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </ScrollView>
+              {banner.length > 1 && (
+                <View style={customStyle.paginationContainer}>
+                  {banner.map((_, index) => (
+                    <View
+                      key={`dot-${index}`}
+                      style={[
+                        customStyle.paginationDot,
+                        {
+                          backgroundColor: index === currentBannerIndex ? appColors.primary : appColors.gray4,
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+              )}
+            </>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -152,6 +288,78 @@ const customStyle = {
     backgroundColor: appColors.gray5,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  } as const,
+
+  swiperContainer: {
+    width: appInfo.sizes.WIDTH - 32,
+    height: 180,
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: appColors.gray5,
+  } as const,
+
+  swiperStyle: {
+    height: 180,
+  } as const,
+
+  paginationStyle: {
+    bottom: 10,
+  } as const,
+
+  bannerItem: {
+    width: appInfo.sizes.WIDTH - 32,
+    height: 180,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  } as const,
+
+  bannerImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  } as const,
+
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: appColors.gray5,
+  } as const,
+
+  placeholderIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: appColors.gray4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  } as const,
+
+  content: {
+    paddingHorizontal: 16,
+  } as const,
+
+  fallbackSwiper: {
+    height: 180,
+  } as const,
+
+  paginationContainer: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  } as const,
+
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
   } as const,
 };
 

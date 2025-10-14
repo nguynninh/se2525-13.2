@@ -1,4 +1,4 @@
-import { View, StatusBar, Platform, Text } from 'react-native';
+import { View, StatusBar, Platform } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';

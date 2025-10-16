@@ -4,7 +4,7 @@ import { ContainerComponent, RowComponent, TextComponent } from '../../component
 import { appColors } from '../../constants/appColors';
 import { ArrowRight2 } from 'iconsax-react-native';
 
-const SettingScreen = () => {
+const SettingScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['common', 'profile']);
 
   const settingsOptions = [
@@ -49,14 +49,11 @@ const SettingScreen = () => {
           onPress: () => { },
         },
         {
-          key: 'user_blocked',
-          label: `${t('profile:settings')} ${t('profile:user_blocked')}`,
-          onPress: () => { },
-        },
-        {
           key: 'language',
           label: `${t('profile:settings')} ${t('profile:language')}`,
-          onPress: () => { },
+          onPress: () => {
+            navigation.navigate('LanguageScreen');
+          },
         },
       ],
     },

@@ -1,0 +1,13 @@
+{
+  "morning": "おはようございます",
+  "afternoon": "こんにちは",
+  "evening": "こんばんは",
+  "night": "おやすみなさい",
+  "new_user": "新規ユーザー",
+  "search_placeholder": "何をお探しですか？",
+  "search_placeholder1": "ちょっと検索してみよう！",
+  "search_placeholder2": "見つかるかもしれません 😉",
+  "search_placeholder3": "少し検索してみて 💫",
+  "search_placeholder4": "今日は何を買いますか？",
+  "search_filter": "フィルター"
+}

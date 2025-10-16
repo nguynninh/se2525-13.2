@@ -15,7 +15,7 @@ i18next
   .use(middleware.LanguageDetector)
   .init({
     fallbackLng: "vi",
-    preload: ["en", "vi"],
+    preload: ["en", "vi", "cn", "jp"],
     ns: namespaces,
     defaultNS: "common",
     backend: {

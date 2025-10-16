@@ -12,6 +12,9 @@ import ProfileScreen from './profile/ProfileScreen';
 import NotificationScreen from './profile/NotificationScreen';
 import SearchScreen from './commerce/SearchScreen';
 import CartScreen from './commerce/CartScreen';
+import SettingScreen from './profile/SettingScreen';
+import HelpAndFAQs from './profile/HelpAndFAQs';
+import ContactUs from './profile/ContactUs';
 
 export {
     HomeScreen,
@@ -28,4 +31,7 @@ export {
     SearchScreen,
     NotificationScreen,
     CartScreen,
+    SettingScreen,
+    HelpAndFAQs,
+    ContactUs,
 };

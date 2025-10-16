@@ -22,3 +22,7 @@ yarn-error.log*
 
 # Coverage
 coverage/
+
+# Lockfiles
+yarn.lock
+package-lock.json

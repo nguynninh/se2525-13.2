@@ -102,9 +102,8 @@ const DrawerCustom = ({ navigation }: any) => {
       <TouchableOpacity
         onPress={() => {
           navigation.closeDrawer();
-
-          navigation.navigate('Profile', {
-            screen: 'ProfileScreen',
+          navigation.navigate('TabNavigator', {
+            screen: 'Profile',
           });
         }}>
         <AvatarComponent
@@ -117,8 +116,8 @@ const DrawerCustom = ({ navigation }: any) => {
           <RowComponent justify="flex-start" styles={{ alignItems: 'center', gap: 6 }}>
             <TextComponent text={getTimeBasedGreeting()} font={fontFamilies.semiBold} color={appColors.gray} size={14} />
             {new Date().getHours() < 12
-              ? <SunFog variant="Bold" size={14} color={appColors.gray}/>
-              : <Moon variant="Bold" size={14} color={appColors.gray}/>}
+              ? <SunFog variant="Bold" size={14} color={appColors.gray} />
+              : <Moon variant="Bold" size={14} color={appColors.gray} />}
           </RowComponent>
           <TextComponent text={user.name || t('home:new_user')} title color={appColors.text} size={16} />
         </View>
@@ -131,12 +130,53 @@ const DrawerCustom = ({ navigation }: any) => {
           <RowComponent
             styles={[localStyles.listItem]}
             onPress={
-              item.key === 'SignOut'
-                ? () => handleSignOut()
-                : () => {
-                  console.log(item.key);
+              item.key === 'MyProfile'
+                ? () => {
                   navigation.closeDrawer();
-                }
+                  navigation.navigate('TabNavigator', {
+                    screen: 'Profile',
+                    params: { screen: 'ProfileScreen' },
+                  });
+                } : item.key === 'Notifications'
+                  ? () => {
+                    navigation.closeDrawer();
+                    navigation.navigate('TabNavigator', {
+                      screen: 'Home',
+                      params: { screen: 'NotificationScreen' },
+                    });
+                  } : item.key === 'Message'
+                    ? () => {
+                      navigation.closeDrawer();
+                      navigation.navigate('TabNavigator', {
+                        screen: 'Home',
+                        params: { screen: 'NotificationScreen' },
+                      });
+                    } : item.key === 'Settings'
+                      ? () => {
+                        navigation.closeDrawer();
+                        navigation.navigate('TabNavigator', {
+                          screen: 'Profile',
+                          params: { screen: 'SettingScreen' },
+                        });
+                      } : item.key === 'HelpAndFAQs'
+                        ? () => {
+                          navigation.closeDrawer();
+                          navigation.navigate('TabNavigator', {
+                            screen: 'Profile',
+                            params: { screen: 'HelpAndFAQs' },
+                          });
+                        } : item.key === 'ContactUs'
+                          ? () => {
+                            navigation.closeDrawer();
+                            navigation.navigate('TabNavigator', {
+                              screen: 'Profile',
+                              params: { screen: 'ContactUs' },
+                            });
+                          } : item.key === 'SignOut'
+                            ? () => handleSignOut()
+                            : () => {
+                              navigation.closeDrawer();
+                            }
             }>
             {item.icon}
             <TextComponent
@@ -146,17 +186,6 @@ const DrawerCustom = ({ navigation }: any) => {
           </RowComponent>
         )}
       />
-      <RowComponent justify="flex-start">
-        <TouchableOpacity
-          style={[
-            globalStyles.button,
-            { backgroundColor: '#00F8FF33', height: 'auto' },
-          ]}>
-          <MaterialCommunityIcons name="crown" size={22} color={'#00F8FF'} />
-          <SpaceComponent width={8} />
-          <TextComponent color="#00F8FF" text="Upgrade Pro" />
-        </TouchableOpacity>
-      </RowComponent>
     </View>
   );
 };

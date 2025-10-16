@@ -1,0 +1,19 @@
+{
+    "settings": "Settings",
+    "general": "General",
+    "support": "Support",
+    "account": "Account",
+    "security": "Security",
+    "address": "Address",
+    "card_banks": "Bank Account / Cards",
+    "chats": "Chats",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "user_blocked": "User Blocked",
+    "language": "Language",
+    "help_center": "Help Center",
+    "faq": "FAQ",
+    "contact_us": "Contact Us",
+    "delete_account": "Delete Account",
+    "and": "and"
+}

@@ -15,5 +15,13 @@
     "faq": "FAQ",
     "contact_us": "Contact Us",
     "delete_account": "Delete Account",
+    "default_language": "Default Language",
+    "other_languages": "Other Languages",
+    "language_depcription": "Language will be synchronized for all content in the application",
+    "language_system_default": "System Default",
+    "english": "English",
+    "vietnamese": "Tiếng Việt",
+    "chinese": "Chinese",
+    "japanese": "Japanese",
     "and": "and"
 }

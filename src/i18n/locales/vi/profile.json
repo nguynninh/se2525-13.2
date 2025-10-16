@@ -15,5 +15,13 @@
     "faq": "Câu hỏi thường gặp",
     "contact_us": "Liên hệ chúng tôi",
     "delete_account": "Yêu cầu xoá tài khoản",
+    "default_language": "Ngôn ngữ mặc định",
+    "other_languages": "Ngôn ngữ khác",
+    "language_depcription": "Ngôn ngữ sẽ được đồng bộ cho tất cả các nội dung trong ứng dụng",
+    "language_system_default": "Mặc định hệ thống",
+    "english": "English",
+    "vietnamese": "Tiếng Việt",
+    "chinese": "Tiếng Trung",
+    "japanese": "Tiếng Nhật",
     "and": "và"
 }

@@ -1,5 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { HelpAndFAQs, ProfileScreen, SettingScreen, ContactUs } from '../screens';
+import { HelpAndFAQs, ProfileScreen, SettingScreen, ContactUs, LanguageScreen } from '../screens';
 
 const ProfileNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -12,6 +12,7 @@ const ProfileNavigator = () => {
       <Stack.Screen name="SettingScreen" component={SettingScreen} />
       <Stack.Screen name="HelpAndFAQs" component={HelpAndFAQs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
+      <Stack.Screen name="LanguageScreen" component={LanguageScreen} />
     </Stack.Navigator>
   );
 };

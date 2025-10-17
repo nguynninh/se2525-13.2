@@ -25,8 +25,11 @@ export const validateLogin = (req: Request, res: Response, next: NextFunction) =
   const { error } = loginSchema.validate(req.body, { abortEarly: false }); 
 
   if (error) {
-    const messages = error.details.map((d) => d.message).join(', ');
-    return next(new ValidationError(messages));
+    const errors = error.details.map((d) => ({
+      field: d.path.join('.'),
+      message: d.message
+    }));
+    return next(new ValidationError(req.t('common:validation_error'), errors));
   }
 
   next();

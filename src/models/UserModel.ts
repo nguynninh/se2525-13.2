@@ -15,15 +15,19 @@ const UserModel = sequelize.define('users', {
             isEmail: true,
         },
     },
-    first_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    last_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
     password: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    firstname: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    photoUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    lastname: {
         type: DataTypes.STRING,
         allowNull: true,
     },
@@ -40,7 +44,11 @@ const UserModel = sequelize.define('users', {
         allowNull: true,
     },
 }, {
-    timestamps: false,
+    timestamps: true,
+    paranoid: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
 });
 
 export default UserModel;

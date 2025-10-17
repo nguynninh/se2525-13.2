@@ -4,6 +4,7 @@ import i18nMiddleware from "./i18n";
 import type { Request, Response } from 'express';
 import config from './config/config';
 import authRouter from './routers/authRouter';
+import userRouter from './routers/userRouter';
 import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(i18nMiddleware);
 const base = config.apiBasePath || '';
 
 app.use(`${base}/auth`, authRouter);
+app.use(`${base}/users`, userRouter);
 
 app.get(`${base}/healthy`, (req: Request, res: Response) => {
 	res.status(200).json({

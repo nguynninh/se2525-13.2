@@ -29,10 +29,12 @@ const createAdminUser = async () => {
 
     const admin = await UserModel.create({
       email: adminEmail,
-      first_name: 'Admin',
-      last_name: 'User',
+      firstname: 'Admin',
+      lastname: 'Super',
+      photoUrl: 'https://res.cloudinary.com/ddox3txnn/image/upload/v1752024992/dsx-store/logo/Logo.png',
       password: hashedPassword,
       created_at: new Date(),
+      updated_at: new Date(),
     });
 
     console.log('✅ Admin user created successfully!');

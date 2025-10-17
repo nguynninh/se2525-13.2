@@ -16,8 +16,21 @@ services:
     networks:
       - se-network
 
+  se-redis:
+    container_name: se-redis
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - se-network
+    command: redis-server --appendonly yes
+
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   se-network:

@@ -1,4 +1,4 @@
-import UserModel from "../models/UserModel";
+import { UserModel, RoleModel, PermissionModel } from "../models";
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
@@ -11,7 +11,21 @@ dotenv.config();
 const login = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    const user = await UserModel.findOne({ where: { email } });
+    const user = await UserModel.findOne({
+        where: { email },
+        include: [{
+            model: RoleModel,
+            as: 'roles',
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+            include: [{
+                model: PermissionModel,
+                as: 'permissions',
+                attributes: ['id', 'name'],
+                through: { attributes: [] }
+            }]
+        }]
+    });
 
     if (!user)
         throw new NotFoundError(req.t('auth:user_not_found'));
@@ -21,6 +35,17 @@ const login = asyncHandler(async (req: Request, res: Response) => {
         throw new UnauthorizedError(req.t('auth:invalid_credentials'));
 
     const userRoles = (user as any).roles || [];
+    const roleNames = userRoles.map((role: any) => role.name);
+    
+    const allPermissions = new Set<string>();
+    userRoles.forEach((role: any) => {
+        if (role.permissions && role.permissions.length > 0) {
+            role.permissions.forEach((permission: any) => {
+                allPermissions.add(permission.name);
+            });
+        }
+    });
+    const permissionNames = Array.from(allPermissions);
 
     return res.status(200).json({
         code: 200,
@@ -31,14 +56,14 @@ const login = asyncHandler(async (req: Request, res: Response) => {
                 password: undefined,
             },
             auth: {
-                access_token: await getAccesstoken((user as any).id, userRoles, 600),
-                refresh_token: await getAccesstoken((user as any).id, userRoles, 86400),
+                access_token: await getAccesstoken((user as any).id, roleNames, permissionNames, 600, false),
+                refresh_token: await getAccesstoken((user as any).id, roleNames, permissionNames, 86400, true),
                 expires_in: 600,
             }
         }
     });
 });
 
-export { 
+export {
     login,
 };

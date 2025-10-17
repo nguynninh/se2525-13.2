@@ -1,4 +1,4 @@
-import { ButtonComponent, ContainerComponent, SectionComponent, TextComponent } from '../../components';
+import { AvatarComponent, ButtonComponent, ContainerComponent, SectionComponent, TextComponent } from '../../components';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,9 +17,19 @@ const ProfileScreen = () => {
   const user = useSelector(userSelector);
   return (
     <ContainerComponent back isImageBackground>
+      <AvatarComponent
+          shape="circle"
+          imageUrl={user.photoUrl}
+          size={52}
+          styles={{ alignSelf: 'center', marginTop: 20 }}
+        />
       <TextComponent
-        text={ user.name || t('common:profile')}
+        text={ `${user.lastname} ${user.firstname}` || t('common:profile')}
         title
+        styles={{textAlign: 'center'}}
+      />
+      <TextComponent
+        text={ `${user.id}` || t('common:profile')}
         styles={{textAlign: 'center', marginVertical: 20}}
       />
       <SectionComponent>

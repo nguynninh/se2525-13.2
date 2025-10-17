@@ -73,7 +73,7 @@ const SettingScreen = ({ navigation }: any) => {
         },
         {
           key: 'contact_us',
-          label: 'Contact Us',
+          label: t('profile:contact_us'),
           onPress: () => { },
         },
         {

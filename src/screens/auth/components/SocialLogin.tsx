@@ -34,6 +34,7 @@ const SocialLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLoginWithGoogle = async () => {
+        setIsLoading(true);
         await GoogleSignin.hasPlayServices({
             showPlayServicesUpdateDialog: true,
         });
@@ -44,11 +45,12 @@ const SocialLogin = () => {
             const user = userInfo.data?.user;
 
             const res: any = await handleAuthentication(
-                '/social-login',
+                '/login/google/social',
                 {
-                    name: user?.name,
+                    firstname: user?.givenName,
+                    lastname: user?.familyName,
                     email: user?.email,
-                    avatar: user?.photo,
+                    photoUrl: user?.photo,
                 },
                 'post',
             );
@@ -59,11 +61,14 @@ const SocialLogin = () => {
             await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
         } catch (error) {
             return;
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleLoginWithFacebook = async () => {
         try {
+            setIsLoading(true);
             const result = await LoginManager.logInWithPermissions([
                 'public_profile',
             ]);
@@ -77,13 +82,12 @@ const SocialLogin = () => {
                     setIsLoading(true);
 
                     const res: any = await handleAuthentication(
-                        '/social-login',
+                        '/login/facebook/social',
                         {
-                            name: profile.name,
-                            givenName: profile.firstName,
-                            familyName: profile.lastName,
-                            email: profile.userID,
-                            photo: profile.imageURL,
+                            firstname: profile?.firstName,
+                            lastname: profile?.lastName,
+                            email: profile?.userID + '@facebook.com',
+                            photoUrl: profile?.imageURL,
                         },
                         'post',
                     );
@@ -98,6 +102,8 @@ const SocialLogin = () => {
             }
         } catch (error) {
             return;
+        } finally {
+            setIsLoading(false);
         }
     };
 

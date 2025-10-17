@@ -7,9 +7,7 @@ import {
   FlatList,
 } from 'react-native';
 import React from 'react';
-import { AvatarComponent, RowComponent, SpaceComponent, TextComponent } from '.';
-import { globalStyles } from '../styles/globalStyles';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AvatarComponent, RowComponent, TextComponent } from '.';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeAuth } from '../redux/reducers/authReducer';
 import { appColors } from '../constants/appColors';
@@ -108,7 +106,7 @@ const DrawerCustom = ({ navigation }: any) => {
         }}>
         <AvatarComponent
           shape="circle"
-          imageUrl={user.avatar}
+          imageUrl={user.photoUrl}
           size={52}
           styles={localStyles.avatar}
         />
@@ -119,7 +117,7 @@ const DrawerCustom = ({ navigation }: any) => {
               ? <SunFog variant="Bold" size={14} color={appColors.gray} />
               : <Moon variant="Bold" size={14} color={appColors.gray} />}
           </RowComponent>
-          <TextComponent text={user.name || t('home:new_user')} title color={appColors.text} size={16} />
+          <TextComponent text={`${user.lastname} ${user.firstname}` || t('home:new_user')} title color={appColors.text} size={16} />
         </View>
       </TouchableOpacity>
       <FlatList

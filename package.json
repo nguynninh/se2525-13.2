@@ -2,6 +2,7 @@
   "name": "server",
   "version": "0.0.1",
   "description": "",
+<<<<<<< HEAD
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -100,5 +101,57 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+=======
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec \"node -r ts-node/register ./src/server.ts\"",
+    "build": "tsc -p .",
+    "start": "node ./dist/server.js",
+    "seed:admin": "node -r ts-node/register ./src/seeds/createAdmin.ts",
+    "seed:permission": "node -r ts-node/register ./src/seeds/createPermission.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguynninh/se2025-13.2-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nguynninh/se2025-13.2-server/issues"
+  },
+  "homepage": "https://github.com/nguynninh/se2025-13.2-server#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.7.0",
+    "@types/pg": "^8.15.5",
+    "@types/redis": "^4.0.11",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.37.0",
+    "express": "^5.1.0",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.10",
+    "npm": "^11.6.1",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "i18next": "^25.5.3",
+    "i18next-fs-backend": "^2.6.0",
+    "i18next-http-middleware": "^3.8.1",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "redis": "^5.8.3",
+    "sequelize": "^6.37.7"
+>>>>>>> development
   }
 }

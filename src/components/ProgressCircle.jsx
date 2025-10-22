@@ -1,31 +1,23 @@
 import React from 'react';
 
 const ProgressCircle = ({ percent, label, value }) => {
-  const radius = 40;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
+  const circumference = 2 * Math.PI * 40;
+  const offset = circumference - (percent / 100) * circumference;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+    <div className="bg-white p-6 rounded-xl shadow-sm text-center flex-1">
       <div className="relative inline-block">
         <svg width="100" height="100" className="-rotate-90">
+          <circle cx="50" cy="50" r="40" stroke="#e5e7eb" strokeWidth="8" fill="none" />
           <circle
             cx="50"
             cy="50"
-            r={radius}
-            stroke="#e5e7eb"
-            strokeWidth="8"
-            fill="none"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
+            r="40"
             stroke="#3b82f6"
             strokeWidth="8"
             fill="none"
             strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
+            strokeDashoffset={offset}
             className="transition-all duration-1000"
           />
         </svg>

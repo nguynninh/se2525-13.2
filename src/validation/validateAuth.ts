@@ -35,6 +35,72 @@ export const validateLogin = (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
+export const validateForgotPasswordVerification = (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required()
+      .messages({
+        'string.empty': req.t('user:email_required'),
+        'string.email': req.t('user:email_invalid'),
+        'any.required': req.t('user:email_required'),
+      }),
+  });
+
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    const errors = error.details.map((d) => ({
+      field: d.path.join('.'),
+      message: d.message
+    }));
+    return next(new ValidationError(req.t('common:validation_error'), errors));
+  }
+
+  next();
+};
+
+export const validateResetPassword = (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required()
+      .messages({
+        'string.empty': req.t('user:email_required'),
+        'string.email': req.t('user:email_invalid'),
+        'any.required': req.t('user:email_required'),
+      }),
+    code: Joi.string()
+      .length(4)
+      .required()
+      .messages({
+        'string.empty': req.t('user:verification_code_required'),
+        'string.length': req.t('user:verification_code_length', { length: 4 }),
+        'any.required': req.t('user:verification_code_required'),
+      }),
+    password: Joi.string()
+      .min(6)
+      .required()
+      .messages({
+        'string.empty': req.t('user:password_required'),
+        'string.min': req.t('user:password_min_length', { min: 6 }),
+        'any.required': req.t('user:password_required'),
+      }),
+  });
+
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    const errors = error.details.map((d) => ({
+      field: d.path.join('.'),
+      message: d.message
+    }));
+    return next(new ValidationError(req.t('common:validation_error'), errors));
+  }
+
+  next();
+};
+
 export const validateLoginSocial = (req: Request, res: Response, next: NextFunction) => {
   const allowedProviders = ['google', 'facebook'];
   const provider = req.params.provider;

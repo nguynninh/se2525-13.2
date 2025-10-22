@@ -4,10 +4,10 @@ import {
     verifyUser,
     retrievedUser,
 } from '../controllers/userController';
-import {
-    validateCreateUser,
+import { 
+    validateCreateUser, 
     validateVerifyUser,
-    validateUserId,
+    validateUserId
 } from '../validation/validateUser';
 
 const router = Router();
@@ -30,4 +30,4 @@ router.get(
     retrievedUser,
 );
 
-export default router;
+export default router; 

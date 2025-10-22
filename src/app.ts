@@ -1,37 +1,24 @@
-import express from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
 import cors from 'cors';
-import i18nMiddleware from "./i18n";
-import type { Request, Response } from 'express';
-import config from './config/config';
-import authRouter from './routers/authRouter';
-import userRouter from './routers/userRouter';
+import dotenv from 'dotenv';
+import i18nMiddleware from './i18n';
+import indexRouter from './routers/index.route';
 import { errorHandler } from './middlewares/errorHandler';
-import './models/associations';
 
-const app = express();
+dotenv.config();
 
+const app: Express = express();
+
+app.use(morgan('dev'));
+app.use(helmet());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(i18nMiddleware);
 
-const base = config.apiBasePath || '';
-
-app.use(`${base}/auth`, authRouter);
-app.use(`${base}/users`, userRouter);
-
-app.get(`${base}/healthy`, (req: Request, res: Response) => {
-	res.status(200).json({
-		code: 200,
-        message: req.t('common:success'),
-	});
-});
-
-app.use((req: Request, res: Response) => {
-	res.status(404).json({
-		code: 404,
-        message: req.t('common:error'),
-	});
-});
+app.use('/', indexRouter);
 
 app.use(errorHandler);
 

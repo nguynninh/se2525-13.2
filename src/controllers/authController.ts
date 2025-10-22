@@ -151,7 +151,7 @@ const forgotPasswordVerification = asyncHandler(async (req: Request, res: Respon
 
     const user = await UserModel.findOne({ where: { email } });
     if (!user)
-        throw new NotFoundError(req.t('user:user_not_found'));
+        throw new NotFoundError(req.t('auth:user_not_found'));
 
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     const timeDead = 90;
@@ -163,7 +163,7 @@ const forgotPasswordVerification = asyncHandler(async (req: Request, res: Respon
     }));
 
     return successResponse(res, {
-        message: req.t('user:verification_code_sent', { email }),
+        message: req.t('auth:verification_code_sent', { email }),
         data: {
             email,
             ...(process.env.NODE_ENV === 'development' ? { code } : {}),
@@ -180,13 +180,13 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     const resetData = await redisClient.get(resetKey);
 
     if (!resetData)
-        throw new ValidationError(req.t('user:verification_code_expired_or_not_found'));
+        throw new ValidationError(req.t('auth:verification_code_expired_or_not_found'));
 
     const { code: storedCode, attempts_left } = JSON.parse(resetData);
 
     if (attempts_left <= 0) {
         await redisClient.del(resetKey);
-        throw new ValidationError(req.t('user:verification_attempts_exceeded'));
+        throw new ValidationError(req.t('auth:verification_attempts_exceeded'));
     }
 
     if (code !== storedCode) {
@@ -194,7 +194,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 
         if (newAttemptsLeft <= 0) {
             await redisClient.del(resetKey);
-            throw new ValidationError(req.t('user:verification_attempts_exceeded'));
+            throw new ValidationError(req.t('auth:verification_attempts_exceeded'));
         }
 
         const ttl = await redisClient.ttl(resetKey);
@@ -203,7 +203,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
             attempts_left: newAttemptsLeft,
         }));
 
-        throw new ValidationError(req.t('user:verification_code_invalid', { attempts_left: newAttemptsLeft }));
+        throw new ValidationError(req.t('auth:verification_code_invalid', { attempts_left: newAttemptsLeft }));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -216,7 +216,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     await redisClient.del(resetKey);
 
     return successResponse(res, {
-        message: req.t('user:password_reset_successfully'),
+        message: req.t('auth:password_reset_successfully'),
     });
 });
 

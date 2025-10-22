@@ -162,4 +162,4 @@ export const validateLoginSocial = (req: Request, res: Response, next: NextFunct
   }
 
   next();
-}; 
+};

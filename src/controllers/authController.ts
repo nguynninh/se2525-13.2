@@ -225,4 +225,4 @@ export {
     loginSocial,
     forgotPasswordVerification,
     resetPassword,
-}; 
+};

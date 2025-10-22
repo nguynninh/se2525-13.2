@@ -30,4 +30,4 @@ router.get(
     retrievedUser,
 );
 
-export default router; 
+export default router;

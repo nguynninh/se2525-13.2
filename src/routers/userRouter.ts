@@ -3,11 +3,15 @@ import {
     createUser,
     verifyUser,
     retrievedUser,
+    forgotPasswordVerification,
+    resetPassword,
 } from '../controllers/userController';
-import { 
-    validateCreateUser, 
+import {
+    validateCreateUser,
     validateVerifyUser,
-    validateUserId
+    validateUserId,
+    validateForgotPasswordVerification,
+    validateResetPassword,
 } from '../validation/validateUser';
 
 const router = Router();
@@ -22,6 +26,18 @@ router.post(
     '/verification',
     validateVerifyUser,
     verifyUser,
+);
+
+router.post(
+    '/forgot-password/verification',
+    validateForgotPasswordVerification,
+    forgotPasswordVerification,
+);
+
+router.post(
+    '/reset-password',
+    validateResetPassword,
+    resetPassword,
 );
 
 router.get(

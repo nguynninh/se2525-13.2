@@ -1,35 +1,36 @@
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const ProgressCircle = ({ percent, label, value }) => {
-  const circumference = 2 * Math.PI * 40;
+  const circumference = 2 * Math.PI * 30;
   const offset = circumference - (percent / 100) * circumference;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm text-center flex-1">
-      <div className="relative inline-block">
-        <svg width="100" height="100" className="-rotate-90">
-          <circle cx="50" cy="50" r="40" stroke="#e5e7eb" strokeWidth="8" fill="none" />
+    <div className="bg-white p-4 rounded-xl shadow-sm flex items-center gap-4">
+      <div className="relative">
+        <svg width="80" height="80" className="-rotate-90">
+          <circle cx="40" cy="40" r="30" stroke="#e5e7eb" strokeWidth="8" fill="none" />
           <circle
-            cx="50"
-            cy="50"
-            r="40"
-            stroke="#3b82f6"
-            strokeWidth="8"
-            fill="none"
+            cx="40" cy="40" r="30"
+            stroke="#3b82f6" strokeWidth="8" fill="none"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             className="transition-all duration-1000"
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold text-primary">{percent}%</span>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-xl font-bold text-blue-600">{percent}%</span>
         </div>
       </div>
-      <p className="mt-3 text-sm text-gray-600">{label}</p>
-      <p className="text-lg font-semibold">{value}</p>
-      <button className="mt-2 text-primary text-sm flex items-center gap-1 mx-auto">
-        View <span className="text-xs">→</span>
-      </button>
+      <div className="flex-1">
+        <p className="text-sm text-gray-600">{label}</p>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-lg font-semibold">{value}</span>
+          <button className="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

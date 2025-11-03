@@ -8,8 +8,6 @@ import { asyncHandler } from '../utils/asyncHandler';
 
 dotenv.config();
 
-// This is a temporary in-memory store for verification codes.
-// In a real application, you would use a more persistent store like Redis.
 const verificationCodes: { [email: string]: string } = {};
 
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -184,8 +182,6 @@ const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
     const verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
     verificationCodes[email] = verificationCode;
 
-    // In a real application, you would send the verificationCode via email.
-    // For this example, we'll just return it in the response.
     res.status(200).json({
         code: 200,
         message: req.t('auth:verification_code_sent'),

@@ -2,14 +2,14 @@ import { Router } from 'express';
 import {
     login,
     loginSocial,
-    forgotPasswordVerification,
     resetPassword,
+    forgotPassword,
 } from '../controllers/authController';
 import {
     validateLogin,
     validateLoginSocial,
-    validateForgotPasswordVerification,
     validateResetPassword,
+    validateForgotPassword,
 } from '../validation/validateAuth';
 
 const router = Router();
@@ -27,15 +27,15 @@ router.post(
 );
 
 router.post(
-    '/forgot-password/verification',
-    validateForgotPasswordVerification,
-    forgotPasswordVerification,
-);
-
-router.post(
     '/reset-password',
     validateResetPassword,
     resetPassword,
+);
+
+router.post(
+    '/forgot-password/verification',
+    validateForgotPassword,
+    forgotPassword,
 );
 
 export default router;

@@ -35,60 +35,58 @@ export const validateLogin = (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
-export const validateForgotPasswordVerification = (req: Request, res: Response, next: NextFunction) => {
-  const schema = Joi.object({
-    email: Joi.string()
-      .email({ tlds: { allow: false } })
-      .required()
-      .messages({
-        'string.empty': req.t('user:email_required'),
-        'string.email': req.t('user:email_invalid'),
-        'any.required': req.t('user:email_required'),
-      }),
-  });
+export const validateForgotPassword = (req: Request, res: Response, next: NextFunction) => {
+    const forgotPasswordSchema = Joi.object({
+        email: Joi.string()
+            .email({ tlds: { allow: false } })
+            .required()
+            .messages({
+                'string.empty': req.t('auth:email_required'),
+                'string.email': req.t('auth:email_invalid'),
+                'any.required': req.t('auth:email_required'),
+            }),
+    });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+    const { error } = forgotPasswordSchema.validate(req.body, { abortEarly: false });
 
-  if (error) {
-    const errors = error.details.map((d) => ({
-      field: d.path.join('.'),
-      message: d.message
-    }));
-    return next(new ValidationError(req.t('common:validation_error'), errors));
-  }
+    if (error) {
+        const errors = error.details.map((d) => ({
+            field: d.path.join('.'),
+            message: d.message
+        }));
+        return next(new ValidationError(req.t('common:validation_error'), errors));
+    }
 
-  next();
+    next();
 };
 
 export const validateResetPassword = (req: Request, res: Response, next: NextFunction) => {
-  const schema = Joi.object({
+  const resetPasswordSchema = Joi.object({
     email: Joi.string()
       .email({ tlds: { allow: false } })
       .required()
       .messages({
-        'string.empty': req.t('user:email_required'),
-        'string.email': req.t('user:email_invalid'),
-        'any.required': req.t('user:email_required'),
-      }),
-    code: Joi.string()
-      .length(4)
-      .required()
-      .messages({
-        'string.empty': req.t('user:verification_code_required'),
-        'string.length': req.t('user:verification_code_length', { length: 4 }),
-        'any.required': req.t('user:verification_code_required'),
+        'string.empty': req.t('auth:email_required'),
+        'string.email': req.t('auth:email_invalid'),
+        'any.required': req.t('auth:email_required'),
       }),
     password: Joi.string()
       .min(6)
       .required()
       .messages({
-        'string.empty': req.t('user:password_required'),
-        'string.min': req.t('user:password_min_length', { min: 6 }),
-        'any.required': req.t('user:password_required'),
+        'string.empty': req.t('auth:password_required'),
+        'string.min': req.t('auth:password_min_length', { min: 6 }),
+        'any.required': req.t('auth:password_required'),
       }),
+    code: Joi.string()
+        .required()
+        .messages({
+            'string.empty': req.t('auth:code_required'),
+            'any.required': req.t('auth:code_required'),
+        }),
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = resetPasswordSchema.validate(req.body, { abortEarly: false });
 
   if (error) {
     const errors = error.details.map((d) => ({

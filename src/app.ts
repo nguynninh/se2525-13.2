@@ -5,6 +5,7 @@ import type { Request, Response } from 'express';
 import config from './config/config';
 import authRouter from './routers/authRouter';
 import userRouter from './routers/userRouter';
+import productRouter from './routers/productRouter';
 import chatRouter from './routers/chatRouter';
 import { errorHandler } from './middlewares/errorHandler';
 import './models/associations';
@@ -19,6 +20,7 @@ const base = config.apiBasePath || '';
 
 app.use(`${base}/auth`, authRouter);
 app.use(`${base}/users`, userRouter);
+app.use(`${base}/`, productRouter);
 app.use(`${base}/chat`, chatRouter);
 
 app.get(`${base}/healthy`, (req: Request, res: Response) => {

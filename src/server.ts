@@ -3,6 +3,7 @@ import http from 'http';
 import debug from 'debug';
 import { sequelize } from './models';
 import { connectRedis } from './config/redis';
+require('dotenv').config();
 
 const debugLog = debug('SE2025-13.2-SEVER:server');
 

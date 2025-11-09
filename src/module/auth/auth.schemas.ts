@@ -93,6 +93,11 @@ export const ResetVerifySchema = z
 
 export const ResetFinalizeSchema = z
     .object({
+        code: z
+            .string()
+            .trim()
+            .min(1, 'auth:otp_required')
+            .regex(/^\d{4}$/, 'auth:otp_invalid'),
         new_password: z
             .string()
             .min(1, 'auth:password_required')

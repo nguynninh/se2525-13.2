@@ -23,7 +23,7 @@ export interface RegisterFinalizeDto {
 }
 
 /*
- * ---------- PUT OUTDTOs ----------
+ * ---------- OUTPUT DTOs ----------
  */
 export type RegisterStartResponse =
     | { sent: true; ttl: number; windowRemaining: number; rotated: boolean }

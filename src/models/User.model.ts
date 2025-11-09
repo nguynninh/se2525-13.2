@@ -1,45 +1,22 @@
-import { Model, DataTypes, Optional, Sequelize } from 'sequelize';
+import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
 export type UserRole = 'customer' | 'seller' | 'admin';
 
-export interface UserAttributes {
-    id: string; // UUID
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-    role: UserRole;
-    profile_url?: string | null;
-    created_at?: Date;
-    updated_at?: Date;
-}
-
-// Cho phép bỏ qua các trường tùy chọn khi khởi tạo User, nên có defaultValue
-export type UserCreationAttributes = Optional<
-    UserAttributes,
-    'id' | 'profile_url' | 'created_at' | 'updated_at' | 'role'
->;
-
-export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-    public id!: string;
-    public first_name!: string;
-    public last_name!: string;
-    public email!: string;
-    public password!: string;
-    public role!: UserRole;
-    public profile_url?: string | null;
-    public created_at?: Date;
-    public updated_at?: Date;
+export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+    declare id: CreationOptional<string>;
+    declare first_name: string;
+    declare last_name: string;
+    declare email: string;
+    declare password: string;
+    declare role: CreationOptional<UserRole>;
+    declare profile_url: CreationOptional<string | null>;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 
     static initModel(sequelize: Sequelize) {
         User.init(
             {
-                id: {
-                    type: DataTypes.UUID,
-                    allowNull: false,
-                    primaryKey: true,
-                    defaultValue: DataTypes.UUIDV4,
-                },
+                id: { type: DataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: DataTypes.UUIDV4 },
                 first_name: { type: DataTypes.STRING(255), allowNull: false },
                 last_name: { type: DataTypes.STRING(255), allowNull: false },
                 email: { type: DataTypes.STRING(255), allowNull: false, unique: true },

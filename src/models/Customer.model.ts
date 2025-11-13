@@ -11,7 +11,6 @@ import {
 export class Customer extends Model<InferAttributes<Customer>, InferCreationAttributes<Customer>> {
     declare id: CreationOptional<string>;
     declare user_id: ForeignKey<string>;
-    declare default_address_id: CreationOptional<string | null>;
     declare loyalty_points: CreationOptional<number>;
 
     static initModel(sequelize: Sequelize) {
@@ -27,11 +26,6 @@ export class Customer extends Model<InferAttributes<Customer>, InferCreationAttr
                     type: DataTypes.UUID,
                     allowNull: false,
                     unique: true,
-                },
-                default_address_id: {
-                    type: DataTypes.UUID,
-                    allowNull: true,
-                    defaultValue: null,
                 },
                 loyalty_points: {
                     type: DataTypes.INTEGER,

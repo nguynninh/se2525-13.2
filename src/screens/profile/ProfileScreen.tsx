@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AvatarComponent, ButtonComponent, ContainerComponent, SectionComponent, TextComponent } from '../../components';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
+import { launchImageLibrary} from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeAuth } from '../../redux/reducers/authReducer';
 import { useTranslation } from 'react-i18next';
@@ -12,13 +13,31 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileMenuModal } from '../../modals';
 import { MenuItem } from '../../modals/ProfileMenuModal';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['profile', 'common']);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const dispatch = useDispatch();
 
   const user = useSelector(userSelector);
+
+  const handleChooseAvatar = async () => {
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+        selectionLimit: 1,
+      });
+
+      if (result.assets && result.assets[0]) {
+        const imageUri = result.assets[0].uri;
+        setShowProfileMenu(false);
+        (navigation as any).navigate('AvatarPreview', { imageUri });
+      }
+    } catch (error) {
+      console.error('Error picking image: ', error);
+    }
+  };
 
   const menuItemsProfileMenu: MenuItem[] = [
     {
@@ -29,7 +48,7 @@ const ProfileScreen = () => {
     {
       icon: <PictureFrame size={20} color={appColors.white} />,
       title: t('profile:choose_avatar'),
-      onPress: () => console.log('Chọn ảnh'),
+      onPress: handleChooseAvatar,
     },
   ];
   return (

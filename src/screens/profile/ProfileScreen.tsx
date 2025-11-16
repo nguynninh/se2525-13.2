@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { AvatarComponent, ButtonComponent, ContainerComponent, SectionComponent, TextComponent } from '../../components';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
@@ -6,22 +7,35 @@ import { removeAuth } from '../../redux/reducers/authReducer';
 import { useTranslation } from 'react-i18next';
 import { appColors } from '../../constants/appColors';
 import { removeUser, userSelector } from '../../redux/reducers/userReducer';
-import { ArrowRight } from 'iconsax-react-native';
+import { ArrowRight, Camera } from 'iconsax-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ProfileMenuModal } from '../../modals';
 
 const ProfileScreen = () => {
   const { t } = useTranslation(['auth', 'common']);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const dispatch = useDispatch();
 
   const user = useSelector(userSelector);
+
+  const menuItems = [
+    { icon: '👤', title: 'Xem ảnh đại diện', onPress: () => console.log('Xem ảnh đại diện') },
+    { icon: '🖼️', title: 'Chọn ảnh đại diện', onPress: () => console.log('Chọn ảnh') },
+  ];
   return (
     <ContainerComponent back isImageBackground>
       <AvatarComponent
           shape="circle"
-          imageUrl={user.photoUrl}
-          size={52}
+          imageUrl={user.avatar}
+          size={60}
+          dot
+          dotColor={appColors.white}
+          dotPosition="bottom-right"
+          dotIcon={<Camera size={16} color={appColors.gray} variant="Bold"/>}
+          border={[2, 'solid', appColors.gray2]}
           styles={{ alignSelf: 'center', marginTop: 20 }}
+          onPress={() => setShowProfileMenu(true)}
         />
       <TextComponent
         text={ `${user.lastname} ${user.firstname}` || t('common:profile')}
@@ -47,6 +61,12 @@ const ProfileScreen = () => {
           iconFlex="right"
         />
       </SectionComponent>
+
+      <ProfileMenuModal
+        visible={showProfileMenu}
+        onClose={() => setShowProfileMenu(false)}
+        menuItems={menuItems}
+      />
     </ContainerComponent>
   );
 };

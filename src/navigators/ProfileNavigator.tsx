@@ -9,7 +9,14 @@ const ProfileNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-      <Stack.Screen name="AvatarPreview" component={AvatarPreview} />
+      <Stack.Screen
+          name="AvatarPreview"
+          component={AvatarPreview}
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
       <Stack.Screen name="SettingScreen" component={SettingScreen} />
       <Stack.Screen name="HelpAndFAQs" component={HelpAndFAQs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />

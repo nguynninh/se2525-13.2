@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   View,
   Text,
@@ -34,17 +33,10 @@ const ProfileMenuModal = ({
       onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.container}>
-          {/* Header */}
           <View style={styles.header}>
             <View style={styles.handle} />
           </View>
 
-          {/* Title */}
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Công cụ chuyên nghiệp</Text>
-          </View>
-
-          {/* Menu Items */}
           <View style={styles.menuContainer}>
             {menuItems.map((item, index) => (
               <TouchableOpacity
@@ -90,24 +82,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#48484a',
     borderRadius: 2,
   },
-  titleContainer: {
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2c2c2e',
-  },
-  title: {
-    fontSize: 16,
-    fontFamily: fontFamilies.semiBold,
-    color: '#ffffff',
-  },
   menuContainer: {
     paddingTop: 8,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 10,
     paddingHorizontal: 20,
   },
   iconContainer: {

@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import {fontFamilies} from '../constants/fontFamilies';
 
-interface MenuItem {
-  icon: string;
+export interface MenuItem {
+  icon: string | React.ReactNode;
   title: string;
   onPress: () => void;
 }

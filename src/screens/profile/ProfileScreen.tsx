@@ -7,9 +7,10 @@ import { removeAuth } from '../../redux/reducers/authReducer';
 import { useTranslation } from 'react-i18next';
 import { appColors } from '../../constants/appColors';
 import { removeUser, userSelector } from '../../redux/reducers/userReducer';
-import { ArrowRight, Camera } from 'iconsax-react-native';
+import { ArrowRight, Camera, PictureFrame, UserSquare } from 'iconsax-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileMenuModal } from '../../modals';
+import { MenuItem } from '../../modals/ProfileMenuModal';
 
 const ProfileScreen = () => {
   const { t } = useTranslation(['auth', 'common']);
@@ -19,32 +20,40 @@ const ProfileScreen = () => {
 
   const user = useSelector(userSelector);
 
-  const menuItems = [
-    { icon: '👤', title: 'Xem ảnh đại diện', onPress: () => console.log('Xem ảnh đại diện') },
-    { icon: '🖼️', title: 'Chọn ảnh đại diện', onPress: () => console.log('Chọn ảnh') },
+  const menuItemsProfileMenu: MenuItem[] = [
+    {
+      icon: <UserSquare size={20} color={appColors.white} variant="Bold" />,
+      title: 'Xem ảnh đại diện',
+      onPress: () => console.log('Xem ảnh đại diện'),
+    },
+    {
+      icon: <PictureFrame size={20} color={appColors.white} />,
+      title: 'Chọn ảnh đại diện',
+      onPress: () => console.log('Chọn ảnh'),
+    },
   ];
   return (
     <ContainerComponent back isImageBackground>
       <AvatarComponent
-          shape="circle"
-          imageUrl={user.avatar}
-          size={60}
-          dot
-          dotColor={appColors.white}
-          dotPosition="bottom-right"
-          dotIcon={<Camera size={16} color={appColors.gray} variant="Bold"/>}
-          border={[2, 'solid', appColors.gray2]}
-          styles={{ alignSelf: 'center', marginTop: 20 }}
-          onPress={() => setShowProfileMenu(true)}
-        />
-      <TextComponent
-        text={ `${user.lastname} ${user.firstname}` || t('common:profile')}
-        title
-        styles={{textAlign: 'center'}}
+        shape="circle"
+        imageUrl={user.avatar}
+        size={60}
+        dot
+        dotColor={appColors.white}
+        dotPosition="bottom-right"
+        dotIcon={<Camera size={16} color={appColors.gray} variant="Bold" />}
+        border={[2, 'solid', appColors.gray2]}
+        styles={{ alignSelf: 'center', marginTop: 20 }}
+        onPress={() => setShowProfileMenu(true)}
       />
       <TextComponent
-        text={ `${user.id}` || t('common:profile')}
-        styles={{textAlign: 'center', marginVertical: 20}}
+        text={`${user.lastname} ${user.firstname}` || t('common:profile')}
+        title
+        styles={{ textAlign: 'center' }}
+      />
+      <TextComponent
+        text={`${user.id}` || t('common:profile')}
+        styles={{ textAlign: 'center', marginVertical: 20 }}
       />
       <SectionComponent>
         <ButtonComponent
@@ -65,7 +74,7 @@ const ProfileScreen = () => {
       <ProfileMenuModal
         visible={showProfileMenu}
         onClose={() => setShowProfileMenu(false)}
-        menuItems={menuItems}
+        menuItems={menuItemsProfileMenu}
       />
     </ContainerComponent>
   );

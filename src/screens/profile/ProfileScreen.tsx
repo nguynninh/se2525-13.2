@@ -13,7 +13,7 @@ import { ProfileMenuModal } from '../../modals';
 import { MenuItem } from '../../modals/ProfileMenuModal';
 
 const ProfileScreen = () => {
-  const { t } = useTranslation(['auth', 'common']);
+  const { t } = useTranslation(['profile', 'common']);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const dispatch = useDispatch();
@@ -23,12 +23,12 @@ const ProfileScreen = () => {
   const menuItemsProfileMenu: MenuItem[] = [
     {
       icon: <UserSquare size={20} color={appColors.white} variant="Bold" />,
-      title: 'Xem ảnh đại diện',
+      title: t('profile:avatar_view'),
       onPress: () => console.log('Xem ảnh đại diện'),
     },
     {
       icon: <PictureFrame size={20} color={appColors.white} />,
-      title: 'Chọn ảnh đại diện',
+      title: t('profile:choose_avatar'),
       onPress: () => console.log('Chọn ảnh'),
     },
   ];

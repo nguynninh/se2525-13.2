@@ -1,4 +1,4 @@
-import { Image, Alert } from 'react-native';
+import { Image, Alert, Text, Button } from 'react-native';
 import { useState } from 'react';
 import {Lock, Sms, User} from 'iconsax-react-native';
 import {
@@ -44,6 +44,8 @@ const SignUpScreen = ({navigation}: any) => {
 
     if (!data.name) {
       newError.name = t('auth:fullname_required');
+    } else if (data.name.trim().split(' ').length < 2) {
+      newError.name = t('auth:fullname_invalid');
     }
 
     if (!data.email) {

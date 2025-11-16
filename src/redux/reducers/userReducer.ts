@@ -5,7 +5,7 @@ interface UserState {
     email: string;
     firstname?: string;
     lastname?: string;
-    photoUrl?: string;
+    avatar?: string;
 }
 
 const initialState: UserState = {
@@ -13,7 +13,7 @@ const initialState: UserState = {
     email: '',
     firstname: '',
     lastname: '',
-    photoUrl: '',
+    avatar: '',
 };
 
 const userSlice = createSlice({

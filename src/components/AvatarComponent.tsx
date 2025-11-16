@@ -7,7 +7,9 @@ interface Props {
     icon?: React.ReactNode;
     size?: number;
     dot?: boolean;
+    dotIcon?: React.ReactNode;
     dotColor?: string;
+    dotPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
     count?: number;
     shape?: 'circle' | 'square';
     border?: [number, string, string];
@@ -16,7 +18,7 @@ interface Props {
 }
 
 const AvatarComponent = (props: Props) => {
-    const { imageUrl, icon, size, dot, dotColor, count, shape, border, styles, onPress } = props;
+    const { imageUrl, icon, size, dot, dotIcon, dotColor, dotPosition, count, shape, border, styles, onPress } = props;
 
     const globalStyle = {
         container: {
@@ -45,12 +47,17 @@ const AvatarComponent = (props: Props) => {
 
         dot: {
             backgroundColor: dotColor ?? appColors.primary,
-            width: 10,
-            height: 10,
-            borderRadius: 4,
+            width: dotIcon ? 16 : 10,
+            height: dotIcon ? 16 : 10,
+            borderRadius: dotIcon ? 8 : 4,
             position: 'absolute',
             top: -2,
             right: -2,
+            justifyContent: 'center',
+            alignItems: 'center',
+            ...(dotPosition === 'top-left' && { top: -2, left: -2, right: undefined }),
+            ...(dotPosition === 'bottom-left' && { bottom: -2, left: -2, top: undefined, right: undefined }),
+            ...(dotPosition === 'bottom-right' && { bottom: -2, right: -2, top: undefined }),
         } as const,
 
         count: {
@@ -89,7 +96,7 @@ const AvatarComponent = (props: Props) => {
                     <User variant="Bold" size={(size ?? 40) * 0.7} color={appColors.gray2} />
                 </View>
             )}
-            {dot && <View style={globalStyle.dot} />}
+            {dot && <View style={globalStyle.dot}>{dotIcon}</View>}
             {count && (<View style={globalStyle.count}>
                 <View>
                     <Text style={globalStyle.countText}>{count}</Text>

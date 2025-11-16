@@ -13,19 +13,15 @@ import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { globalStyles } from '../../styles/globalStyles';
 import { LoadingModal } from '../../modals';
-import { useDispatch } from 'react-redux';
-import { addAuth } from '../../redux/reducers/authReducer';
-import { addUser } from '../../redux/reducers/userReducer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import handleAuthentication from '../../apis/authApi';
 
-const Verification = ({ _navigation, route }: any) => {
+const Verification = ({ navigation, route }: any) => {
   const { name, email, password } = route.params;
 
   const { t } = useTranslation(['auth', 'common']);
 
-  const [codeValues, setCodeValues] = useState<string[]>(['', '', '', '']);
+  const [codeValues, setCodeValues] = useState<string[]>(['', '', '', '', '', '']);
   const [limit, setLimit] = useState(90);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -34,8 +30,8 @@ const Verification = ({ _navigation, route }: any) => {
   const ref2 = useRef<any>(null);
   const ref3 = useRef<any>(null);
   const ref4 = useRef<any>(null);
-
-  const dispatch = useDispatch();
+  const ref5 = useRef<any>(null);
+  const ref6 = useRef<any>(null);
 
   useEffect(() => {
     ref1.current.focus();
@@ -58,17 +54,17 @@ const Verification = ({ _navigation, route }: any) => {
   };
 
   const handleResendVerification = async () => {
-    setCodeValues(['', '', '', '']);
+    setCodeValues(['', '', '', '', '', '']);
 
     setIsLoading(true);
     try {
-      await handleAuthentication(
+      const res = await handleAuthentication(
         '/verification',
         { email },
         'post',
       );
 
-      setLimit(90);
+      setLimit(res.data.expires_in || 300);
       Alert.alert(t('common:success'), t('auth:verification_success'));
     } catch (error) {
       Alert.alert(t('common:error'), (error as Error).message || t('auth:verification_error'));
@@ -83,19 +79,22 @@ const Verification = ({ _navigation, route }: any) => {
 
       try {
         setIsLoading(true);
-        const res: any = await handleAuthentication(
-          '/register',
+        const nameParts = name.split(' ');
+        const firstname = nameParts[nameParts.length - 1];
+        const lastname = nameParts.slice(0, -1).join(' ');
+        await handleAuthentication(
+          '/registration',
           {
             code: codeValues.join(''),
             email,
             password,
-            name,
+            firstname,
+            lastname,
           },
           'post',
         );
-        dispatch(addAuth(res.data.auth));
-        dispatch(addUser(res.data.user));
-        await AsyncStorage.setItem('auth', JSON.stringify(res.data.auth));
+
+        navigation.navigate('LoginScreen');
       } catch (error) {
         setErrorMessage((error as Error).message || t('auth:invalid_verification_code'));
       } finally {
@@ -129,6 +128,11 @@ const Verification = ({ _navigation, route }: any) => {
               val.length > 0 && ref2.current.focus();
               handleChangeCode(val, 0);
             }}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace' && !codeValues[0]) {
+                // Ở ô đầu tiên, không làm gì
+              }
+            }}
             placeholder="-"
           />
           <TextInput
@@ -138,6 +142,11 @@ const Verification = ({ _navigation, route }: any) => {
             onChangeText={val => {
               handleChangeCode(val, 1);
               val.length > 0 && ref3.current.focus();
+            }}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace' && !codeValues[1]) {
+                ref1.current.focus();
+              }
             }}
             style={[styles.input]}
             maxLength={1}
@@ -151,6 +160,11 @@ const Verification = ({ _navigation, route }: any) => {
               handleChangeCode(val, 2);
               val.length > 0 && ref4.current.focus();
             }}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace' && !codeValues[2]) {
+                ref2.current.focus();
+              }
+            }}
             style={[styles.input]}
             maxLength={1}
             placeholder="-"
@@ -161,6 +175,45 @@ const Verification = ({ _navigation, route }: any) => {
             value={codeValues[3]}
             onChangeText={val => {
               handleChangeCode(val, 3);
+              val.length > 0 && ref5.current.focus();
+            }}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace' && !codeValues[3]) {
+                ref3.current.focus();
+              }
+            }}
+            style={[styles.input]}
+            maxLength={1}
+            placeholder="-"
+          />
+          <TextInput
+            keyboardType="number-pad"
+            ref={ref5}
+            value={codeValues[4]}
+            onChangeText={val => {
+              handleChangeCode(val, 4);
+              val.length > 0 && ref6.current.focus();
+            }}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace' && !codeValues[4]) {
+                ref4.current.focus();
+              }
+            }}
+            style={[styles.input]}
+            maxLength={1}
+            placeholder="-"
+          />
+          <TextInput
+            keyboardType="number-pad"
+            ref={ref6}
+            value={codeValues[5]}
+            onChangeText={val => {
+              handleChangeCode(val, 5);
+            }}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace' && !codeValues[5]) {
+                ref5.current.focus();
+              }
             }}
             style={[styles.input]}
             maxLength={1}
@@ -170,7 +223,7 @@ const Verification = ({ _navigation, route }: any) => {
       </SectionComponent>
       <SectionComponent styles={{ marginTop: 40 }}>
         <ButtonComponent
-          disable={codeValues.join('').length !== 4}
+          disable={codeValues.join('').length !== 6}
           onPress={handleVerification}
           text={t('auth:continue')}
           type="primary"
@@ -181,7 +234,7 @@ const Verification = ({ _navigation, route }: any) => {
                 globalStyles.iconContainer,
                 {
                   backgroundColor:
-                    codeValues.join('').length !== 4 ? appColors.gray : appColors.primary,
+                    codeValues.join('').length !== 6 ? appColors.gray : appColors.primary,
                 },
               ]}>
               <ArrowRight size={18} color={appColors.white} />

@@ -107,14 +107,14 @@ const HomeScreen = ({ navigation }: any) => {
             onPress={() => navigation.openDrawer()} />
           <RowComponent styles={customStyle.headerAccountRight}>
             <AvatarComponent
-              icon={<ShoppingCart variant="Bold" size={24} color={appColors.gray} />}
+              icon={<ShoppingCart variant="Bold" size={24} color={appColors.gray5} />}
               size={40}
               dot
               dotColor={appColors.success}
               onPress={() => navigation.navigate('CartScreen')}
             />
             <AvatarComponent
-              icon={<Notification variant="Bold" size={26} color={appColors.gray} />}
+              icon={<Notification variant="Bold" size={26} color={appColors.gray5} />}
               size={40}
               count={3}
               onPress={() => navigation.navigate('NotificationScreen')}
@@ -130,9 +130,9 @@ const HomeScreen = ({ navigation }: any) => {
             height={45}
             affix={
               searchIcon ? (
-                <SearchNormal1 size={18} color={appColors.gray} />
+                <SearchNormal1 size={18} color={appColors.gray5} />
               ) : (
-                <ScanBarcode size={18} color={appColors.gray}
+                <ScanBarcode size={18} color={appColors.gray5}
                   onPress={() => navigation.navigate('ScannerScreen')} />
               )
             }
@@ -194,7 +194,7 @@ const HomeScreen = ({ navigation }: any) => {
                       style={[
                         customStyle.paginationDot,
                         {
-                          backgroundColor: index === currentBannerIndex ? appColors.primary : appColors.gray4,
+                          backgroundColor: index === currentBannerIndex ? appColors.primary : appColors.gray8,
                         },
                       ]}
                     />
@@ -243,7 +243,7 @@ const customStyle = {
   } as const,
 
   searchFilter: {
-    backgroundColor: appColors.gray5,
+    backgroundColor: appColors.gray9,
     paddingHorizontal: 12,
     paddingVertical: 8,
   } as const,
@@ -254,7 +254,7 @@ const customStyle = {
     borderRadius: 8,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: appColors.gray5,
+    borderColor: appColors.gray9,
   } as const,
 
   swiperStyle: {
@@ -290,7 +290,7 @@ const customStyle = {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: appColors.gray4,
+    backgroundColor: appColors.gray5,
     justifyContent: 'center',
     alignItems: 'center',
   } as const,
@@ -323,7 +323,7 @@ const customStyle = {
   placeholderImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: appColors.gray5,
+    backgroundColor: appColors.gray9,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,

@@ -28,6 +28,7 @@ interface Props {
   style?: ViewStyle;
   disabled?: boolean;
   onPress?: () => void;
+  borderWidth?: number;
 }
 
 const InputComponent = (props: Props) => {
@@ -46,13 +47,14 @@ const InputComponent = (props: Props) => {
     style,
     disabled,
     onPress,
+    borderWidth,
   } = props;
 
   const [isShowPass, setIsShowPass] = useState(isPassword ?? false);
 
   return (
     <View style={[styles.container, style]}>
-    <View style={[styles.inputContainer]}>
+    <View style={[styles.inputContainer, {borderWidth: borderWidth ?? 1, paddingHorizontal: borderWidth ? 15 : 10 }]}>
       {affix ?? affix}
       <TextInput
         style={[styles.input, globalStyles.text, { minHeight: height ?? 56 }]}
@@ -77,7 +79,7 @@ const InputComponent = (props: Props) => {
           <FontAwesome
             name={isShowPass ? 'eye-slash' : 'eye'}
             size={22}
-            color={appColors.gray}
+            color={appColors.gray5}
           />
         ) : (
           value.length > 0 &&
@@ -101,12 +103,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: appColors.gray3,
+    borderColor: appColors.gray8,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 15,
     backgroundColor: appColors.white,
     marginBottom: 0,
   },

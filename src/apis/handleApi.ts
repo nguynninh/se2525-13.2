@@ -16,11 +16,14 @@ class HandleAPI {
     try {
       const accessToken = this.getAccessToken();
       const requestData = (data === null || data === undefined || (typeof data === 'object' && Object.keys(data).length === 0)) ? undefined : data;
+
+      const isFormData = data instanceof FormData;
+
       const response = await axiosClient(`${appInfo.BASE_URL}${url}`, {
         method,
         data: requestData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });

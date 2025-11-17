@@ -15,21 +15,25 @@ import { fontFamilies } from '../constants/fontFamilies';
 
 interface Props {
   isImageBackground?: boolean;
+  imageBackgroundSource?: string;
+  blurRadius?: number;
   isScroll?: boolean;
   title?: string;
   children: ReactNode;
   back?: boolean;
+  save?: boolean;
+  onSave?: () => void;
 }
 
 const ContainerComponent = (props: Props) => {
-  const { children, isScroll, isImageBackground, title, back } = props;
+  const { children, isScroll, blurRadius, isImageBackground, imageBackgroundSource, title, back, save, onSave } = props;
 
   const navigation: any = useNavigation();
 
   const headerComponent = () => {
     return (
       <View style={{ flex: 1 }}>
-        {(title || back) && (
+        {(title || back || save) && (
           <RowComponent
             styles={{
               paddingHorizontal: 16,
@@ -57,6 +61,16 @@ const ContainerComponent = (props: Props) => {
             ) : (
               <></>
             )}
+            {save && (
+              <TouchableOpacity onPress={onSave}>
+                <TextComponent
+                  text="Lưu"
+                  size={16}
+                  color={appColors.primary}
+                  font={fontFamilies.medium}
+                />
+              </TouchableOpacity>
+            )}
           </RowComponent>
         )}
         {returnContainer}
@@ -72,11 +86,12 @@ const ContainerComponent = (props: Props) => {
     <View style={{ flex: 1 }}>{children}</View>
   );
 
-  return isImageBackground ? (
+  return isImageBackground || imageBackgroundSource ? (
     <ImageBackground
-      source={require('../assets/images/splash-img.png')}
+      source={imageBackgroundSource ? { uri: imageBackgroundSource } : require('../assets/images/splash-img.png')}
       style={{ flex: 1 }}
-      imageStyle={{ flex: 1 }}>
+      imageStyle={{ flex: 1 }}
+      blurRadius={blurRadius || 0}>
       <SafeAreaView style={{ flex: 1 }}>{headerComponent()}</SafeAreaView>
     </ImageBackground>
   ) : (

@@ -16,6 +16,7 @@ import SettingScreen from './profile/SettingScreen';
 import HelpAndFAQs from './profile/HelpAndFAQs';
 import ContactUs from './profile/ContactUs';
 import LanguageScreen from './profile/LanguageScreen';
+import AvatarPreview from './profile/AvatarPreview';
 
 export {
     HomeScreen,
@@ -36,4 +37,5 @@ export {
     HelpAndFAQs,
     ContactUs,
     LanguageScreen,
+    AvatarPreview,
 };

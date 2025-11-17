@@ -7,6 +7,7 @@ import {
   Pressable,
 } from 'react-native';
 import {fontFamilies} from '../constants/fontFamilies';
+import { appColors } from '../constants/appColors';
 
 export interface MenuItem {
   icon: string | React.ReactNode;
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: '#1c1c1e',
+    backgroundColor: appColors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: 34,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   handle: {
     width: 40,
     height: 4,
-    backgroundColor: '#48484a',
+    backgroundColor: appColors.gray7,
     borderRadius: 2,
   },
   menuContainer: {
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#2c2c2e',
+    backgroundColor: appColors.gray6,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 16,
     fontFamily: fontFamilies.regular,
-    color: '#ffffff',
+    color: appColors.text,
     flex: 1,
   },
 });

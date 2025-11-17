@@ -1,4 +1,4 @@
-import { Image, Alert, Text, Button } from 'react-native';
+import { Image, Alert } from 'react-native';
 import { useState } from 'react';
 import {Lock, Sms, User} from 'iconsax-react-native';
 import {

@@ -23,6 +23,9 @@ const ProfileScreen = ({ navigation }: any) => {
 
   const handleChooseAvatar = async () => {
     try {
+      setShowProfileMenu(false);
+      await new Promise(resolve => setTimeout(resolve, 300));
+
       const result = await launchImageLibrary({
         mediaType: 'photo',
         quality: 1,
@@ -31,11 +34,9 @@ const ProfileScreen = ({ navigation }: any) => {
 
       if (result.assets && result.assets[0]) {
         const imageUri = result.assets[0].uri;
-        setShowProfileMenu(false);
-        (navigation as any).navigate('AvatarPreview', { imageUri });
+        navigation.push('AvatarPreview', { imageUri });
       }
     } catch (error) {
-      console.error('Error picking image: ', error);
     }
   };
 

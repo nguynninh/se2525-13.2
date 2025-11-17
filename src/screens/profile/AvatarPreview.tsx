@@ -2,74 +2,51 @@ import { useState } from 'react';
 import {
     View,
     Image,
-    ImageBackground,
     StyleSheet,
     TouchableOpacity,
     Text,
-    StatusBar,
-    SafeAreaView,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
+import { ContainerComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
+import { Global } from 'iconsax-react-native';
 
-const AvatarPreview = () => {
-    const navigation = useNavigation();
-    const route = useRoute();
+const AvatarPreview = ({_navigation, route }: any) => {
     const { imageUri } = route.params as { imageUri: string };
     const [visibility, setVisibility] = useState('Công khai');
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor="#000" />
+        <ContainerComponent title={'Xem trước ảnh đại diện'} isImageBackground back save>
+            <RowComponent justify="flex-start" styles={{ paddingHorizontal: 10 }}>
+                <TextComponent text="Đến:" size={16} font={fontFamilies.medium} />
+                <RowComponent justify="flex-start">
+                    <Global size={20} color={appColors.gray} />
+                    <TextComponent text={visibility} size={16} font={fontFamilies.medium} color={appColors.gray}/>
+                </RowComponent>
+            </RowComponent>
 
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.headerButton}
-                    onPress={() => navigation.goBack()}>
-                    <Text style={styles.headerButtonText}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Xem trước ảnh đại diện</Text>
-                <TouchableOpacity style={styles.headerButton}>
-                    <Text style={styles.headerButtonText}>Lưu</Text>
-                </TouchableOpacity>
-            </View>
+            <SpaceComponent height={16} />
 
-            {/* Visibility Section */}
-            <View style={styles.visibilitySection}>
-                <Text style={styles.visibilityLabel}>Đến: 🌐 {visibility}</Text>
-            </View>
+            <RowComponent justify="flex-start">
+                <InputComponent
+                    value=""
+                    placeholder="Hãy nói gì đó về ảnh đại diện của bạn"
+                    onChange={() => {}}
+                    style={{
+                        flex: 1,
+                        paddingHorizontal: 10,
+                    }}
+                />
+            </RowComponent>
 
-            {/* Caption Input */}
-            <View style={styles.captionSection}>
-                <Text style={styles.captionPlaceholder}>
-                    Hãy nói gì đó về ảnh đại diện của bạn
-                </Text>
-            </View>
+            <SpaceComponent height={16} />
 
-            {/* Image Preview */}
             <View style={styles.imageContainer}>
-                {/* Background Image with Blur */}
-                <ImageBackground
-                    source={{ uri: imageUri }}
-                    style={styles.backgroundImage}
-                    blurRadius={20}>
-                    <View style={styles.overlay} />
-
-                    {/* Circle Image */}
+                <ContainerComponent imageBackgroundSource={imageUri} blurRadius={20}>
                     <Image source={{ uri: imageUri }} style={styles.image} />
-                </ImageBackground>
-
-                {/* Camera Button */}
-                <TouchableOpacity style={styles.cameraButton}>
-                    <View style={styles.cameraIcon}>
-                        <Text style={styles.cameraIconText}>📷</Text>
-                    </View>
-                </TouchableOpacity>
+                </ContainerComponent>
             </View>
 
-            {/* Action Buttons */}
             <View style={styles.actionButtons}>
                 <TouchableOpacity style={styles.actionButton}>
                     <Text style={styles.actionIcon}>✂️</Text>
@@ -87,30 +64,25 @@ const AvatarPreview = () => {
                 </TouchableOpacity>
             </View>
 
-            {/* Share to Feed */}
-            <View style={styles.shareSection}>
-                <Text style={styles.shareText}>
-                    Chia sẻ thông tin mới lên Bảng feed
-                </Text>
+            <RowComponent justify="space-between">
+                <TextComponent text=" Chia sẻ thông tin mới lên Bảng feed" size={16} font={fontFamilies.medium} />
                 <TouchableOpacity style={styles.checkbox}>
                     <View style={styles.checkboxInner} />
                 </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+            </RowComponent>
+        </ContainerComponent>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 12,
     },
     headerButton: {
         padding: 8,
@@ -144,10 +116,10 @@ const styles = StyleSheet.create({
         fontFamily: fontFamilies.regular,
     },
     imageContainer: {
-        flex: 1,
+        width: '100%',
+        aspectRatio: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 20,
         position: 'relative',
         overflow: 'hidden',
     },

@@ -13,7 +13,7 @@ const ProfileNavigator = () => {
           name="AvatarPreview"
           component={AvatarPreview}
           options={{
-            presentation: 'modal',
+            presentation: 'transparentModal',
             headerShown: false,
           }}
         />

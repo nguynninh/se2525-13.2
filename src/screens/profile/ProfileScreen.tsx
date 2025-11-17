@@ -52,7 +52,7 @@ const ProfileScreen = ({ navigation }: any) => {
     },
   ];
   return (
-    <ContainerComponent back isImageBackground>
+    <ContainerComponent isImageBackground>
       <AvatarComponent
         shape="circle"
         imageUrl={user.avatar}

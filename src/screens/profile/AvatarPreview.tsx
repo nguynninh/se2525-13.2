@@ -19,8 +19,8 @@ const AvatarPreview = ({_navigation, route }: any) => {
 
     return (
         <ContainerComponent title={'Xem trước ảnh đại diện'} isImageBackground back save>
-            <View style={{ flex: 1 }}>
-                <RowComponent justify="flex-start" styles={{ paddingHorizontal: 10 }}>
+            <View style={styles.container}>
+                <RowComponent justify="flex-start" styles={{ paddingHorizontal: 15 }}>
                     <TextComponent text="Đến:" size={16} font={fontFamilies.medium} color={appColors.text5}/>
                     <RowComponent justify="flex-start">
                         <Global size={20} color={appColors.text5} />
@@ -35,9 +35,9 @@ const AvatarPreview = ({_navigation, route }: any) => {
                         value={description}
                         placeholder="Hãy nói gì đó về ảnh đại diện của bạn"
                         onChange={(text) => setDescription(text)}
+                        borderWidth={0}
                         style={{
                             flex: 1,
-                            paddingHorizontal: 10,
                         }}
                     />
                 </RowComponent>
@@ -50,16 +50,18 @@ const AvatarPreview = ({_navigation, route }: any) => {
                     </ContainerComponent>
                 </View>
 
+                <SpaceComponent height={16} />
+
                 <RowComponent justify="space-around">
-                    <RowComponent justify="center">
+                    <RowComponent justify="center" styles={styles.btnOther}>
                         <Scissor size={20} color={appColors.text} />
                         <TextComponent text="Chỉnh sửa" size={14} font={fontFamilies.regular} color={appColors.text} />
                     </RowComponent>
-                    <RowComponent justify="center">
+                    <RowComponent justify="center" styles={styles.btnOther}>
                         <Screenmirroring size={20} color={appColors.text} />
                         <TextComponent text="Khung" size={14} font={fontFamilies.regular} color={appColors.text} />
                     </RowComponent>
-                    <RowComponent justify="center">
+                    <RowComponent justify="center" styles={styles.btnOther}>
                         <Clock size={20} color={appColors.text} />
                         <TextComponent text="Đề tạm thời" size={14} font={fontFamilies.regular} color={appColors.text} />
                     </RowComponent>
@@ -67,7 +69,7 @@ const AvatarPreview = ({_navigation, route }: any) => {
 
                 <View style={{ flex: 1 }} />
 
-                <RowComponent justify="space-between" styles={{ paddingHorizontal: 10, alignItems: 'center' }}>
+                <RowComponent justify="space-between" styles={{ paddingHorizontal: 15, alignItems: 'center' }}>
                     <TextComponent text=" Chia sẻ thông tin mới lên Bảng feed" size={16} font={fontFamilies.medium} />
                     <TouchableOpacity
                         style={styles.checkbox}
@@ -84,6 +86,9 @@ const AvatarPreview = ({_navigation, route }: any) => {
 };
 
 const styles = StyleSheet.create({
+    container:  {
+        flex: 1,
+    },
     imageContainer: {
         width: '100%',
         aspectRatio: 1,
@@ -97,6 +102,14 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
         borderRadius: 1000,
         resizeMode: 'cover',
+    },
+    btnOther: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 6,
+        padding: 10,
+        backgroundColor: appColors.gray9,
+        borderRadius: 8,
     },
     checkbox: {
         width: 24,

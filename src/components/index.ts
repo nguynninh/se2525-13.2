@@ -8,6 +8,7 @@ import SectionComponent from './SectionComponent';
 import CircleComponent from './CircleComponent';
 import AvatarComponent from './AvatarComponent';
 import DrawerCustom from './DrawerCustom';
+import SharingScopeComponent from './SharingScopeComponent';
 
 export {
     SpaceComponent,
@@ -20,4 +21,5 @@ export {
     CircleComponent,
     AvatarComponent,
     DrawerCustom,
+    SharingScopeComponent,
 };

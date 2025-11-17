@@ -7,24 +7,29 @@ import {
 } from 'react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import { ContainerComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
-import { Clock, Global, Scissor, Screenmirroring } from 'iconsax-react-native';
+import { ContainerComponent, InputComponent, RowComponent, SharingScopeComponent, SpaceComponent, TextComponent } from '../../components';
+import { Clock, Scissor, Screenmirroring } from 'iconsax-react-native';
+import { useTranslation } from 'react-i18next';
 
-const AvatarPreview = ({_navigation, route }: any) => {
+const AvatarPreview = ({ _navigation, route }: any) => {
+    const { t } = useTranslation(['profile', 'common']);
     const { imageUri } = route.params as { imageUri: string };
 
-    const [visibility, setVisibility] = useState('Công khai');
+    const [visibility, setVisibility] = useState<string>('public');
     const [description, setDescription] = useState('');
     const [isSharedToFeed, setIsSharedToFeed] = useState(true);
 
     return (
-        <ContainerComponent title={'Xem trước ảnh đại diện'} isImageBackground back save>
+        <ContainerComponent title={t('avatar_preview')} isImageBackground back save>
             <View style={styles.container}>
                 <RowComponent justify="flex-start" styles={{ paddingHorizontal: 15 }}>
-                    <TextComponent text="Đến:" size={16} font={fontFamilies.medium} color={appColors.text5}/>
-                    <RowComponent justify="flex-start">
-                        <Global size={20} color={appColors.text5} />
-                        <TextComponent text={visibility} size={16} font={fontFamilies.medium} color={appColors.text5}/>
+                    <TextComponent text={`${t('to')}:`} size={16} font={fontFamilies.medium} color={appColors.text5} />
+                    <RowComponent justify="flex-start" styles={{ marginLeft: 10, gap: 5 }}>
+                        <SharingScopeComponent
+                            value={visibility}
+                            onPress={(value) => setVisibility(value)}
+                            locked={false}
+                        />
                     </RowComponent>
                 </RowComponent>
 
@@ -86,7 +91,7 @@ const AvatarPreview = ({_navigation, route }: any) => {
 };
 
 const styles = StyleSheet.create({
-    container:  {
+    container: {
         flex: 1,
     },
     imageContainer: {

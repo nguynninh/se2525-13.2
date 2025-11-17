@@ -4,23 +4,59 @@ import {
     Image,
     StyleSheet,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { ContainerComponent, InputComponent, RowComponent, SharingScopeComponent, SpaceComponent, TextComponent } from '../../components';
 import { Clock, Scissor, Screenmirroring } from 'iconsax-react-native';
 import { useTranslation } from 'react-i18next';
+import handleApi from '../../apis/handleApi';
 
 const AvatarPreview = ({ _navigation, route }: any) => {
     const { t } = useTranslation(['profile', 'common']);
+    const [isLoading, setIsLoading] = useState(false);
     const { imageUri } = route.params as { imageUri: string };
 
     const [visibility, setVisibility] = useState<string>('public');
     const [description, setDescription] = useState('');
     const [isSharedToFeed, setIsSharedToFeed] = useState(true);
 
+    const handleUploadAvatar = async () => {
+        try {
+            setIsLoading(true);
+
+            const formData = new FormData();
+
+            formData.append('avatar', {
+                uri: imageUri,
+                type: 'image/jpeg',
+                name: `avatar_${Date.now()}.jpg`,
+            } as any);
+
+            if (description) {
+                formData.append('description', description);
+            }
+            formData.append('visibility', visibility);
+            formData.append('isSharedToFeed', String(isSharedToFeed));
+
+            await handleApi(
+                '/users/avatar',
+                formData,
+                'post',
+            );
+
+            Alert.alert(t('common:success'), t('avatar_uploaded_successfully'));
+            _navigation.goBack();
+        } catch (error) {
+            Alert.alert(t('common:error'), (error as Error).message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <ContainerComponent title={t('avatar_preview')} isImageBackground back save>
+        <ContainerComponent title={t('avatar_preview')} isImageBackground back save onSave={handleUploadAvatar}>
             <View style={styles.container}>
                 <RowComponent justify="flex-start" styles={{ paddingHorizontal: 15 }}>
                     <TextComponent text={`${t('to')}:`} size={16} font={fontFamilies.medium} color={appColors.text5} />

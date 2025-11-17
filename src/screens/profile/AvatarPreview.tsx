@@ -19,62 +19,66 @@ const AvatarPreview = ({_navigation, route }: any) => {
 
     return (
         <ContainerComponent title={'Xem trước ảnh đại diện'} isImageBackground back save>
-            <RowComponent justify="flex-start" styles={{ paddingHorizontal: 10 }}>
-                <TextComponent text="Đến:" size={16} font={fontFamilies.medium} />
+            <View style={{ flex: 1 }}>
+                <RowComponent justify="flex-start" styles={{ paddingHorizontal: 10 }}>
+                    <TextComponent text="Đến:" size={16} font={fontFamilies.medium} />
+                    <RowComponent justify="flex-start">
+                        <Global size={20} color={appColors.gray} />
+                        <TextComponent text={visibility} size={16} font={fontFamilies.medium} color={appColors.gray}/>
+                    </RowComponent>
+                </RowComponent>
+
+                <SpaceComponent height={16} />
+
                 <RowComponent justify="flex-start">
-                    <Global size={20} color={appColors.gray} />
-                    <TextComponent text={visibility} size={16} font={fontFamilies.medium} color={appColors.gray}/>
+                    <InputComponent
+                        value={description}
+                        placeholder="Hãy nói gì đó về ảnh đại diện của bạn"
+                        onChange={(text) => setDescription(text)}
+                        style={{
+                            flex: 1,
+                            paddingHorizontal: 10,
+                        }}
+                    />
                 </RowComponent>
-            </RowComponent>
 
-            <SpaceComponent height={16} />
+                <SpaceComponent height={16} />
 
-            <RowComponent justify="flex-start">
-                <InputComponent
-                    value={description}
-                    placeholder="Hãy nói gì đó về ảnh đại diện của bạn"
-                    onChange={(text) => setDescription(text)}
-                    style={{
-                        flex: 1,
-                        paddingHorizontal: 10,
-                    }}
-                />
-            </RowComponent>
+                <View style={styles.imageContainer}>
+                    <ContainerComponent imageBackgroundSource={imageUri} blurRadius={20}>
+                        <Image source={{ uri: imageUri }} style={styles.image} />
+                    </ContainerComponent>
+                </View>
 
-            <SpaceComponent height={16} />
+                <RowComponent justify="space-around">
+                    <RowComponent justify="center">
+                        <Scissor size={20} color={appColors.text} />
+                        <TextComponent text="Chỉnh sửa" size={14} font={fontFamilies.regular} color={appColors.text} />
+                    </RowComponent>
+                    <RowComponent justify="center">
+                        <Screenmirroring size={20} color={appColors.text} />
+                        <TextComponent text="Khung" size={14} font={fontFamilies.regular} color={appColors.text} />
+                    </RowComponent>
+                    <RowComponent justify="center">
+                        <Clock size={20} color={appColors.text} />
+                        <TextComponent text="Đề tạm thời" size={14} font={fontFamilies.regular} color={appColors.text} />
+                    </RowComponent>
+                </RowComponent>
 
-            <View style={styles.imageContainer}>
-                <ContainerComponent imageBackgroundSource={imageUri} blurRadius={20}>
-                    <Image source={{ uri: imageUri }} style={styles.image} />
-                </ContainerComponent>
+                <View style={{ flex: 1 }} />
+
+                <RowComponent justify="space-between" styles={{ paddingHorizontal: 10, alignItems: 'center' }}>
+                    <TextComponent text=" Chia sẻ thông tin mới lên Bảng feed" size={16} font={fontFamilies.medium} />
+                    <TouchableOpacity
+                        style={styles.checkbox}
+                        onPress={() => setIsSharedToFeed(!isSharedToFeed)}
+                        activeOpacity={0.7}>
+                        {isSharedToFeed && (
+                            <View style={[styles.checkboxInner, { backgroundColor: appColors.primary }]} />
+                        )}
+                    </TouchableOpacity>
+                </RowComponent>
             </View>
-
-            <RowComponent justify="space-around">
-                <RowComponent justify="center">
-                    <Scissor size={20} color={appColors.text} />
-                    <TextComponent text="Chỉnh sửa" size={14} font={fontFamilies.regular} color={appColors.text} />
-                </RowComponent>
-                <RowComponent justify="center">
-                    <Screenmirroring size={20} color={appColors.text} />
-                    <TextComponent text="Khung" size={14} font={fontFamilies.regular} color={appColors.text} />
-                </RowComponent>
-                <RowComponent justify="center">
-                    <Clock size={20} color={appColors.text} />
-                    <TextComponent text="Đề tạm thời" size={14} font={fontFamilies.regular} color={appColors.text} />
-                </RowComponent>
-            </RowComponent>
-
-            <RowComponent justify="space-between">
-                <TextComponent text=" Chia sẻ thông tin mới lên Bảng feed" size={16} font={fontFamilies.medium} />
-                <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => setIsSharedToFeed(!isSharedToFeed)}
-                    activeOpacity={0.7}>
-                    {isSharedToFeed && (
-                        <View style={[styles.checkboxInner, { backgroundColor: appColors.primary }]} />
-                    )}
-                </TouchableOpacity>
-            </RowComponent>
         </ContainerComponent>
     );
 };

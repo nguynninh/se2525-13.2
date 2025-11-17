@@ -21,10 +21,10 @@ const AvatarPreview = ({_navigation, route }: any) => {
         <ContainerComponent title={'Xem trước ảnh đại diện'} isImageBackground back save>
             <View style={{ flex: 1 }}>
                 <RowComponent justify="flex-start" styles={{ paddingHorizontal: 10 }}>
-                    <TextComponent text="Đến:" size={16} font={fontFamilies.medium} />
+                    <TextComponent text="Đến:" size={16} font={fontFamilies.medium} color={appColors.text5}/>
                     <RowComponent justify="flex-start">
-                        <Global size={20} color={appColors.gray} />
-                        <TextComponent text={visibility} size={16} font={fontFamilies.medium} color={appColors.gray}/>
+                        <Global size={20} color={appColors.text5} />
+                        <TextComponent text={visibility} size={16} font={fontFamilies.medium} color={appColors.text5}/>
                     </RowComponent>
                 </RowComponent>
 

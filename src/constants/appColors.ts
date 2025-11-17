@@ -2,7 +2,6 @@ export const appColors = {
     primary: '#5669FF',
     white: '#ffffff',
     white2: '#fcfcfc',
-    text: '#120D26',
     text_decription: '#4E4B66',
     gray: '#807A7A',
     gray2: '#DADADA',
@@ -15,4 +14,16 @@ export const appColors = {
     secondary: '#F5F5F5',
     success: '#2ecc71',
     warning: '#f1c40f',
+
+    text: '#0D0D0D',
+    text1: '#1A1A1A',
+    text2: '#333333',
+    text3: '#4D4D4D',
+    text4: '#666666',
+    text5: '#808080',
+    text6: '#999999',
+    text7: '#B3B3B3',
+    text8: '#CCCCCC',
+    text9: '#E6E6E6',
+
 };

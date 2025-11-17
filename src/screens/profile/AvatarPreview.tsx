@@ -12,11 +12,15 @@ import { ContainerComponent, InputComponent, RowComponent, SharingScopeComponent
 import { Clock, Scissor, Screenmirroring } from 'iconsax-react-native';
 import { useTranslation } from 'react-i18next';
 import handleApi from '../../apis/handleApi';
+import { addUser } from '../../redux/reducers/userReducer';
+import { useDispatch } from 'react-redux';
 
-const AvatarPreview = ({ _navigation, route }: any) => {
+const AvatarPreview = ({ navigation, route }: any) => {
     const { t } = useTranslation(['profile', 'common']);
     const [isLoading, setIsLoading] = useState(false);
     const { imageUri } = route.params as { imageUri: string };
+
+    const dispatch = useDispatch();
 
     const [visibility, setVisibility] = useState<string>('public');
     const [description, setDescription] = useState('');
@@ -28,10 +32,13 @@ const AvatarPreview = ({ _navigation, route }: any) => {
 
             const formData = new FormData();
 
+            const fileExtension = imageUri.split('.').pop()?.toLowerCase() || 'jpg';
+            const mimeType = fileExtension === 'png' ? 'image/png' : 'image/jpeg';
+
             formData.append('avatar', {
                 uri: imageUri,
-                type: 'image/jpeg',
-                name: `avatar_${Date.now()}.jpg`,
+                type: mimeType,
+                name: `avatar_${Date.now()}.${fileExtension}`,
             } as any);
 
             if (description) {
@@ -40,14 +47,15 @@ const AvatarPreview = ({ _navigation, route }: any) => {
             formData.append('visibility', visibility);
             formData.append('isSharedToFeed', String(isSharedToFeed));
 
-            await handleApi(
+            const res = await handleApi(
                 '/users/avatar',
                 formData,
                 'post',
             );
 
+            dispatch(addUser(res.data.user));
             Alert.alert(t('common:success'), t('avatar_uploaded_successfully'));
-            _navigation.goBack();
+            navigation.goBack();
         } catch (error) {
             Alert.alert(t('common:error'), (error as Error).message);
         } finally {
@@ -137,6 +145,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
+    },
+    imageBackground: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     image: {
         width: '100%',

@@ -54,7 +54,7 @@ const InputComponent = (props: Props) => {
 
   return (
     <View style={[styles.container, style]}>
-    <View style={[styles.inputContainer, {borderWidth: borderWidth ?? 1, paddingHorizontal: borderWidth ? 15 : 0 }]}>
+    <View style={[styles.inputContainer, {borderWidth: borderWidth ?? 1, paddingHorizontal: borderWidth ? 15 : 10 }]}>
       {affix ?? affix}
       <TextInput
         style={[styles.input, globalStyles.text, { minHeight: height ?? 56 }]}

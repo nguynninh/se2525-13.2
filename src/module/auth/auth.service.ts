@@ -7,7 +7,7 @@ import axios from 'axios';
 import crypto from 'crypto';
 import { sendEmail } from '../../utils/email';
 import { User } from '../../models/User.model';
-import { UnauthorizedError, ValidationError, NotFoundError, InternalServerError } from '../../exception/AppError';
+import { UnauthorizedError, ValidationError, InternalServerError } from '../../exception/AppError';
 import { redisHelper } from '../../utils/redisHelper';
 import {
     LoginDto,

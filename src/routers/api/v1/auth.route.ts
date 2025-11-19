@@ -1,4 +1,3 @@
-import { Request, Response, NextFunction } from 'express';
 import { Router } from 'express';
 import { authenticate, restrictTo } from '../../../middlewares/auth.middleware';
 import {
@@ -19,7 +18,7 @@ import {
     ResetRequestSchema,
     ResetVerifySchema,
     ResetFinalizeSchema,
-} from '../../../module/auth/auth.schemas';
+} from '../../../module/auth/auth.schema';
 
 const router = Router();
 

@@ -24,26 +24,21 @@ router.post('/', authenticate, v(CreateSellerApplicationSchema, 'user'), createS
 // GET /api/seller-applications/me/latest
 router.get('/me/latest', authenticate, getMyLatestSellerApplicationController);
 
-// GET /api/admin/seller-applications/pending
-router.get(
-    '/admin/seller-applications/pending',
-    authenticate,
-    restrictTo('admin'),
-    listSellerPendingApplicationsController,
-);
+// GET /api/seller-applications/admin/pending
+router.get('/admin/pending', authenticate, restrictTo('admin'), listSellerPendingApplicationsController);
 
-// GET /api/admin/seller-applications/history?status=approved|rejected
+// GET /api/seller-applications/admin/history?status=approved|rejected
 router.get(
-    '/admin/seller-applications/history',
+    '/admin/history',
     authenticate,
     restrictTo('admin'),
     v(HistoryQuerySchema, 'user'),
     listSellerHistoryApplicationsController,
 );
 
-// PATCH /api/admin/seller-applications/:id/review
+// PATCH /api/seller-applications/admin/:id/review
 router.patch(
-    '/admin/seller-applications/:id/review',
+    '/admin/:id/review',
     authenticate,
     restrictTo('admin'),
     v(ReviewSellerApplicationSchema, 'user'),

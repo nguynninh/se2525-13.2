@@ -6,7 +6,6 @@ module.exports = {
         await queryInterface.addColumn('users', 'phone', {
             type: Sequelize.STRING(20),
             allowNull: true,
-            unique: true,
         });
     },
 

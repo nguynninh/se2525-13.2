@@ -1,9 +1,9 @@
-import { Router } from 'express';
-import { createProductsFromFile, getAllProducts } from '../controllers/productController';
+// import { Router } from 'express';
+// import { createProductsFromFile, getAllProducts } from '../controllers/productController';
 
-const router = Router();
+// const router = Router();
 
-router.post('/products/create-from-file', createProductsFromFile);
-router.get('/products', getAllProducts);
+// router.post('/products/create-from-file', createProductsFromFile);
+// router.get('/products', getAllProducts);
 
-export default router;
+// export default router;

@@ -2,7 +2,9 @@
     "email_required": "Email không được để trống",
     "email_invalid": "Email không hợp lệ",
     "password_required": "Mật khẩu không được để trống",
+    "new_password_required": "Mật khẩu mới không được để trống",
     "password_min_length": "Mật khẩu phải có ít nhất {{min}} ký tự",
+    "new_password_same_as_old": "Mật khẩu mới trùng với mật khẩu cũ",
     "first_name_required": "Tên không được để trống",
     "first_name_max_length": "Tên không được vượt quá {{max}} ký tự",
     "last_name_required": "Họ không được để trống",
@@ -39,5 +41,15 @@
     "get_pending_seller_applications_successfully": "Lấy các đơn đăng ký người bán đang chờ xử lý thành công",
     "get_seller_applications_history_successfully": "Lấy lịch sử đơn đăng ký người bán thành công",
     "invalid_status_filter": "Bộ lọc trạng thái không hợp lệ. Các giá trị cho phép là 'pending', 'approved', 'rejected'",
-    "review_seller_application_successfully": "Phê duyệt đơn đăng ký bán hàng thành công"
+    "review_seller_application_successfully": "Phê duyệt đơn đăng ký bán hàng thành công",
+    "phone_too_long": "Định dạng số điện thoại không hợp lệ",
+    "profile_url_invalid": "Đường dẫn cho ảnh cá nhân không hợp lệ",
+    "update_empty": "Không có gì được thay đổi",
+    "invalid_file_type": "Tệp tin không đúng định dạng",
+    "get_me_successfully": "Gửi thông tin người dùng thành công",
+    "update_me_successfully": "Cập nhật thông tin người dùng thành công",
+    "change_password_successfully": "Đổi mật khẩu thành công",
+    "file_required": "Thiếu tệp yêu cầu",
+    "update_avatar_successfully": "Cập nhật ảnh đại diện thành công",
+    "delete_me_successfully": "Xóa tài khoản thành công"
 }

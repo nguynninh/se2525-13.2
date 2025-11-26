@@ -1,5 +1,3 @@
-//Thao tác Redis thống nhất (set/get/del/expire/…)
-
 import redisClient from '../config/redis';
 
 export const redisHelper = {

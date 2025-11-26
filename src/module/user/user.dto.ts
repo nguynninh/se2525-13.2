@@ -1,5 +1,4 @@
 // định nghĩa các DTO cho module User
-// Bao gồm cấu trúc dữ liệu đầu vào/đầu ra cho các hành động như tạo, cập nhật, và lấy thông tin người dùng
 
 import { UserRole } from '../../models/User.model';
 
@@ -20,6 +19,11 @@ export interface RegisterResendDto {
 
 export interface RegisterFinalizeDto {
     code: string;
+}
+
+export interface ChangePasswordDto {
+    current_password: string;
+    new_password: string;
 }
 
 /*
@@ -52,6 +56,8 @@ export interface UpdateUserDto {
     phone?: string | null;
     profile_url?: string | null;
 }
+
+export type UpdateMeDto = Pick<UpdateUserDto, 'first_name' | 'last_name' | 'phone' | 'profile_url'>;
 
 export interface VerifyUserDto {
     email: string;

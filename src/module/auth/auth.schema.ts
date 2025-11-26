@@ -1,5 +1,3 @@
-// Validate input cho auth
-
 import { z } from 'zod';
 
 const NAME_REGEX = /^[\p{L}\s'-]+$/u;

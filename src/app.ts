@@ -1,8 +1,10 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+import { openApiDocument } from './registry';
 import i18nMiddleware from './i18n';
 import { errorHandler } from './middlewares/errorHandler';
 import indexRouter from './routers/index.route';
@@ -28,5 +30,7 @@ app.use('/api/seller-applications', sellerApplicationRouter);
 app.use('/api/user', userRouter);
 
 app.use(errorHandler);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 export default app;

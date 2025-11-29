@@ -51,5 +51,12 @@
     "change_password_successfully": "Changing password successfully",
     "file_required": "Required file to upload",
     "update_avatar_successfully": "Updated avatar successfully",
-    "delete_me_successfully": "Delete user successfully"
+    "delete_me_successfully": "Delete user successfully",
+    "user_not_found_for_seller": "User not found for seller",
+    "seller_not_found": "User is not registered as a seller yet",
+    "invalid_seller_status": "Invalid status filter. Allowed values are 'active', 'suspended', 'closed'",
+    "get_sellers_successfully": "Get seller information successfully",
+    "seller_id_required": "Seller id is required",
+    "update_seller_status_successfully": "Update seller status successfully",
+    "delete_seller_successfully": "Delete seller successfully"
 }

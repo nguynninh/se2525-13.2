@@ -1,6 +1,17 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+
+extendZodWithOpenApi(z);
 
 const NAME_REGEX = /^[\p{L}\s'-]+$/u;
+
+export const UploadAvatarSchema = z.object({
+    avatar: z.custom<Express.Multer.File>().openapi({
+        type: 'string',
+        format: 'binary',
+        description: 'File ảnh avatar (image/*)',
+    }),
+});
 
 export const UpdateMeSchema = z
     .object({
@@ -25,11 +36,12 @@ export const UpdateMeSchema = z
         message: 'user:update_empty',
         path: ['_root'],
     })
-    .strict();
+    .strict()
+    .openapi('UpdateMeRequest');
 
 export const ChangePasswordSchema = z
     .object({
-        password: z
+        current_password: z
             .string()
             .min(1, 'user:password_required')
             .refine((s) => s.length >= 6, 'auth:password_min_length'),
@@ -47,7 +59,7 @@ export const ChangePasswordSchema = z
                 message: 'auth:password_mismatch',
             });
         }
-        if (v.new_password === v.password) {
+        if (v.new_password === v.current_password) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 path: ['new_password'],
@@ -55,4 +67,111 @@ export const ChangePasswordSchema = z
             });
         }
     })
-    .strict();
+    .strict()
+    .openapi('ChangePasswordRequest');
+
+export const AdminUpdateSellerStatusSchema = z
+    .object({
+        status: z.enum(['active', 'suspended', 'closed'], {
+            message: 'user:invalid_status_filter',
+        }),
+    })
+    .strict()
+    .openapi('AdminUpdateSellerStatusRequest');
+
+export const UserRoleSchema = z.enum(['customer', 'seller', 'admin']).openapi('UserRole');
+
+export const AdminListUsersQuerySchema = z
+    .object({
+        role: UserRoleSchema.optional(),
+        search: z.string().trim().optional(),
+    })
+    .strict()
+    .openapi('AdminListUsersQuery');
+
+export const UserResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        first_name: z.string(),
+        last_name: z.string(),
+        email: z.string().email(),
+        role: z.enum(['customer', 'seller', 'admin']),
+        phone: z.string().nullable(),
+        profile_url: z.string().url().nullable().optional(),
+    })
+    .strict()
+    .openapi('UserResponse');
+
+export const UserPublicSchema = UserResponseSchema.pick({
+    id: true,
+    first_name: true,
+    last_name: true,
+    email: true,
+    phone: true,
+    profile_url: true,
+}).openapi('UserPublic');
+
+export const SellerStatusSchema = z.enum(['active', 'suspended', 'closed']).openapi('SellerStatus');
+
+export const SellerWithUserResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        user_id: z.string().uuid(),
+        status: SellerStatusSchema,
+        user: UserPublicSchema,
+    })
+    .strict()
+    .openapi('SellerWithUserResponse');
+
+export const SellerResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        user_id: z.string().uuid(),
+        status: SellerStatusSchema,
+    })
+    .strict()
+    .openapi('SellerResponse');
+
+export const CustomerResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        user_id: z.string().uuid(),
+        loyalty_points: z.number().int(),
+    })
+    .strict()
+    .openapi('CustomerResponse');
+
+export const AdminResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        user_id: z.string().uuid(),
+    })
+    .strict()
+    .openapi('AdminResponse');
+
+export const AdminUserDetailResponseSchema = z
+    .object({
+        user: UserResponseSchema,
+        customer: CustomerResponseSchema.nullable(),
+        seller: SellerResponseSchema.nullable(),
+        admin: AdminResponseSchema.nullable(),
+    })
+    .strict()
+    .openapi('AdminUserDetailResponse');
+
+export const CustomerWithUserResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        first_name: z.string(),
+        last_name: z.string(),
+        email: z.string().email(),
+        role: z.enum(['customer', 'seller', 'admin']),
+        phone: z.string().nullable(),
+        profile_url: z.string().url().nullable().optional(),
+        customer: CustomerResponseSchema.pick({
+            id: true,
+            loyalty_points: true,
+        }),
+    })
+    .strict()
+    .openapi('CustomerWithUserResponse');

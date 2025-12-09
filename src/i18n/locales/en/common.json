@@ -28,5 +28,15 @@
     "error": "Error",
     "warning": "Warning",
     "info": "Info",
-    "see_all": "See All"
+    "see_all": "See All",
+    "total": "Total",
+    "pay": "Pay",
+    "category": "Category",
+    "brand": "Brand",
+    "product_not_found": "Product Not Found",
+    "my_cart": "My Cart",
+    "checkout": "Checkout",
+    "empty_cart": "Your cart is empty",
+    "shop_now": "Shop Now",
+    "item_variant": "Variant"
 }

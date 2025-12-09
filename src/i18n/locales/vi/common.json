@@ -11,7 +11,6 @@
     "sign_out": "Đăng xuất",
     "help_fqa": "Trợ giúp & Câu hỏi",
     "contact_us": "Liên hệ chúng tôi",
-
     "skip": "Bỏ qua",
     "next": "Tiếp theo",
     "onboarding1_title": "Tìm sản phẩm yêu thích",
@@ -21,15 +20,23 @@
     "onboarding3_title": "Giao hàng sản phẩm",
     "onboarding3_description": "Sản phẩm của bạn được giao đến tận nhà một cách an toàn và bảo mật",
     "fetch_info_error": "Không thể lấy thông tin người dùng",
-
     "public": "Công khai",
     "friends": "Bạn bè",
     "only_me": "Chỉ mình tôi",
-
     "success": "Thành công",
     "failed": "Thất bại",
     "error": "Lỗi",
     "warning": "Cảnh báo",
     "info": "Thông tin",
-    "see_all": "Xem tất cả"
+    "see_all": "Xem tất cả",
+    "total": "Tổng",
+    "pay": "Thanh toán",
+    "category": "Danh mục",
+    "brand": "Thương hiệu",
+    "product_not_found": "Không tìm thấy sản phẩm",
+    "my_cart": "Giỏ hàng",
+    "checkout": "Thanh toán",
+    "empty_cart": "Giỏ hàng trống",
+    "shop_now": "Mua sắm ngay",
+    "item_variant": "Phân loại"
 }

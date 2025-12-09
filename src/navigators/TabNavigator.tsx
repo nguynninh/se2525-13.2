@@ -59,7 +59,7 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => {
         const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-        const isProductDetail = routeName === 'ProductDetail' || routeName === 'CartScreen' || routeName === 'SearchScreen' || routeName === 'CheckoutScreen' || routeName === 'AddressList' || routeName === 'AddNewAddress' || routeName === 'SellerRegistrationScreen';
+        const isProductDetail = routeName === 'ProductDetail' || routeName === 'CartScreen' || routeName === 'SearchScreen' || routeName === 'CheckoutScreen' || routeName === 'AddressList' || routeName === 'AddNewAddress' || routeName === 'SellerRegistrationScreen' || routeName === 'OrderSuccessScreen';
 
         return {
           headerShown: false,

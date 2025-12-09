@@ -18,7 +18,7 @@ interface Props {
   imageBackgroundSource?: string;
   blurRadius?: number;
   isScroll?: boolean;
-  title?: string;
+  title?: string | ReactNode;
   children: ReactNode;
   back?: boolean;
   save?: boolean;
@@ -45,19 +45,24 @@ const ContainerComponent = (props: Props) => {
             {back && (
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
-                style={{ marginRight: 12,
+                style={{
+                  marginRight: 12,
 
                 }}>
                 <ArrowLeft size={24} color={appColors.text} />
               </TouchableOpacity>
             )}
             {title ? (
-              <TextComponent
-                text={title}
-                size={16}
-                font={fontFamilies.medium}
-                flex={1}
-              />
+              typeof title === 'string' ? (
+                <TextComponent
+                  text={title}
+                  size={16}
+                  font={fontFamilies.medium}
+                  flex={1}
+                />
+              ) : (
+                <View style={{ flex: 1 }}>{title}</View>
+              )
             ) : (
               <></>
             )}
@@ -96,7 +101,7 @@ const ContainerComponent = (props: Props) => {
     </ImageBackground>
   ) : (
     <SafeAreaView style={[globalStyles.container]}>
-      <View>{headerComponent()}</View>
+      <View style={{ flex: 1 }}>{headerComponent()}</View>
     </SafeAreaView>
   );
 };

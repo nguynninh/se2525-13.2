@@ -194,6 +194,15 @@ const ProductDetail = () => {
         }
     };
 
+    const handleBuyNow = () => {
+        const item = {
+            product,
+            variant: selectedVariant,
+            quantity
+        };
+        (navigation as any).navigate('CheckoutScreen', { items: [item] });
+    };
+
     return (
         <View style={{ flex: 1, backgroundColor: appColors.white }}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -474,7 +483,7 @@ const ProductDetail = () => {
                 </View>
 
                 <View style={{ flex: 1, flexDirection: 'row', marginLeft: 20, gap: 12 }}>
-                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#E3F2FD' }]} onPress={() => (navigation as any).navigate('CheckoutScreen')}>
+                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#E3F2FD' }]} onPress={handleBuyNow}>
                         <TextComponent text={t('profile:buy_now')} color={appColors.primary} font={fontFamilies.bold} />
                     </TouchableOpacity>
 

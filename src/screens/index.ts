@@ -20,6 +20,7 @@ import AvatarPreview from './profile/AvatarPreview';
 import ProductDetail from './commerce/ProductDetail';
 
 import CheckoutScreen from './commerce/CheckoutScreen';
+import OrderSuccessScreen from './commerce/OrderSuccessScreen';
 import AddressList from './profile/AddressList';
 import AddNewAddress from './profile/AddNewAddress';
 
@@ -47,6 +48,7 @@ export {
     AvatarPreview,
     ProductDetail,
     CheckoutScreen,
+    OrderSuccessScreen,
     AddressList,
     AddNewAddress,
     SellerRegistrationScreen,

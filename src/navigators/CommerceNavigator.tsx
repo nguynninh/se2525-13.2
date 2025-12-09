@@ -1,5 +1,5 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { CartScreen, HomeScreen, NotificationScreen, ScannerScreen, SearchScreen } from '../screens';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { CartScreen, HomeScreen, NotificationScreen, ScannerScreen, SearchScreen, ProductDetail } from '../screens';
 
 const CommerceNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -13,6 +13,7 @@ const CommerceNavigator = () => {
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
       <Stack.Screen name="ScannerScreen" component={ScannerScreen} />
+      <Stack.Screen name="ProductDetail" component={ProductDetail} />
     </Stack.Navigator>
   );
 };

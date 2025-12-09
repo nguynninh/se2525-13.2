@@ -19,6 +19,9 @@ import LanguageScreen from './profile/LanguageScreen';
 import AvatarPreview from './profile/AvatarPreview';
 import ProductDetail from './commerce/ProductDetail';
 
+import AddressList from './profile/AddressList';
+import AddNewAddress from './profile/AddNewAddress';
+
 export {
     HomeScreen,
     LoginScreen,
@@ -40,4 +43,6 @@ export {
     LanguageScreen,
     AvatarPreview,
     ProductDetail,
+    AddressList,
+    AddNewAddress,
 };

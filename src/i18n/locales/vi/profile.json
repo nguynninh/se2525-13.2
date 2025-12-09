@@ -28,5 +28,17 @@
     "vietnamese": "Tiếng Việt",
     "chinese": "Tiếng Trung",
     "japanese": "Tiếng Nhật",
-    "and": "và"
+    "and": "và",
+    "delivery_address": "Địa chỉ nhận hàng",
+    "add_new_address": "Thêm địa chỉ mới",
+    "update_address": "Cập nhật địa chỉ",
+    "default_address": "Mặc định",
+    "delivery_to": "Giao đến",
+    "full_name": "Họ và tên",
+    "phone_number": "Số điện thoại",
+    "detail_address": "Địa chỉ chi tiết",
+    "save": "Lưu",
+    "province": "Tỉnh/Thành phố",
+    "district": "Quận/Huyện",
+    "ward": "Phường/Xã"
 }

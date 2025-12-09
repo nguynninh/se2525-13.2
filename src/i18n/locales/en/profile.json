@@ -28,5 +28,17 @@
     "vietnamese": "Tiếng Việt",
     "chinese": "Chinese",
     "japanese": "Japanese",
-    "and": "and"
+    "and": "and",
+    "delivery_address": "Delivery Address",
+    "add_new_address": "Add New Address",
+    "update_address": "Update Address",
+    "default_address": "Default",
+    "delivery_to": "Delivery to",
+    "full_name": "Full Name",
+    "phone_number": "Phone Number",
+    "detail_address": "Address Detail",
+    "save": "Save",
+    "province": "Province/City",
+    "district": "District",
+    "ward": "Ward/Commune"
 }

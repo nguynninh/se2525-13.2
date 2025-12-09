@@ -1,5 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { addressSelector } from '../../redux/reducers/addressReducer';
+import { useTranslation } from 'react-i18next';
 import {
     View,
     StyleSheet,
@@ -13,7 +16,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ArrowLeft, Bag2, Heart, Add, Minus } from 'iconsax-react-native';
+import { ArrowLeft, Bag2, Heart, Add, Minus, Location, ArrowRight2 } from 'iconsax-react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { ContainerComponent, RowComponent, SpaceComponent, TextComponent, GlassView, ButtonComponent } from '../../components';
@@ -22,9 +25,11 @@ import productApi from '../../apis/productApi';
 const { width, height } = Dimensions.get('window');
 
 const ProductDetail = () => {
+    const { t } = useTranslation();
     const navigation = useNavigation();
     const route = useRoute();
     const { id }: any = route.params;
+    const selectedAddress = useSelector(addressSelector);
 
     const [product, setProduct] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -97,11 +102,9 @@ const ProductDetail = () => {
         const newSelectedAttrs = { ...selectedAttributes, [attrName]: value };
         setSelectedAttributes(newSelectedAttrs);
 
-        // Find variant matching all selected attributes
         if (product && product.variants) {
             const match = product.variants.find((variant: any) => {
                 if (!variant.values) return false;
-                // Check if this variant has all the selected attribute values
                 return Object.keys(newSelectedAttrs).every(key => {
                     const vVal = variant.values.find((v: any) => v.attribute.name === key);
                     return vVal && vVal.value === newSelectedAttrs[key];
@@ -111,7 +114,6 @@ const ProductDetail = () => {
             if (match) {
                 setSelectedVariant(match);
             } else {
-                // Fallback: Find the first variant that matches the *just clicked* attribute value.
                 const fallbackMatch = product.variants.find((variant: any) => {
                     if (!variant.values) return false;
                     const vVal = variant.values.find((v: any) => v.attribute.name === attrName);
@@ -184,6 +186,22 @@ const ProductDetail = () => {
                                 <GlassView style={{ padding: 20, borderRadius: 24, marginBottom: 16, backgroundColor: 'rgba(255,255,255,0.6)' }}>
                                     <RowComponent justify="space-between">
                                         <View style={{ flex: 1, marginRight: 10 }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate('AddressList' as never)}>
+                                                <RowComponent>
+                                                    <Location size={16} color={appColors.text} variant="Bold" />
+                                                    <SpaceComponent width={4} />
+                                                    <TextComponent
+                                                        text={`${t('profile:delivery_to')}: ${selectedAddress ? selectedAddress.address : 'Select Address'}`}
+                                                        size={12}
+                                                        color={appColors.text}
+                                                        numberOfLine={1}
+                                                        styles={{ flex: 1 }}
+                                                    />
+                                                    <ArrowRight2 size={14} color={appColors.gray} />
+                                                </RowComponent>
+                                            </TouchableOpacity>
+                                            <SpaceComponent height={12} />
+
                                             <TextComponent text={product.name} title size={22} color={appColors.text} font={fontFamilies.bold} />
                                             <TextComponent text={product.brand ?? 'Brand'} color={appColors.gray} size={14} />
                                         </View>

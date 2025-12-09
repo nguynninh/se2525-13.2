@@ -474,7 +474,7 @@ const ProductDetail = () => {
                 </View>
 
                 <View style={{ flex: 1, flexDirection: 'row', marginLeft: 20, gap: 12 }}>
-                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#E3F2FD' }]}>
+                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#E3F2FD' }]} onPress={() => (navigation as any).navigate('CheckoutScreen')}>
                         <TextComponent text={t('profile:buy_now')} color={appColors.primary} font={fontFamilies.bold} />
                     </TouchableOpacity>
 

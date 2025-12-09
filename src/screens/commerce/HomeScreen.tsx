@@ -173,14 +173,14 @@ const HomeScreen = ({ navigation }: any) => {
                     <View
                       key={`banner-${item.id || index}`}
                       style={customStyle.bannerItem}>
-                      {item.imageUrl ? (
+                      {item.image_url ? (
                         <Image
-                          source={{ uri: item.imageUrl }}
+                          source={{ uri: item.image_url }}
                           style={customStyle.bannerImage}
                           resizeMode="cover"
                         />
                       ) : (
-                        <View style={customStyle.placeholderImage}/>
+                        <View style={customStyle.placeholderImage} />
                       )}
                     </View>
                   );

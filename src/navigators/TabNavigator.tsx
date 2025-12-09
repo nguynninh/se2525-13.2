@@ -46,7 +46,6 @@ const TabNavigator = () => {
         flex={0}
         size={12}
         color={focused ? appColors.primary : appColors.gray5}
-        // eslint-disable-next-line react-native/no-inline-styles
         styles={{
           marginBottom: Platform.OS === 'android' ? 12 : 0,
         }}
@@ -62,7 +61,22 @@ const TabNavigator = () => {
           height: Platform.OS === 'ios' ? 88 : 68,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: appColors.white,
+          backgroundColor: 'rgba(255,255,255,0.8)',
+          position: 'absolute',
+          bottom: 20,
+          marginHorizontal: 12,
+          borderRadius: 30,
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 10,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+          paddingTop: 10,
         },
         tabBarIcon: ({ focused, color, size }) => {
           let icon: ReactNode;

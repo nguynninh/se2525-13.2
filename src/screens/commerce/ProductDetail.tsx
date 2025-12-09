@@ -18,7 +18,7 @@ import {
     Alert
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ArrowLeft, Bag2, Heart, Add, Minus, Location, ArrowRight2, Message, ShoppingCart, More, Star, Shop, Tag } from 'iconsax-react-native';
+import { ArrowLeft, Bag2, Heart, Add, Minus, Location, ArrowRight2, Message, ShoppingCart, More, Star, Shop, Tag, ShieldTick } from 'iconsax-react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { ContainerComponent, RowComponent, SpaceComponent, TextComponent, ButtonComponent, SectionComponent } from '../../components';
@@ -317,6 +317,49 @@ const ProductDetail = () => {
                         ))}
                     </View>
                 )}
+
+                <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
+
+                {/* Shipping & Delivery */}
+                <View style={styles.container}>
+                    <RowComponent justify="space-between" styles={{ alignItems: 'flex-start' }}>
+                        <RowComponent styles={{ flex: 1 }}>
+                            <Location size={22} color={appColors.warning} variant="Bold" />
+                            <SpaceComponent width={12} />
+                            <View style={{ flex: 1 }}>
+                                <TextComponent text="Giao đến" size={13} color={appColors.gray} />
+                                <SpaceComponent height={4} />
+                                <TextComponent
+                                    text={selectedAddress ? selectedAddress.address : "Vị trí của bạn"}
+                                    size={14}
+                                    color={appColors.text}
+                                    font={fontFamilies.medium}
+                                    numberOfLine={1}
+                                />
+                            </View>
+                        </RowComponent>
+                        <TouchableOpacity onPress={() => (navigation as any).navigate('AddressList')}>
+                            <TextComponent text="Thay đổi" color={appColors.primary} font={fontFamilies.bold} size={13} />
+                        </TouchableOpacity>
+                    </RowComponent>
+
+                    <SpaceComponent height={16} />
+
+                    <View style={{
+                        backgroundColor: '#F0F8FF',
+                        padding: 12,
+                        borderRadius: 12,
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                    }}>
+                        <ShieldTick size={28} color={appColors.primary} variant="Bold" />
+                        <SpaceComponent width={12} />
+                        <View>
+                            <TextComponent text="Miễn phí vận chuyển" font={fontFamilies.bold} size={14} color={appColors.text} />
+                            <TextComponent text="Dự kiến giao: 2-3 ngày" size={12} color={appColors.gray} />
+                        </View>
+                    </View>
+                </View>
 
                 <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
 

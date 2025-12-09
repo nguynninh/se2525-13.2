@@ -52,6 +52,5 @@ router.post('/reset/finalize', v(ResetFinalizeSchema, 'auth'), forgotPasswordCon
 
 // POST api/auth/logout
 router.post('/logout', v(RefreshTokenSchema), logoutController.logoutOne);
-router.post('/logout/all', authenticate, logoutController.logoutAll);
 
 export default router;

@@ -29,6 +29,8 @@ interface Props {
   disabled?: boolean;
   onPress?: () => void;
   borderWidth?: number;
+  multiline?: boolean;
+  numberOfLines?: number;
 }
 
 const InputComponent = (props: Props) => {
@@ -48,47 +50,51 @@ const InputComponent = (props: Props) => {
     disabled,
     onPress,
     borderWidth,
+    multiline,
+    numberOfLines,
   } = props;
 
   const [isShowPass, setIsShowPass] = useState(isPassword ?? false);
 
   return (
     <View style={[styles.container, style]}>
-    <View style={[styles.inputContainer, {borderWidth: borderWidth ?? 1, paddingHorizontal: borderWidth ? 15 : 10 }]}>
-      {affix ?? affix}
-      <TextInput
-        style={[styles.input, globalStyles.text, { minHeight: height ?? 56 }]}
-        value={value}
-        placeholder={placeholder ?? ''}
-        onChangeText={val => onChange(val)}
-        secureTextEntry={isShowPass}
-        placeholderTextColor={'#747688'}
-        keyboardType={type ?? 'default'}
-        autoCapitalize="none"
-        onEndEditing={onEnd}
-        editable={!disabled}
-        selectTextOnFocus={!disabled}
-        onTouchStart={onPress}
-      />
-      {suffix ?? suffix}
-      <TouchableOpacity
-        onPress={
-          isPassword ? () => setIsShowPass(!isShowPass) : () => onChange('')
-        }>
-        {isPassword ? (
-          <FontAwesome
-            name={isShowPass ? 'eye-slash' : 'eye'}
-            size={22}
-            color={appColors.gray5}
-          />
-        ) : (
-          value.length > 0 &&
-          allowClear && (
-            <AntDesign name="close" size={22} color={appColors.text} />
-          )
-        )}
-      </TouchableOpacity>
-    </View>
+      <View style={[styles.inputContainer, { borderWidth: borderWidth ?? 1, paddingHorizontal: borderWidth ? 15 : 10, alignItems: multiline ? 'flex-start' : 'center', paddingVertical: multiline ? 10 : 0 }]}>
+        {affix ?? affix}
+        <TextInput
+          style={[styles.input, globalStyles.text, { minHeight: height ?? 56, textAlignVertical: multiline ? 'top' : 'center' }]}
+          value={value}
+          placeholder={placeholder ?? ''}
+          onChangeText={val => onChange(val)}
+          secureTextEntry={isShowPass}
+          placeholderTextColor={'#747688'}
+          keyboardType={type ?? 'default'}
+          autoCapitalize="none"
+          onEndEditing={onEnd}
+          editable={!disabled}
+          selectTextOnFocus={!disabled}
+          onTouchStart={onPress}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+        />
+        {suffix ?? suffix}
+        <TouchableOpacity
+          onPress={
+            isPassword ? () => setIsShowPass(!isShowPass) : () => onChange('')
+          }>
+          {isPassword ? (
+            <FontAwesome
+              name={isShowPass ? 'eye-slash' : 'eye'}
+              size={22}
+              color={appColors.gray5}
+            />
+          ) : (
+            value.length > 0 &&
+            allowClear && (
+              <AntDesign name="close" size={22} color={appColors.text} />
+            )
+          )}
+        </TouchableOpacity>
+      </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );

@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Alert } from 'react-native';
 import { AvatarComponent, ButtonComponent, ContainerComponent, SectionComponent, TextComponent } from '../../components';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
-import { launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeAuth } from '../../redux/reducers/authReducer';
 import { useTranslation } from 'react-i18next';
@@ -89,6 +90,38 @@ const ProfileScreen = ({ navigation }: any) => {
           icon={<ArrowRight size={20} color={appColors.white} />}
           iconFlex="right"
         />
+
+        {user.seller_request_status === 'none' && (
+          <ButtonComponent
+            type="link"
+            text={t('profile:request_seller', { defaultValue: 'Register as Seller' })}
+            onPress={async () => {
+              try {
+                const userApi = require('../../apis/userApi').default;
+                await userApi.requestSeller();
+                // Optional: Update user state or show success
+                Alert.alert(t('profile:request_sent', { defaultValue: 'Request sent successfully' }));
+              } catch (e) {
+                console.log(e);
+              }
+            }}
+            styles={{ marginTop: 20 }}
+          />
+        )}
+        {user.seller_request_status === 'pending' && (
+          <TextComponent
+            text={t('profile:seller_pending', { defaultValue: 'Seller Request Pending' })}
+            styles={{ textAlign: 'center', marginTop: 10, color: appColors.warning }}
+          />
+        )}
+        {user.seller_request_status === 'approved' && (
+          <ButtonComponent
+            type="link"
+            text={t('profile:seller_dashboard', { defaultValue: 'Seller Dashboard' })}
+            onPress={() => navigation.navigate('MyProducts')}
+            styles={{ marginTop: 20 }}
+          />
+        )}
       </SectionComponent>
 
       <ProfileMenuModal

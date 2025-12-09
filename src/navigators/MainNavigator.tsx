@@ -29,6 +29,8 @@ const MainNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Main" component={DrawerNavigator} />
+      <Stack.Screen name="MyProducts" component={require('../screens/product/MyProductsScreen').default} />
+      <Stack.Screen name="AddProduct" component={require('../screens/product/AddProductScreen').default} />
     </Stack.Navigator>
   );
 };

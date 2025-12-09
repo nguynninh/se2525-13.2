@@ -1,9 +1,11 @@
 import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import Ward from './Wards.model';
 
 export class Address extends Model<InferAttributes<Address>, InferCreationAttributes<Address>> {
     declare id: CreationOptional<string>;
     declare address_line: string;
     declare ward_id: string;
+    declare ward?: Ward;
 
     static initModel(sequelize: Sequelize) {
         Address.init(

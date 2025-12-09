@@ -13,7 +13,12 @@ import categoryApi from '../../apis/categoryApi';
 import productApi from '../../apis/productApi';
 import { fontFamilies } from '../../constants/fontFamilies';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { cartCountSelector, getCart } from '../../redux/reducers/cartReducer';
+
 const HomeScreen = ({ navigation }: any) => {
+  const dispatch = useDispatch();
+  const cartCount = useSelector(cartCountSelector);
   const { t } = useTranslation();
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -21,6 +26,10 @@ const HomeScreen = ({ navigation }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    dispatch(getCart() as any);
+  }, [dispatch]);
 
   const searchPlaceholders = useMemo(() => [
     t('home:search_placeholder'),
@@ -169,6 +178,7 @@ const HomeScreen = ({ navigation }: any) => {
               <AvatarComponent
                 icon={<ShoppingCart variant="Bold" size={20} color={appColors.white} />}
                 size={40}
+                count={cartCount}
                 styles={{ backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}
                 onPress={() => navigation.navigate('CartScreen')}
               />

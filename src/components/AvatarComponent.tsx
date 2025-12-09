@@ -97,7 +97,7 @@ const AvatarComponent = (props: Props) => {
                 </View>
             )}
             {dot && <View style={globalStyle.dot}>{dotIcon}</View>}
-            {count && (<View style={globalStyle.count}>
+            {(count ?? 0) > 0 && (<View style={globalStyle.count}>
                 <View>
                     <Text style={globalStyle.countText}>{count}</Text>
                 </View>

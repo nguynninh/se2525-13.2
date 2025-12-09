@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addToCart, cartCountSelector, getCart } from '../../redux/reducers/cartReducer';
 import { addressSelector } from '../../redux/reducers/addressReducer';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,7 +14,8 @@ import {
     ScrollView,
     Dimensions,
     Text,
-    FlatList
+    FlatList,
+    Alert
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ArrowLeft, Bag2, Heart, Add, Minus, Location, ArrowRight2, Message, ShoppingCart, More, Star, Shop, Tag } from 'iconsax-react-native';
@@ -27,9 +29,11 @@ const { width, height } = Dimensions.get('window');
 const ProductDetail = () => {
     const { t } = useTranslation();
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     const route = useRoute();
     const { id }: any = route.params;
     const selectedAddress = useSelector(addressSelector);
+    const cartCount = useSelector(cartCountSelector);
 
     const [product, setProduct] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +47,13 @@ const ProductDetail = () => {
     useEffect(() => {
         getData();
         getRelated();
+        dispatch(getCart() as any);
     }, [id]);
+
+    // ... (keep getData/getRelated)
+
+    // In return JSX, replace the Bag2 button:
+
 
     const getData = async () => {
         try {
@@ -167,11 +177,27 @@ const ProductDetail = () => {
     const price = parseInt(getPrice());
     const originalPrice = price * 1.2;
 
+    const handleAddToCart = async () => {
+        if (product) {
+            const data = {
+                product_id: product.id,
+                variant_id: selectedVariant ? selectedVariant.id : null,
+                quantity: quantity
+            };
+            try {
+                await dispatch(addToCart(data) as any).unwrap();
+                Alert.alert(t('common:success'), t('profile:add_to_cart_success') || 'Added to cart successfully');
+            } catch (error: any) {
+                console.log('Error adding to cart:', error);
+                Alert.alert(t('common:error'), error || 'Failed to add to cart');
+            }
+        }
+    };
+
     return (
         <View style={{ flex: 1, backgroundColor: appColors.white }}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.circleBtn}>
                     <ArrowLeft size={22} color={appColors.text} />
@@ -180,13 +206,32 @@ const ProductDetail = () => {
                     <TouchableOpacity style={styles.circleBtn}>
                         <Heart size={22} color={appColors.text} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.circleBtn}>
-                        <Bag2 size={22} color={appColors.text} />
+                    <TouchableOpacity style={styles.circleBtn} onPress={() => (navigation as any).navigate('CartScreen')}>
+                        <View>
+                            <Bag2 size={22} color={appColors.text} />
+                            {cartCount > 0 && (
+                                <View style={{
+                                    position: 'absolute',
+                                    top: -4,
+                                    right: -4,
+                                    backgroundColor: appColors.danger,
+                                    minWidth: 16,
+                                    height: 16,
+                                    borderRadius: 8,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderWidth: 1.5,
+                                    borderColor: appColors.white
+                                }}>
+                                    <TextComponent text={cartCount > 9 ? '9+' : cartCount.toString()} size={8} color={appColors.white} font={fontFamilies.bold} />
+                                </View>
+                            )}
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
                 {/* Product Image */}
                 <View style={{ width: width, height: width, backgroundColor: '#F9F9F9' }}>
                     <Image source={{ uri: getImage() }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
@@ -194,7 +239,7 @@ const ProductDetail = () => {
 
                 {/* Main Info */}
                 <View style={styles.container}>
-                    {/* Brand & Category Tags - RESTORED */}
+                    {/* Brand & Category Tags */}
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
                         {product.brand && (
                             <View style={styles.tagBadge}>
@@ -202,7 +247,7 @@ const ProductDetail = () => {
                             </View>
                         )}
                         <View style={[styles.tagBadge, { backgroundColor: '#F0F0F0' }]}>
-                            <TextComponent text={product.category?.name || 'Category'} size={10} font={fontFamilies.medium} color={appColors.gray} />
+                            <TextComponent text={product.category?.name || t('common:category')} size={10} font={fontFamilies.medium} color={appColors.gray} />
                         </View>
                     </View>
 
@@ -275,11 +320,9 @@ const ProductDetail = () => {
 
                 <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
 
-                {/* Shop Info */}
                 <View style={styles.container}>
                     <TouchableOpacity onPress={() => console.log('View Shop')}>
                         <RowComponent>
-                            {/* Avatar Logic: User request "nếu ko avatar thì vẫn là icon shop cũ" */}
                             {product.shop?.image ? (
                                 <Image source={{ uri: product.shop.image }} style={{ width: 50, height: 50, borderRadius: 25 }} />
                             ) : (
@@ -299,7 +342,6 @@ const ProductDetail = () => {
                                     <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: appColors.gray }} />
                                     <SpaceComponent width={6} />
                                     <Shop size={14} color={appColors.primary} variant="Bold" />
-                                    {/* Note: Using Shop icon as placeholder for proper 'Trophy' or 'Badge' if not available, colored primary for 'Official' look */}
                                     <SpaceComponent width={4} />
                                     <TextComponent text="Chính hãng" size={12} color={appColors.primary} />
                                 </RowComponent>
@@ -340,14 +382,12 @@ const ProductDetail = () => {
 
                 <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
 
-                {/* Description */}
                 <View style={styles.container}>
-                    <TextComponent text="Description" font={fontFamilies.semiBold} size={16} />
+                    <TextComponent text={t('profile:product_description')} font={fontFamilies.semiBold} size={16} />
                     <SpaceComponent height={8} />
                     <TextComponent text={product.description} size={14} color={appColors.text} styles={{ lineHeight: 22 }} />
                 </View>
 
-                {/* Related */}
                 {relatedProducts.length > 0 && (
                     <View style={{ marginTop: 16 }}>
                         <TextComponent text={t('profile:related_products')} font={fontFamilies.semiBold} size={18} styles={{ marginHorizontal: 16, marginBottom: 12 }} />
@@ -374,27 +414,34 @@ const ProductDetail = () => {
                 )}
             </ScrollView>
 
-            {/* Clean Bottom Bar */}
             <View style={styles.bottomBar}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                    <TouchableOpacity style={styles.circleBtn} onPress={() => (navigation as any).navigate('CartScreen')}>
+                        <Bag2 size={22} color={appColors.text} />
+                    </TouchableOpacity>
                     <TouchableOpacity style={{ alignItems: 'center' }}>
                         <Message size={22} color={appColors.text} />
-                        <TextComponent text="Chat" size={10} color={appColors.gray} />
+                        <TextComponent text={t('profile:chat_now')} size={10} color={appColors.gray} />
                     </TouchableOpacity>
                     <View style={{ width: 1, height: 20, backgroundColor: appColors.gray8 }} />
-                    <TouchableOpacity style={{ alignItems: 'center' }}>
+                    <TouchableOpacity style={{ alignItems: 'center' }} onPress={handleAddToCart}>
                         <ShoppingCart size={22} color={appColors.text} />
-                        <TextComponent text="Add" size={10} color={appColors.gray} />
+                        <TextComponent text={t('profile:add_to_cart')} size={10} color={appColors.gray} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={{ flex: 1, flexDirection: 'row', marginLeft: 20, gap: 12 }}>
                     <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#E3F2FD' }]}>
-                        <TextComponent text="Buy Now" color={appColors.primary} font={fontFamilies.bold} />
+                        <TextComponent text={t('profile:buy_now')} color={appColors.primary} font={fontFamilies.bold} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: appColors.primary }]}>
-                        <TextComponent text={`Pays - ${(price * quantity).toLocaleString()}đ`} color={appColors.white} font={fontFamilies.bold} />
+                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: appColors.primary }]} onPress={handleAddToCart}>
+                        <TextComponent
+                            text={`${(price * quantity).toLocaleString()}đ`}
+                            color={appColors.white}
+                            font={fontFamilies.bold}
+                            numberOfLine={1}
+                        />
                     </TouchableOpacity>
                 </View>
             </View>

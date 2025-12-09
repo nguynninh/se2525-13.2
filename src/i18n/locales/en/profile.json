@@ -40,5 +40,12 @@
     "save": "Save",
     "province": "Province/City",
     "district": "District",
-    "ward": "Ward/Commune"
+    "ward": "Ward/Commune",
+    "product_options": "Product Options",
+    "product_description": "Product Description",
+    "related_products": "Related Products",
+    "buy_now": "Buy Now",
+    "add_to_cart": "Add to Cart",
+    "chat_now": "Chat Now",
+    "view_shop": "View Shop"
 }

@@ -14,10 +14,15 @@ const getProducts = async (params?: string) => {
     return await handleAPI(`${url}${params ? `?${params}` : ''}`, undefined, 'get');
 };
 
+const getProductDetail = async (id: string) => {
+    return await handleAPI(`${url}/${id}`, undefined, 'get');
+};
+
 const productApi = {
     getMyProducts,
     createProduct,
     getProducts,
+    getProductDetail,
 };
 
 export default productApi;

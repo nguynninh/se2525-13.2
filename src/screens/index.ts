@@ -17,6 +17,7 @@ import HelpAndFAQs from './profile/HelpAndFAQs';
 import ContactUs from './profile/ContactUs';
 import LanguageScreen from './profile/LanguageScreen';
 import AvatarPreview from './profile/AvatarPreview';
+import ProductDetail from './commerce/ProductDetail';
 
 export {
     HomeScreen,
@@ -38,4 +39,5 @@ export {
     ContactUs,
     LanguageScreen,
     AvatarPreview,
+    ProductDetail,
 };

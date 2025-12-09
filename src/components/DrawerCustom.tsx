@@ -5,6 +5,7 @@ import {
   StatusBar,
   TouchableOpacity,
   FlatList,
+  ImageBackground,
 } from 'react-native';
 import React from 'react';
 import { AvatarComponent, RowComponent, TextComponent } from '.';
@@ -49,7 +50,7 @@ const DrawerCustom = ({ navigation }: any) => {
   };
 
   const size = 20;
-  const color = appColors.gray;
+  const color = appColors.white; // Changed to white for glass theme
   const profileMenu = [
     {
       key: 'MyProfile',
@@ -95,95 +96,109 @@ const DrawerCustom = ({ navigation }: any) => {
     await AsyncStorage.clear();
   };
 
+  // Same background image as HomeScreen
+  const bgImage = { uri: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop' };
+
   return (
-    <View style={[localStyles.container]}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.closeDrawer();
-          navigation.navigate('TabNavigator', {
-            screen: 'Profile',
-          });
-        }}>
-        <AvatarComponent
-          shape="circle"
-          imageUrl={user.photoUrl}
-          size={52}
-          styles={localStyles.avatar}
-        />
-        <View style={{ gap: 3 }}>
-          <RowComponent justify="flex-start" styles={{ alignItems: 'center', gap: 6 }}>
-            <TextComponent text={getTimeBasedGreeting()} font={fontFamilies.semiBold} color={appColors.gray} size={14} />
-            {new Date().getHours() < 12
-              ? <SunFog variant="Bold" size={14} color={appColors.gray} />
-              : <Moon variant="Bold" size={14} color={appColors.gray} />}
-          </RowComponent>
-          <TextComponent text={`${user.lastname} ${user.firstname}` || t('home:new_user')} title color={appColors.text} size={16} />
-        </View>
-      </TouchableOpacity>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={profileMenu}
-        style={{ flex: 1, marginVertical: 20 }}
-        renderItem={({ item }) => (
-          <RowComponent
-            styles={[localStyles.listItem]}
-            onPress={
-              item.key === 'MyProfile'
-                ? () => {
-                  navigation.closeDrawer();
-                  navigation.navigate('TabNavigator', {
-                    screen: 'Profile',
-                    params: { screen: 'ProfileScreen' },
-                  });
-                } : item.key === 'Notifications'
-                  ? () => {
-                    navigation.closeDrawer();
-                    navigation.navigate('TabNavigator', {
-                      screen: 'Home',
-                      params: { screen: 'NotificationScreen' },
-                    });
-                  } : item.key === 'Message'
+    <View style={{ flex: 1 }}>
+      <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover" blurRadius={Platform.OS === 'ios' ? 10 : 3}>
+        <View style={[localStyles.container, { backgroundColor: 'rgba(0,0,0,0.3)' }]}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.closeDrawer();
+              navigation.navigate('TabNavigator', {
+                screen: 'Profile',
+              });
+            }}>
+            <AvatarComponent
+              shape="circle"
+              imageUrl={user.photoUrl}
+              size={60}
+              styles={[localStyles.avatar, { borderWidth: 2, borderColor: 'rgba(255,255,255,0.5)' }]}
+            />
+            <View style={{ gap: 4, marginTop: 10 }}>
+              <RowComponent justify="flex-start" styles={{ alignItems: 'center', gap: 6 }}>
+                <TextComponent text={getTimeBasedGreeting()} font={fontFamilies.medium} color={appColors.gray2} size={14} />
+                {new Date().getHours() < 12
+                  ? <SunFog variant="Bold" size={16} color={appColors.warning} />
+                  : <Moon variant="Bold" size={16} color={appColors.white} />}
+              </RowComponent>
+              <TextComponent text={`${user.lastname} ${user.firstname}` || t('home:new_user')} title color={appColors.white} size={20} font={fontFamilies.bold} />
+            </View>
+          </TouchableOpacity>
+
+          <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: 20 }} />
+
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={profileMenu}
+            style={{ flex: 1 }}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[localStyles.listItem]}
+                onPress={
+                  item.key === 'MyProfile'
                     ? () => {
                       navigation.closeDrawer();
                       navigation.navigate('TabNavigator', {
-                        screen: 'Home',
-                        params: { screen: 'NotificationScreen' },
+                        screen: 'Profile',
+                        params: { screen: 'ProfileScreen' },
                       });
-                    } : item.key === 'Settings'
+                    } : item.key === 'Notifications'
                       ? () => {
                         navigation.closeDrawer();
                         navigation.navigate('TabNavigator', {
-                          screen: 'Profile',
-                          params: { screen: 'SettingScreen' },
+                          screen: 'Home',
+                          params: { screen: 'NotificationScreen' },
                         });
-                      } : item.key === 'HelpAndFAQs'
+                      } : item.key === 'Message'
                         ? () => {
                           navigation.closeDrawer();
                           navigation.navigate('TabNavigator', {
-                            screen: 'Profile',
-                            params: { screen: 'HelpAndFAQs' },
+                            screen: 'Home',
+                            params: { screen: 'NotificationScreen' },
                           });
-                        } : item.key === 'ContactUs'
+                        } : item.key === 'Settings'
                           ? () => {
                             navigation.closeDrawer();
                             navigation.navigate('TabNavigator', {
                               screen: 'Profile',
-                              params: { screen: 'ContactUs' },
+                              params: { screen: 'SettingScreen' },
                             });
-                          } : item.key === 'SignOut'
-                            ? () => handleSignOut()
-                            : () => {
+                          } : item.key === 'HelpAndFAQs'
+                            ? () => {
                               navigation.closeDrawer();
-                            }
-            }>
-            {item.icon}
-            <TextComponent
-              text={item.title}
-              styles={localStyles.listItemText}
-            />
-          </RowComponent>
-        )}
-      />
+                              navigation.navigate('TabNavigator', {
+                                screen: 'Profile',
+                                params: { screen: 'HelpAndFAQs' },
+                              });
+                            } : item.key === 'ContactUs'
+                              ? () => {
+                                navigation.closeDrawer();
+                                navigation.navigate('TabNavigator', {
+                                  screen: 'Profile',
+                                  params: { screen: 'ContactUs' },
+                                });
+                              } : item.key === 'SignOut'
+                                ? () => handleSignOut()
+                                : () => {
+                                  navigation.closeDrawer();
+                                }
+                }>
+                <RowComponent justify="flex-start" styles={{ alignItems: 'center' }}>
+                  {item.icon}
+                  <TextComponent
+                    text={item.title}
+                    styles={localStyles.listItemText}
+                    color={appColors.white}
+                    size={16}
+                  />
+                </RowComponent>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -193,21 +208,18 @@ export default DrawerCustom;
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    paddingVertical: Platform.OS === 'android' ? StatusBar.currentHeight : 48,
+    padding: 20,
+    paddingVertical: Platform.OS === 'android' ? StatusBar.currentHeight : 50,
   },
 
   avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 100,
-    marginBottom: 12,
+    marginBottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   listItem: {
-    paddingVertical: 12,
+    paddingVertical: 14,
     justifyContent: 'flex-start',
   },
 

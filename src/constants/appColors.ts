@@ -31,4 +31,5 @@ export const appColors = {
     gray7: '#090606ff',
     gray8: '#B9B9B9',
     gray9: '#CCCCCC',
+    orange: '#FF5722',
 };

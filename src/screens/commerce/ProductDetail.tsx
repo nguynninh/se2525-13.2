@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { addressSelector } from '../../redux/reducers/addressReducer';
@@ -8,18 +7,19 @@ import {
     StyleSheet,
     StatusBar,
     Platform,
-    ImageBackground,
-    ScrollView,
-    Dimensions,
     Image,
     TouchableOpacity,
     ActivityIndicator,
+    ScrollView,
+    Dimensions,
+    Text,
+    FlatList
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ArrowLeft, Bag2, Heart, Add, Minus, Location, ArrowRight2 } from 'iconsax-react-native';
+import { ArrowLeft, Bag2, Heart, Add, Minus, Location, ArrowRight2, Message, ShoppingCart, More, Star, Shop, Tag } from 'iconsax-react-native';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import { ContainerComponent, RowComponent, SpaceComponent, TextComponent, GlassView, ButtonComponent } from '../../components';
+import { ContainerComponent, RowComponent, SpaceComponent, TextComponent, ButtonComponent, SectionComponent } from '../../components';
 import productApi from '../../apis/productApi';
 
 const { width, height } = Dimensions.get('window');
@@ -33,17 +33,16 @@ const ProductDetail = () => {
 
     const [product, setProduct] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
 
     const [selectedVariant, setSelectedVariant] = useState<any>(null);
     const [attributeGroups, setAttributeGroups] = useState<any[]>([]);
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
     const [quantity, setQuantity] = useState(1);
 
-    // Same background as HomeScreen
-    const bgImage = { uri: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop' };
-
     useEffect(() => {
         getData();
+        getRelated();
     }, [id]);
 
     const getData = async () => {
@@ -58,6 +57,17 @@ const ProductDetail = () => {
             setIsLoading(false);
         }
     };
+
+    const getRelated = async () => {
+        try {
+            const res = await productApi.getProducts();
+            if (res && res.data) {
+                setRelatedProducts(res.data.filter((p: any) => p.id !== id).slice(0, 5));
+            }
+        } catch (error) {
+            console.log('Error fetching related:', error);
+        }
+    }
 
     useEffect(() => {
         if (product && product.variants && product.variants.length > 0) {
@@ -83,11 +93,9 @@ const ProductDetail = () => {
             });
             setAttributeGroups(groups);
 
-            // 2. Select default variant (first one)
             const firstVariant = variants[0];
             setSelectedVariant(firstVariant);
 
-            // 3. Set initial selected attributes based on first variant
             const initialAttrs: Record<string, string> = {};
             if (firstVariant.values) {
                 firstVariant.values.forEach((val: any) => {
@@ -119,10 +127,8 @@ const ProductDetail = () => {
                     const vVal = variant.values.find((v: any) => v.attribute.name === attrName);
                     return vVal && vVal.value === value;
                 });
-
                 if (fallbackMatch) {
                     setSelectedVariant(fallbackMatch);
-                    // Also update the full set of attributes to match this fallback variant
                     const fallbackAttrs: Record<string, string> = {};
                     fallbackMatch.values.forEach((val: any) => {
                         fallbackAttrs[val.attribute.name] = val.value;
@@ -135,18 +141,18 @@ const ProductDetail = () => {
 
     const getPrice = () => {
         if (selectedVariant) return selectedVariant.price;
-        if (!product || !product.variants || product.variants.length === 0) return 0;
+        if (!product || !product.variants || product.variants.length === 0) return product ? product.price : 0;
         return product.variants[0].price;
     }
 
     const getImage = () => {
         if (selectedVariant && selectedVariant.image_url) return selectedVariant.image_url;
         if (selectedVariant && selectedVariant.image) return selectedVariant.image;
-
-        if (!product || !product.variants || product.variants.length === 0) return '';
-        return product.variants[0].image_url ? product.variants[0].image_url : (product.image ?? '');
+        if (!product) return '';
+        if (product.image) return product.image;
+        if (product.variants && product.variants.length > 0) return product.variants[0].image_url;
+        return 'https://via.placeholder.com/300';
     }
-
 
     if (isLoading) {
         return (
@@ -156,198 +162,320 @@ const ProductDetail = () => {
         );
     }
 
+    if (!product) return <View><Text>Product not found</Text></View>;
+
+    const price = parseInt(getPrice());
+    const originalPrice = price * 1.2;
+
     return (
-        <View style={{ flex: 1 }}>
-            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+        <View style={{ flex: 1, backgroundColor: appColors.white }}>
+            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-            <ImageBackground source={bgImage} style={{ flex: 1 }} blurRadius={Platform.OS === 'ios' ? 10 : 3}>
-                {product && (
-                    <>
-                        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-                            {/* Header Image Area */}
-                            <View style={{ height: height * 0.5, position: 'relative' }}>
-                                <Image
-                                    source={{ uri: getImage() }}
-                                    style={{ flex: 1, width: '100%', height: '100%', resizeMode: 'cover' }}
-                                />
-                                {/* Header Buttons Overlay */}
-                                <View style={styles.headerButtons}>
-                                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                                        <ArrowLeft size={24} color={appColors.white} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.iconButton}>
-                                        <Bag2 size={24} color={appColors.white} />
-                                    </TouchableOpacity>
-                                </View>
+            {/* Header */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.circleBtn}>
+                    <ArrowLeft size={22} color={appColors.text} />
+                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <TouchableOpacity style={styles.circleBtn}>
+                        <Heart size={22} color={appColors.text} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.circleBtn}>
+                        <Bag2 size={22} color={appColors.text} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+                {/* Product Image */}
+                <View style={{ width: width, height: width, backgroundColor: '#F9F9F9' }}>
+                    <Image source={{ uri: getImage() }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
+                </View>
+
+                {/* Main Info */}
+                <View style={styles.container}>
+                    {/* Brand & Category Tags - RESTORED */}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                        {product.brand && (
+                            <View style={styles.tagBadge}>
+                                <TextComponent text={product.brand.toUpperCase()} size={10} font={fontFamilies.bold} color={appColors.primary} />
                             </View>
-
-                            {/* Content Section */}
-                            <View style={{ paddingHorizontal: 16, marginTop: -30 }}>
-                                <GlassView style={{ padding: 20, borderRadius: 24, marginBottom: 16, backgroundColor: 'rgba(255,255,255,0.6)' }}>
-                                    <RowComponent justify="space-between">
-                                        <View style={{ flex: 1, marginRight: 10 }}>
-                                            <TouchableOpacity onPress={() => navigation.navigate('AddressList' as never)}>
-                                                <RowComponent>
-                                                    <Location size={16} color={appColors.text} variant="Bold" />
-                                                    <SpaceComponent width={4} />
-                                                    <TextComponent
-                                                        text={`${t('profile:delivery_to')}: ${selectedAddress ? selectedAddress.address : 'Select Address'}`}
-                                                        size={12}
-                                                        color={appColors.text}
-                                                        numberOfLine={1}
-                                                        styles={{ flex: 1 }}
-                                                    />
-                                                    <ArrowRight2 size={14} color={appColors.gray} />
-                                                </RowComponent>
-                                            </TouchableOpacity>
-                                            <SpaceComponent height={12} />
-
-                                            <TextComponent text={product.name} title size={22} color={appColors.text} font={fontFamilies.bold} />
-                                            <TextComponent text={product.brand ?? 'Brand'} color={appColors.gray} size={14} />
-                                        </View>
-                                        <TouchableOpacity>
-                                            <Heart size={24} color={appColors.danger} variant="Bold" />
-                                        </TouchableOpacity>
-                                    </RowComponent>
-
-                                    <SpaceComponent height={16} />
-
-                                    <TextComponent
-                                        text={`${parseInt(getPrice()).toLocaleString('vi-VN')}đ`}
-                                        title
-                                        size={24}
-                                        color={appColors.primary}
-                                        font={fontFamilies.bold}
-                                    />
-
-                                    <SpaceComponent height={20} />
-
-                                    {/* Attribute Selection */}
-                                    {attributeGroups.map((group, index) => (
-                                        <View key={index} style={{ marginBottom: 16 }}>
-                                            <TextComponent text={group.name} size={16} font={fontFamilies.semiBold} color={appColors.text} />
-                                            <SpaceComponent height={8} />
-                                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                                                {group.values.map((val: string, valIndex: number) => {
-                                                    const isSelected = selectedAttributes[group.name] === val;
-                                                    return (
-                                                        <TouchableOpacity
-                                                            key={valIndex}
-                                                            onPress={() => handleSelectAttribute(group.name, val)}
-                                                        >
-                                                            <GlassView
-                                                                style={{
-                                                                    paddingHorizontal: 16,
-                                                                    paddingVertical: 8,
-                                                                    borderRadius: 20,
-                                                                    backgroundColor: isSelected ? appColors.primary : 'rgba(255,255,255,0.4)',
-                                                                    borderColor: isSelected ? appColors.primary : 'rgba(255,255,255,0.3)'
-                                                                }}
-                                                            >
-                                                                <TextComponent
-                                                                    text={val}
-                                                                    size={14}
-                                                                    color={isSelected ? appColors.white : appColors.text}
-                                                                    font={isSelected ? fontFamilies.bold : fontFamilies.regular}
-                                                                />
-                                                            </GlassView>
-                                                        </TouchableOpacity>
-                                                    )
-                                                })}
-                                            </View>
-                                        </View>
-                                    ))}
-
-
-                                    {/* Quantity Selector */}
-                                    <View style={{ marginBottom: 16 }}>
-                                        <TextComponent text="Quantity" size={16} font={fontFamilies.semiBold} color={appColors.text} />
-                                        <SpaceComponent height={8} />
-                                        <RowComponent>
-                                            <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))}>
-                                                <GlassView style={{ width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.4)' }}>
-                                                    <Minus size={20} color={appColors.text} />
-                                                </GlassView>
-                                            </TouchableOpacity>
-                                            <SpaceComponent width={16} />
-                                            <TextComponent text={quantity.toString()} size={18} font={fontFamilies.bold} color={appColors.text} />
-                                            <SpaceComponent width={16} />
-                                            <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
-                                                <GlassView style={{ width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.4)' }}>
-                                                    <Add size={20} color={appColors.text} />
-                                                </GlassView>
-                                            </TouchableOpacity>
-                                        </RowComponent>
-                                    </View>
-
-
-                                    <TextComponent text="Description" size={16} font={fontFamilies.semiBold} color={appColors.text} />
-                                    <SpaceComponent height={8} />
-                                    <TextComponent text={product.description} color={appColors.gray2} size={14} numberOfLine={10} />
-                                </GlassView>
-                            </View>
-                        </ScrollView>
-
-                        {/* Bottom Action Bar */}
-                        <View style={styles.bottomBar}>
-                            <GlassView style={{ flexDirection: 'row', padding: 16, borderRadius: 0, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.8)' }}>
-                                <View>
-                                    <TextComponent text="Total Price" color={appColors.gray} size={12} />
-                                    <TextComponent
-                                        text={`${(parseInt(getPrice()) * quantity).toLocaleString('vi-VN')}đ`}
-                                        title
-                                        size={20}
-                                        color={appColors.text}
-                                        font={fontFamilies.bold}
-                                    />
-                                </View>
-
-                                <TouchableOpacity style={styles.buyButton}>
-                                    <TextComponent text="Buy Now" color={appColors.white} font={fontFamilies.bold} />
-                                    <Bag2 size={20} color={appColors.white} style={{ marginLeft: 8 }} />
-                                </TouchableOpacity>
-                            </GlassView>
+                        )}
+                        <View style={[styles.tagBadge, { backgroundColor: '#F0F0F0' }]}>
+                            <TextComponent text={product.category?.name || 'Category'} size={10} font={fontFamilies.medium} color={appColors.gray} />
                         </View>
-                    </>
+                    </View>
+
+                    <TextComponent text={product.name} font={fontFamilies.medium} size={20} color={appColors.text} numberOfLine={2} />
+
+                    <SpaceComponent height={12} />
+
+                    <RowComponent justify="space-between">
+                        <RowComponent styles={{ alignItems: 'flex-end' }}>
+                            <TextComponent
+                                text={`${price.toLocaleString('vi-VN')}đ`}
+                                font={fontFamilies.bold}
+                                size={26}
+                                color={appColors.primary}
+                            />
+                            <SpaceComponent width={8} />
+                            <TextComponent
+                                text={`${originalPrice.toLocaleString('vi-VN')}đ`}
+                                size={14}
+                                color={appColors.gray4}
+                                styles={{ textDecorationLine: 'line-through', marginBottom: 4 }}
+                            />
+                        </RowComponent>
+                        <RowComponent>
+                            <Star size={16} color="#FFC107" variant="Bold" />
+                            <SpaceComponent width={4} />
+                            <TextComponent text="4.8" font={fontFamilies.bold} size={14} />
+                            <TextComponent text=" (1.2k)" color={appColors.gray4} size={13} />
+                        </RowComponent>
+                    </RowComponent>
+                </View>
+
+                <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
+
+                {/* Variants */}
+                {attributeGroups.length > 0 && (
+                    <View style={styles.container}>
+                        <TextComponent text={t('profile:product_options')} font={fontFamilies.semiBold} size={16} color={appColors.text} />
+                        <SpaceComponent height={12} />
+                        {attributeGroups.map((group, index) => (
+                            <View key={index} style={{ marginBottom: 16 }}>
+                                <TextComponent text={group.name} size={13} color={appColors.gray} />
+                                <SpaceComponent height={8} />
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                                    {group.values.map((val: string, vIndex: number) => {
+                                        const isSelected = selectedAttributes[group.name] === val;
+                                        return (
+                                            <TouchableOpacity
+                                                key={vIndex}
+                                                onPress={() => handleSelectAttribute(group.name, val)}
+                                                style={[
+                                                    styles.cleanChip,
+                                                    isSelected && styles.cleanChipSelected
+                                                ]}
+                                            >
+                                                <TextComponent
+                                                    text={val}
+                                                    size={13}
+                                                    color={isSelected ? appColors.white : appColors.text}
+                                                    font={isSelected ? fontFamilies.medium : fontFamilies.regular}
+                                                />
+                                            </TouchableOpacity>
+                                        )
+                                    })}
+                                </View>
+                            </View>
+                        ))}
+                    </View>
                 )}
-            </ImageBackground>
+
+                <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
+
+                {/* Shop Info */}
+                <View style={styles.container}>
+                    <TouchableOpacity onPress={() => console.log('View Shop')}>
+                        <RowComponent>
+                            {/* Avatar Logic: User request "nếu ko avatar thì vẫn là icon shop cũ" */}
+                            {product.shop?.image ? (
+                                <Image source={{ uri: product.shop.image }} style={{ width: 50, height: 50, borderRadius: 25 }} />
+                            ) : (
+                                <View style={styles.shopAvatar}>
+                                    <Shop size={24} color={appColors.white} variant="Bold" />
+                                </View>
+                            )}
+
+                            <SpaceComponent width={12} />
+
+                            <View style={{ flex: 1 }}>
+                                <TextComponent text={product.shop?.name || "Cửa Hàng Chính Hãng Apple"} font={fontFamilies.bold} size={16} />
+                                <SpaceComponent height={4} />
+                                <RowComponent justify="flex-start" styles={{ alignItems: 'center' }}>
+                                    <TextComponent text="Online 2 giờ trước" size={12} color={appColors.gray} />
+                                    <SpaceComponent width={6} />
+                                    <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: appColors.gray }} />
+                                    <SpaceComponent width={6} />
+                                    <Shop size={14} color={appColors.primary} variant="Bold" />
+                                    {/* Note: Using Shop icon as placeholder for proper 'Trophy' or 'Badge' if not available, colored primary for 'Official' look */}
+                                    <SpaceComponent width={4} />
+                                    <TextComponent text="Chính hãng" size={12} color={appColors.primary} />
+                                </RowComponent>
+                            </View>
+
+                            <ArrowRight2 size={24} color={appColors.gray} />
+                        </RowComponent>
+                    </TouchableOpacity>
+
+                    <View style={{ height: 1, backgroundColor: '#F0F0F0', marginVertical: 16 }} />
+
+                    <RowComponent justify="space-between">
+                        <View style={{ alignItems: 'center', flex: 1 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                <TextComponent text="4.9" font={fontFamilies.bold} size={16} color={appColors.text} />
+                            </View>
+                            <SpaceComponent height={4} />
+                            <TextComponent text="Đánh giá" size={12} color={appColors.gray} />
+                        </View>
+
+                        <View style={{ width: 1, height: 24, backgroundColor: '#F0F0F0' }} />
+
+                        <View style={{ alignItems: 'center', flex: 1 }}>
+                            <TextComponent text="98%" font={fontFamilies.bold} size={16} color={appColors.text} />
+                            <SpaceComponent height={4} />
+                            <TextComponent text="Phản hồi" size={12} color={appColors.gray} />
+                        </View>
+
+                        <View style={{ width: 1, height: 24, backgroundColor: '#F0F0F0' }} />
+
+                        <View style={{ alignItems: 'center', flex: 1 }}>
+                            <TextComponent text="15k" font={fontFamilies.bold} size={16} color={appColors.text} />
+                            <SpaceComponent height={4} />
+                            <TextComponent text="Sản phẩm" size={12} color={appColors.gray} />
+                        </View>
+                    </RowComponent>
+                </View>
+
+                <View style={{ height: 8, backgroundColor: '#F7F7F7' }} />
+
+                {/* Description */}
+                <View style={styles.container}>
+                    <TextComponent text="Description" font={fontFamilies.semiBold} size={16} />
+                    <SpaceComponent height={8} />
+                    <TextComponent text={product.description} size={14} color={appColors.text} styles={{ lineHeight: 22 }} />
+                </View>
+
+                {/* Related */}
+                {relatedProducts.length > 0 && (
+                    <View style={{ marginTop: 16 }}>
+                        <TextComponent text={t('profile:related_products')} font={fontFamilies.semiBold} size={18} styles={{ marginHorizontal: 16, marginBottom: 12 }} />
+                        <FlatList
+                            horizontal
+                            data={relatedProducts}
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ paddingHorizontal: 16 }}
+                            ItemSeparatorComponent={() => <SpaceComponent width={12} />}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    onPress={() => (navigation as any).push('ProductDetail', { id: item.id })}
+                                    style={styles.relatedItem}
+                                >
+                                    <Image source={{ uri: item.image || item.image_url }} style={{ width: 140, height: 140, borderRadius: 8 }} resizeMode="cover" />
+                                    <SpaceComponent height={8} />
+                                    <TextComponent text={item.name} numberOfLine={2} size={13} font={fontFamilies.medium} />
+                                    <SpaceComponent height={4} />
+                                    <TextComponent text={`${item.price ? item.price.toLocaleString() : 0}đ`} color={appColors.primary} size={13} font={fontFamilies.bold} />
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                )}
+            </ScrollView>
+
+            {/* Clean Bottom Bar */}
+            <View style={styles.bottomBar}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                    <TouchableOpacity style={{ alignItems: 'center' }}>
+                        <Message size={22} color={appColors.text} />
+                        <TextComponent text="Chat" size={10} color={appColors.gray} />
+                    </TouchableOpacity>
+                    <View style={{ width: 1, height: 20, backgroundColor: appColors.gray8 }} />
+                    <TouchableOpacity style={{ alignItems: 'center' }}>
+                        <ShoppingCart size={22} color={appColors.text} />
+                        <TextComponent text="Add" size={10} color={appColors.gray} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ flex: 1, flexDirection: 'row', marginLeft: 20, gap: 12 }}>
+                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#E3F2FD' }]}>
+                        <TextComponent text="Buy Now" color={appColors.primary} font={fontFamilies.bold} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: appColors.primary }]}>
+                        <TextComponent text={`Pays - ${(price * quantity).toLocaleString()}đ`} color={appColors.white} font={fontFamilies.bold} />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    headerButtons: {
+    header: {
         position: 'absolute',
         top: Platform.OS === 'ios' ? 50 : 30,
-        left: 16,
-        right: 16,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        zIndex: 999,
-    },
-    iconButton: {
-        width: 40,
-        height: 40,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        borderRadius: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    bottomBar: {
-        position: 'absolute',
-        bottom: 0,
         left: 0,
         right: 0,
-    },
-    buyButton: {
-        backgroundColor: appColors.primary,
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 16,
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        zIndex: 100
+    },
+    circleBtn: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        justifyContent: 'center',
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3
+    },
+    container: {
+        padding: 16,
+        backgroundColor: appColors.white
+    },
+    tagBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 4,
+        backgroundColor: '#E3F2FD'
+    },
+    cleanChip: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: appColors.gray9,
+        backgroundColor: appColors.white
+    },
+    cleanChipSelected: {
+        backgroundColor: appColors.primary,
+        borderColor: appColors.primary
+    },
+    shopAvatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: appColors.primary,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    relatedItem: {
+        width: 140,
+        marginBottom: 10
+    },
+    bottomBar: {
+        padding: 16,
+        paddingBottom: Platform.OS === 'ios' ? 30 : 16,
+        backgroundColor: appColors.white,
+        borderTopWidth: 1,
+        borderTopColor: '#F0F0F0',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    actionBtn: {
+        flex: 1,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
-
 });
 
 export default ProductDetail;

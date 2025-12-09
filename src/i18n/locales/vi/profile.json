@@ -40,5 +40,12 @@
     "save": "Lưu",
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
-    "ward": "Phường/Xã"
+    "ward": "Phường/Xã",
+    "product_options": "Tùy chọn sản phẩm",
+    "product_description": "Mô tả sản phẩm",
+    "related_products": "Sản phẩm liên quan",
+    "buy_now": "Mua ngay",
+    "add_to_cart": "Thêm giỏ",
+    "chat_now": "Chat ngay",
+    "view_shop": "Xem Shop"
 }

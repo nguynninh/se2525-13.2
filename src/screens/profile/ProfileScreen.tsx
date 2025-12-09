@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Alert } from 'react-native';
-import { AvatarComponent, ButtonComponent, ContainerComponent, SectionComponent, TextComponent } from '../../components';
+
+import { useState, useEffect } from 'react';
+import { Alert, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { AvatarComponent, ButtonComponent, ContainerComponent, RowComponent, SectionComponent, SpaceComponent, TextComponent } from '../../components';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -8,19 +9,36 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeAuth } from '../../redux/reducers/authReducer';
 import { useTranslation } from 'react-i18next';
 import { appColors } from '../../constants/appColors';
-import { removeUser, userSelector } from '../../redux/reducers/userReducer';
-import { ArrowRight, Camera, PictureFrame, UserSquare } from 'iconsax-react-native';
+import { getProfile, removeUser, userSelector } from '../../redux/reducers/userReducer';
+import { ArrowRight, Camera, PictureFrame, UserSquare, Verify, Shop } from 'iconsax-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileMenuModal } from '../../modals';
 import { MenuItem } from '../../modals/ProfileMenuModal';
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const ProfileScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['profile', 'common']);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
 
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await dispatch(getProfile() as any);
+    } catch (error) {
+      console.log('Refresh error:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const user = useSelector(userSelector);
+
+  useEffect(() => {
+    dispatch(getProfile() as any);
+  }, []);
 
   const handleChooseAvatar = async () => {
     try {
@@ -55,74 +73,102 @@ const ProfileScreen = ({ navigation }: any) => {
   ];
   return (
     <ContainerComponent isImageBackground>
-      <AvatarComponent
-        shape="circle"
-        imageUrl={user.avatar}
-        size={60}
-        dot
-        dotColor={appColors.white}
-        dotPosition="bottom-right"
-        dotIcon={<Camera size={16} color={appColors.gray} variant="Bold" />}
-        border={[2, 'solid', appColors.gray2]}
-        styles={{ alignSelf: 'center', marginTop: 20 }}
-        onPress={() => setShowProfileMenu(true)}
-      />
-      <TextComponent
-        text={`${user.lastname} ${user.firstname}` || t('common:profile')}
-        title
-        styles={{ textAlign: 'center' }}
-      />
-      <TextComponent
-        text={`${user.id}` || t('common:profile')}
-        styles={{ textAlign: 'center', marginVertical: 20 }}
-      />
-      <SectionComponent>
-        <ButtonComponent
-          type="primary"
-          text={t('auth:btn_log_out')}
-          onPress={async () => {
-            await GoogleSignin.signOut();
-            await LoginManager.logOut();
-            await AsyncStorage.removeItem('auth');
-            dispatch(removeAuth({}));
-            dispatch(removeUser({}));
-          }}
-          icon={<ArrowRight size={20} color={appColors.white} />}
-          iconFlex="right"
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            colors={[appColors.primary]}
+            tintColor={appColors.gray}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <AvatarComponent
+          shape="circle"
+          imageUrl={user.avatar}
+          size={60}
+          dot
+          dotColor={appColors.white}
+          dotPosition="bottom-right"
+          dotIcon={<Camera size={16} color={appColors.gray} variant="Bold" />}
+          border={[2, 'solid', appColors.gray2]}
+          styles={{ alignSelf: 'center', marginTop: 20 }}
+          onPress={() => setShowProfileMenu(true)}
+        />
+        <TextComponent
+          text={`${user.lastname} ${user.firstname} ` || t('common:profile')}
+          title
+          styles={{ textAlign: 'center' }}
         />
 
-        {user.seller_request_status === 'none' && (
+        {/* Seller Status Section replacing UUID */}
+        <View style={{ marginVertical: 20, alignItems: 'center', justifyContent: 'center' }}>
+          {user.seller_request_status === 'pending' ? (
+            <View style={{ alignItems: 'center' }}>
+              <RowComponent>
+                <Shop size={22} color={appColors.text} variant="Bold" />
+                <SpaceComponent width={8} />
+                <TextComponent text={user.store?.store_name || user.email || 'Cửa hàng'} font={fontFamilies.bold} size={18} color={appColors.text} />
+              </RowComponent>
+            </View>
+          ) : (user.seller_request_status === 'approved' && user.store?.store_name) ? (
+            <TouchableOpacity onPress={() => navigation.navigate('MyProducts')}>
+              <RowComponent>
+                <TextComponent
+                  text={user.store.store_name}
+                  font={fontFamilies.bold}
+                  size={18}
+                  color={appColors.text}
+                />
+                <SpaceComponent width={6} />
+                <Verify size={20} color={appColors.primary} variant="Bold" />
+              </RowComponent>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SellerRegistrationScreen')}
+              style={{
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                backgroundColor: appColors.primary + '15',
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: appColors.primary + '50'
+              }}
+            >
+              <TextComponent text="Đăng ký nhà bán hàng" color={appColors.primary} font={fontFamilies.medium} />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <SectionComponent>
           <ButtonComponent
-            type="link"
-            text={t('profile:request_seller', { defaultValue: 'Register as Seller' })}
+            type="primary"
+            text={t('auth:btn_log_out')}
             onPress={async () => {
-              try {
-                const userApi = require('../../apis/userApi').default;
-                await userApi.requestSeller();
-                // Optional: Update user state or show success
-                Alert.alert(t('profile:request_sent', { defaultValue: 'Request sent successfully' }));
-              } catch (e) {
-                console.log(e);
-              }
+              await GoogleSignin.signOut();
+              await LoginManager.logOut();
+              await AsyncStorage.removeItem('auth');
+              dispatch(removeAuth({}));
+              dispatch(removeUser({}));
             }}
-            styles={{ marginTop: 20 }}
+            icon={<ArrowRight size={20} color={appColors.white} />}
+            iconFlex="right"
           />
-        )}
-        {user.seller_request_status === 'pending' && (
-          <TextComponent
-            text={t('profile:seller_pending', { defaultValue: 'Seller Request Pending' })}
-            styles={{ textAlign: 'center', marginTop: 10, color: appColors.warning }}
-          />
-        )}
-        {user.seller_request_status === 'approved' && (
-          <ButtonComponent
-            type="link"
-            text={t('profile:seller_dashboard', { defaultValue: 'Seller Dashboard' })}
-            onPress={() => navigation.navigate('MyProducts')}
-            styles={{ marginTop: 20 }}
-          />
-        )}
-      </SectionComponent>
+
+          {/* Removed redundant buttons as logic is moved up */}
+          {user.seller_request_status === 'approved' && (
+            <ButtonComponent
+              type="link"
+              text={t('profile:seller_dashboard', { defaultValue: 'Seller Dashboard' })}
+              onPress={() => navigation.navigate('MyProducts')}
+              styles={{ marginTop: 20 }}
+            />
+          )}
+        </SectionComponent>
+      </ScrollView>
 
       <ProfileMenuModal
         visible={showProfileMenu}
@@ -132,5 +178,6 @@ const ProfileScreen = ({ navigation }: any) => {
     </ContainerComponent>
   );
 };
+
 
 export default ProfileScreen;

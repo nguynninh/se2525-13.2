@@ -7,6 +7,8 @@ import axios from 'axios';
 import crypto from 'crypto';
 import { sendEmail } from '../../utils/email';
 import { User } from '../../models/User.model';
+import { Customer } from '../../models/Customer.model';
+import { sequelize } from '../../models';
 import { UnauthorizedError, ValidationError, InternalServerError } from '../../exception/AppError';
 import { redisHelper } from '../../utils/redisHelper';
 import {
@@ -370,13 +372,29 @@ export const authRegister = {
         if (!pending) throw new ValidationError('auth:register_session_expired');
 
         // Tạo user
-        const user = await User.create({
-            first_name: pending.first_name,
-            last_name: pending.last_name,
-            email,
-            password: pending.password_hash,
-            role: 'customer',
-            profile_url: null,
+        const user = await sequelize.transaction(async (tx) => {
+            const createdUser = await User.create(
+                {
+                    first_name: pending.first_name,
+                    last_name: pending.last_name,
+                    email,
+                    password: pending.password_hash,
+                    role: 'customer',
+                    profile_url: null,
+                },
+                { transaction: tx },
+            );
+
+            // Khởi tạo customer với 100 loyalty points
+            await Customer.create(
+                {
+                    user_id: createdUser.getDataValue('id'),
+                    loyalty_points: 100,
+                },
+                { transaction: tx },
+            );
+
+            return createdUser;
         });
 
         console.log(user);
@@ -556,12 +574,6 @@ export const authLogout = {
         } catch {
             // Có thể trả lỗi nhưng vì mục đích logout nên im lặng
         }
-        return { ok: true };
-    },
-
-    // Đăng xuất tất cả phiên
-    async logoutAll(userId: string): Promise<{ ok: true }> {
-        await redisHelper.delPattern(`auth:refresh:${userId}:*`);
         return { ok: true };
     },
 };

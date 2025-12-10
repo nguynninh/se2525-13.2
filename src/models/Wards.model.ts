@@ -1,10 +1,12 @@
 import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import Province from './Provinces.model';
 
 export class Ward extends Model<InferAttributes<Ward>, InferCreationAttributes<Ward>> {
     declare id: CreationOptional<string>;
     declare code: string;
     declare name: string;
     declare province_id: string;
+    declare province?: Province;
 
     static initModel(sequelize: Sequelize) {
         Ward.init(

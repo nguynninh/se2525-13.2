@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import Address from './Address.model';
 
 export class ShippingAddress extends Model<InferAttributes<ShippingAddress>, InferCreationAttributes<ShippingAddress>> {
     declare id: CreationOptional<string>;
@@ -7,6 +8,7 @@ export class ShippingAddress extends Model<InferAttributes<ShippingAddress>, Inf
     declare receiver_name: string;
     declare receiver_phone: string;
     declare is_default: CreationOptional<boolean>;
+    declare address?: Address;
 
     static initModel(sequelize: Sequelize) {
         ShippingAddress.init(

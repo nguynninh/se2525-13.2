@@ -41,7 +41,6 @@ router.get('/test/postgres', async (req: Request, res: Response) => {
         await client.connect();
         const r = await client.query('SELECT 1 as ok');
         await client.end();
-
         const pgStatus = r.rows?.[0]?.ok === 1 ? 'connected' : 'unknown';
         return response.ok(res, { status: pgStatus }, 'PostgreSQL connected');
     } catch (err: any) {
@@ -63,7 +62,6 @@ router.get('/test/redis', async (req: Request, res: Response) => {
         await redis.connect();
         const pong = await redis.ping();
         await redis.quit();
-
         const redisStatus = pong === 'PONG' ? 'connected' : 'unknown';
         return response.ok(res, { status: redisStatus }, 'Redis connected');
     } catch (err: any) {

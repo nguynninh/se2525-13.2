@@ -84,10 +84,16 @@ export const changePassword = async (userId: string, dto: ChangePasswordDto): Pr
         throw new NotFoundError('user:user_not_found');
     }
 
+    console.log('dto in changePassword:', dto);
+    console.log('current_password =', dto.current_password);
+    console.log('hash in DB       =', user.password);
+
     const isMatch = await comparePassword(dto.current_password, user.password);
     if (!isMatch) {
         throw new ValidationError('auth:password_incorrect');
     }
+
+    console.log('isMatch =', isMatch);
 
     const newHashed = await hashPassword(dto.new_password);
     user.password = newHashed;

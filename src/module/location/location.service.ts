@@ -54,14 +54,15 @@ export const listProvinces = async (): Promise<ProvinceResponseDto[]> => {
 };
 
 // Lấy danh sách quận/huyện theo tỉnh/thành phố
-export const listWardsByProvince = async (provinceId: string): Promise<WardResponseDto[]> => {
-    const province = await Province.findByPk(provinceId);
+export const listWardsByProvince = async (provinceCode: string): Promise<WardResponseDto[]> => {
+    const province = await Province.findOne({ where: { code: provinceCode } });
+
     if (!province) {
         throw new NotFoundError('shipping:province_not_found');
     }
 
     const wards = await Ward.findAll({
-        where: { province_id: provinceId },
+        where: { province_id: province.id },
         order: [['name', 'ASC']],
     });
 

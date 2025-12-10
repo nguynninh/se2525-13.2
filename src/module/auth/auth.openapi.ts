@@ -313,17 +313,4 @@ export const registerAuthOpenApi = (registry: OpenAPIRegistry) => {
             },
         },
     });
-
-    // POST api/auth/logout/all
-    registry.registerPath({
-        method: 'post',
-        path: '/api/auth/logout/all',
-        tags: ['Auth'],
-        summary: 'Đăng xuất toàn phiên',
-        responses: {
-            200: {
-                description: 'Đăng xuất thành công',
-            },
-        },
-    });
 };

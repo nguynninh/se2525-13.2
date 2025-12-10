@@ -28,16 +28,16 @@ export const registerLocationOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // GET /api/location/provinces/{provinceId}/wards
+    // GET /api/location/provinces/:code/wards
     registry.registerPath({
         method: 'get',
-        path: '/api/location/provinces/{provinceId}/wards',
+        path: '/api/location/provinces/{code}/wards',
         tags: ['Location'],
         summary: 'Lấy danh sách quận huyện của một tỉnh thành',
         request: {
             params: z.object({
-                provinceId: z.string().uuid().openapi({
-                    description: 'Province ID',
+                code: z.string().trim().openapi({
+                    description: 'Province code',
                 }),
             }),
         },

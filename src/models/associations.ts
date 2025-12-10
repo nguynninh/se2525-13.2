@@ -10,6 +10,14 @@ import type Ward from './Wards.model';
 import type Address from './Address.model';
 import type ShippingAddress from './ShippingAddress.model';
 import type OrderAddress from './OrderAddress.model';
+import type Category from './Category.model';
+import type Product from './Product.model';
+import type ProductImage from './ProductImage.model';
+import type ProductVariant from './ProductVariant.model';
+import type ProductVariantOption from './ProductVariantOption.model';
+import type ProductStock from './ProductStock.model';
+import type ProductReview from './ProductReview.model';
+import type ProductQuestion from './ProductQuestion.model';
 
 type Models = {
     User: ModelStatic<User>;
@@ -23,6 +31,14 @@ type Models = {
     Address?: ModelStatic<Address>;
     ShippingAddress?: ModelStatic<ShippingAddress>;
     OrderAddress?: ModelStatic<OrderAddress>;
+    Category?: ModelStatic<Category>;
+    Product?: ModelStatic<Product>;
+    ProductImage?: ModelStatic<ProductImage>;
+    ProductVariant?: ModelStatic<ProductVariant>;
+    ProductVariantOption?: ModelStatic<ProductVariantOption>;
+    ProductStock?: ModelStatic<ProductStock>;
+    ProductReview?: ModelStatic<ProductReview>;
+    ProductQuestion?: ModelStatic<ProductQuestion>;
 };
 
 export function associations(models: Models) {
@@ -38,6 +54,14 @@ export function associations(models: Models) {
         Address,
         ShippingAddress,
         OrderAddress,
+        Category,
+        Product,
+        ProductImage,
+        ProductVariant,
+        ProductVariantOption,
+        ProductStock,
+        ProductReview,
+        ProductQuestion
     } = models;
 
     if (User && Customer) {
@@ -116,5 +140,63 @@ export function associations(models: Models) {
             foreignKey: 'ward_id',
             as: 'ward',
         });
+    }
+
+    if (Category) {
+        Category.hasMany(Category, { foreignKey: 'parent_id', as: 'children' });
+        Category.belongsTo(Category, { foreignKey: 'parent_id', as: 'parent' });
+    }
+
+    if (Category && Product) {
+        Category.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
+        Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category' });
+    }
+
+    if (Shop && Product) {
+        Shop.hasMany(Product, { foreignKey: 'shop_id', as: 'products' });
+        Product.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (Product && ProductImage) {
+        Product.hasMany(ProductImage, { foreignKey: 'product_id', as: 'images' });
+        ProductImage.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (Product && ProductVariant) {
+        Product.hasMany(ProductVariant, { foreignKey: 'product_id', as: 'variants' });
+        ProductVariant.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (Product && ProductStock) {
+        Product.hasMany(ProductStock, { foreignKey: 'product_id', as: 'stocks' });
+        ProductStock.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (ProductVariant && ProductVariantOption) {
+        ProductVariant.hasMany(ProductVariantOption, { foreignKey: 'variant_id', as: 'options' });
+        ProductVariantOption.belongsTo(ProductVariant, { foreignKey: 'variant_id', as: 'variant' });
+    }
+
+    if (Product && ProductReview) {
+        Product.hasMany(ProductReview, { foreignKey: 'product_id', as: 'reviews' });
+        ProductReview.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+    
+    if (User && ProductReview) {
+        User.hasMany(ProductReview, { foreignKey: 'user_id', as: 'product_reviews' });
+        ProductReview.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+    }
+
+    if (Product && ProductQuestion) {
+        Product.hasMany(ProductQuestion, { foreignKey: 'product_id', as: 'questions' });
+        ProductQuestion.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (User && ProductQuestion) {
+        User.hasMany(ProductQuestion, { foreignKey: 'user_id', as: 'questions_asked' });
+        ProductQuestion.belongsTo(User, { foreignKey: 'user_id', as: 'asker' });
+        
+        User.hasMany(ProductQuestion, { foreignKey: 'answered_by', as: 'questions_answered' });
+        ProductQuestion.belongsTo(User, { foreignKey: 'answered_by', as: 'answerer' });
     }
 }

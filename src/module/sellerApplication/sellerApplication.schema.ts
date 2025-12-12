@@ -41,11 +41,11 @@ export const SellerApplicationStatus = z.enum(['approved', 'rejected']).openapi(
 export const SellerApplicationResponseSchema = z
     .object({
         id: z.string().uuid(),
-        userId: z.string().uuid(),
+        user_id: z.string().uuid(),
         status: SellerApplicationStatus,
         accepted_terms: z.boolean(),
-        rejection_reason: z.string(),
-        reviewed_by: z.string().uuid(),
+        rejection_reason: z.string().nullable(),
+        reviewed_by: z.string().uuid().nullable(),
     })
     .openapi('SellerApplicationResponse');
 
@@ -56,17 +56,19 @@ export const GetMySellerApplicationResponseSchema = z
         created_at: z.string(),
         updated_at: z.string(),
         user: UserPublicSchema,
+        status: SellerApplicationStatus,
+        rejection_reason: z.string().nullable().optional(),
     })
     .openapi('GetMySellerApplicationResponse');
 
 export const SellerApplicationWithUserResponseSchema = z
     .object({
         id: z.string().uuid(),
-        userId: z.string().uuid(),
+        user_id: z.string().uuid(),
         status: SellerApplicationStatus,
         accepted_terms: z.boolean(),
-        rejection_reason: z.string(),
-        reviewed_by: z.string().uuid(),
+        rejection_reason: z.string().nullable(),
+        reviewed_by: z.string().uuid().nullable(),
         user: UserPublicSchema,
     })
     .openapi('SellerApplicationWithUserResponse');

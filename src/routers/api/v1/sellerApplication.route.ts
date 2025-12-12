@@ -13,7 +13,6 @@ import {
 import {
     CreateSellerApplicationSchema,
     ReviewSellerApplicationSchema,
-    HistoryQuerySchema,
 } from '../../../module/sellerApplication/sellerApplication.schema';
 
 const router = Router();
@@ -28,13 +27,7 @@ router.get('/me/latest', authenticate, getMyLatestSellerApplicationController);
 router.get('/admin/pending', authenticate, restrictTo('admin'), listSellerPendingApplicationsController);
 
 // GET /api/seller-applications/admin/history?status=approved|rejected
-router.get(
-    '/admin/history',
-    authenticate,
-    restrictTo('admin'),
-    v(HistoryQuerySchema, 'user'),
-    listSellerHistoryApplicationsController,
-);
+router.get('/admin/history', authenticate, restrictTo('admin'), listSellerHistoryApplicationsController);
 
 // PATCH /api/seller-applications/admin/:id/review
 router.patch(

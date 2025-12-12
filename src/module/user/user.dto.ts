@@ -1,5 +1,6 @@
 import { UserRole } from '../../models/User.model';
 import { SellerStatus } from '../../models/Seller.model';
+import { ShippingAddressResponseDto } from '../location/location.dto';
 
 export type SellerStatusDto = SellerStatus;
 
@@ -114,4 +115,5 @@ export interface AdminUserDetailResponseDto {
     customer: CustomerResponseDto | null;
     seller: SellerResponseDto | null;
     admin: AdminResponseDto | null;
+    shipping_addresses: ShippingAddressResponseDto[];
 }

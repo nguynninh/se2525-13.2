@@ -90,8 +90,15 @@ export function associations(models: Models) {
     }
 
     if (Address && Shop) {
-        Shop.hasOne(Address, { foreignKey: 'shop_id', as: 'address' });
-        Address.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+        Address.hasOne(Shop, {
+            foreignKey: 'address_id',
+            as: 'shop',
+        });
+
+        Shop.belongsTo(Address, {
+            foreignKey: 'address_id',
+            as: 'address',
+        });
     }
 
     if (Address && ShippingAddress) {

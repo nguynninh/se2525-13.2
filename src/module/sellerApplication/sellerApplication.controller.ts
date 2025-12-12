@@ -87,7 +87,7 @@ export const reviewSellerApplicationController = async (req: Request, res: Respo
             throw new ValidationError('auth:unauthenticated');
         }
 
-        const applicationId = req.params.applicationId;
+        const applicationId = req.params.id; // 👈 ĐỔI TỪ applicationId -> id
         if (!applicationId) {
             throw new ValidationError('user:application_id_required');
         }

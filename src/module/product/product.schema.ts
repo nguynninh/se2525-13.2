@@ -114,10 +114,11 @@ export const CreateProductVariantOptionSchema = z
 export const CreateProductStockSchema = z
     .object({
         product_id: z.string().uuid(),
-        option_ids: z.string().min(1),
+        option_ids: z.array(z.string()).optional().nullable(),
         sku: z.string().trim().regex(/^[A-Z0-9-_.]+$/).max(100).optional(),
         price: z.number().min(1000),
         quantity: z.number().int().nonnegative(),
+        tier_index: z.array(z.number()).optional(),
     })
     .strict()
     .openapi('CreateProductStockRequest');

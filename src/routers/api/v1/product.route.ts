@@ -21,10 +21,6 @@ import {
 
 const router = Router();
 
-// ==============================================
-// 1. CÁC ROUTE TĨNH (Đặt lên trên cùng)
-// ==============================================
-
 router.get('/categories', ProductController.getCategories);
 router.get('/products/categories', ProductController.getCategories);
 
@@ -32,7 +28,7 @@ router.post(
     '/categories',
     authenticate,
     restrictTo('admin'),
-    v(CreateCategorySchema),
+    v({ body: CreateCategorySchema }),
     ProductController.createCategory
 );
 
@@ -40,17 +36,17 @@ router.patch(
     '/categories/:id',
     authenticate,
     restrictTo('admin'),
-    v(UpdateCategorySchema),
+    v({ body: UpdateCategorySchema }),
     ProductController.updateCategory
 );
 
-router.get('/products', v(FilterProductQuerySchema), ProductController.getProducts);
+router.get('/products', v({ query: FilterProductQuerySchema }), ProductController.getProducts);
 
 router.post(
     '/products',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(CreateProductSchema),
+    v({ body: CreateProductSchema }),
     ProductController.createProduct
 );
 
@@ -59,7 +55,7 @@ router.post(
     authenticate,
     restrictTo('seller', 'admin'),
     uploadImage('file', 5),
-    v(AddProductImageSchema),
+    v({ body: AddProductImageSchema }),
     ProductController.addProductImage
 );
 
@@ -67,7 +63,7 @@ router.post(
     '/products/variants',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(CreateProductVariantSchema),
+    v({ body: CreateProductVariantSchema }),
     ProductController.createVariant
 );
 
@@ -75,7 +71,7 @@ router.post(
     '/products/variants/options',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(CreateProductVariantOptionSchema),
+    v({ body: CreateProductVariantOptionSchema }),
     ProductController.createVariantOption
 );
 
@@ -83,35 +79,31 @@ router.post(
     '/products/stocks',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(CreateProductStockSchema),
+    v({ body: CreateProductStockSchema }),
     ProductController.createStock
 );
 
 router.post(
     '/products/reviews',
     authenticate,
-    restrictTo('customer'),
-    v(CreateReviewSchema),
+    restrictTo('customer', 'seller'),
+    v({ body: CreateReviewSchema }),
     ProductController.createReview
 );
 
 router.post(
     '/products/questions',
     authenticate,
-    restrictTo('customer'),
-    v(CreateQuestionSchema),
+    restrictTo('customer', 'seller'),
+    v({ body: CreateQuestionSchema }),
     ProductController.createQuestion
 );
-
-// ==============================================
-// 2. CÁC ROUTE ĐỘNG KHÁC (Không phải GET Detail)
-// ==============================================
 
 router.patch(
     '/products/stocks/:id',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(UpdateProductStockSchema),
+    v({ body: UpdateProductStockSchema }),
     ProductController.updateStock
 );
 
@@ -119,16 +111,12 @@ router.patch(
     '/products/questions/:id/answer',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(AnswerQuestionSchema),
+    v({ body: AnswerQuestionSchema }),
     ProductController.answerQuestion
 );
 
 router.get('/products/:id/reviews', ProductController.getReviews);
 router.get('/products/:id/questions', ProductController.getQuestions);
-
-// ==============================================
-// 3. ROUTE CHI TIẾT SẢN PHẨM (Đặt cuối cùng)
-// ==============================================
 
 router.get('/products/:id', ProductController.getProductById);
 
@@ -136,7 +124,7 @@ router.patch(
     '/products/:id',
     authenticate,
     restrictTo('seller', 'admin'),
-    v(UpdateProductSchema),
+    v({ body: UpdateProductSchema }),
     ProductController.updateProduct
 );
 

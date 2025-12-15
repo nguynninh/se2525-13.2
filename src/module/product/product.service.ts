@@ -202,7 +202,19 @@ export const createVariantOption = async (data: any) => {
 };
 
 export const createStock = async (data: any) => {
-    return await ProductStock.create(data);
+    const { option_ids, tier_index, ...rest } = data;
+    let optionIdsString = '';
+    
+    if (Array.isArray(option_ids)) {
+        optionIdsString = option_ids.join(','); 
+    } else if (typeof option_ids === 'string') {
+        optionIdsString = option_ids;
+    }
+
+    return await ProductStock.create({
+        ...rest,
+        option_ids: optionIdsString
+    });
 };
 
 export const updateStock = async (id: string, data: any) => {
@@ -210,10 +222,40 @@ export const updateStock = async (id: string, data: any) => {
     if (!stock) {
         throw new NotFoundError('product:stock_not_found');
     }
+
+    if (data.option_ids) {
+        if (Array.isArray(data.option_ids)) {
+            data.option_ids = data.option_ids.join(',');
+        }
+    }
+
     return await stock.update(data);
 };
 
 export const createReview = async (userId: string, data: any) => {
+    const product = await Product.findByPk(data.product_id);
+    if (!product) {
+        throw new NotFoundError('product:not_found');
+    }
+
+    const user = await User.findByPk(userId); 
+    
+    if (user?.role === 'seller') {
+        try {
+            const shop = await Shop.findOne({ where: { id: product.shop_id } });
+            
+            const shopOwnerId = shop ? (shop as any).user_id : null; 
+
+            if (shopOwnerId && shopOwnerId === userId) {
+                 throw new Error('review:cannot_review_own_product');
+            }
+        } catch (error) {
+            if ((error as Error).message === 'review:cannot_review_own_product') {
+                throw error;
+            }
+        }
+    }
+
     return await ProductReview.create({
         ...data,
         user_id: userId

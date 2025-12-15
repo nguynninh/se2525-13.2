@@ -34,6 +34,12 @@ export class ProductQuestion extends Model<InferAttributes<ProductQuestion>, Inf
         );
         return ProductQuestion;
     }
+
+    static associate(models: any) {
+        ProductQuestion.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+        ProductQuestion.belongsTo(models.User, { foreignKey: 'answered_by', as: 'answerer' });
+        ProductQuestion.belongsTo(models.Product, { foreignKey: 'product_id', as: 'product' });
+    }
 }
 
 export default ProductQuestion;

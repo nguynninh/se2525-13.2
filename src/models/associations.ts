@@ -200,8 +200,8 @@ export function associations(models: Models) {
     }
 
     if (User && ProductQuestion) {
-        User.hasMany(ProductQuestion, { foreignKey: 'user_id', as: 'questions_asked' });
-        ProductQuestion.belongsTo(User, { foreignKey: 'user_id', as: 'asker' });
+        User.hasMany(ProductQuestion, { foreignKey: 'user_id', as: 'questions' });
+        ProductQuestion.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
         
         User.hasMany(ProductQuestion, { foreignKey: 'answered_by', as: 'questions_answered' });
         ProductQuestion.belongsTo(User, { foreignKey: 'answered_by', as: 'answerer' });

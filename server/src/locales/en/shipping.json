@@ -1,0 +1,16 @@
+{
+    "address_line_required": "Address line is required.",
+    "ward_id_required": "Ward ID is required.",
+    "address_line_too_long": "Address line must not exceed 255 characters.",
+    "receiver_name_required": "Receiver name is required.",
+    "receiver_name_invalid": "Receiver name contains invalid characters.",
+    "receiver_phone_required": "Receiver phone number is required.",
+    "update_body_empty": "At least one field must be provided for update.",
+    "ward_not_found": "The specified ward was not found.",
+    "province_id_invalid": "Province ID is invalid.",
+    "ward_id_invalid": "Ward ID is invalid.",
+    "id_invalid": "Shipping address ID is invalid.",
+    "province_not_found": "The specified province was not found.",
+    "address_not_found": "The specified shipping address was not found.",
+    "cannot_unset_only_default": "Cannot unset the only default shipping address."
+}

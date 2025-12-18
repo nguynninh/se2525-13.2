@@ -55,7 +55,6 @@ export const ProductController = {
         try {
             const userId = (req as any).user.id;
 
-            // --- ĐÃ SỬA LẠI: Dùng user_id để khớp với Database ---
             const seller = await Seller.findOne({ where: { user_id: userId } });
             
             if (!seller) {
@@ -75,6 +74,31 @@ export const ProductController = {
 
             const result = await createProduct(productData);
             res.status(201).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    getMyProducts: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = (req as any).user.id;
+            const seller = await Seller.findOne({ where: { user_id: userId } });
+            
+            if (!seller) {
+                throw new AppError('product:user_is_not_seller', 403);
+            }
+
+            const shop = await Shop.findOne({ where: { seller_id: seller.id } as any });
+            
+            if (!shop) {
+                throw new AppError('product:user_has_no_shop', 403);
+            }
+
+            const result = await getProducts({ 
+                ...req.query, 
+                shop_id: shop.id 
+            });
+            res.status(200).json({ products: result.products });
         } catch (error) {
             next(error);
         }

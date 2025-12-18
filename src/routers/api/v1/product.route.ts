@@ -42,6 +42,13 @@ router.patch(
 
 router.get('/products', v({ query: FilterProductQuerySchema }), ProductController.getProducts);
 
+router.get(
+    '/products/my-products',
+    authenticate,
+    restrictTo('seller', 'admin'),
+    ProductController.getMyProducts
+);
+
 router.post(
     '/products',
     authenticate,

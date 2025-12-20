@@ -89,7 +89,7 @@ export const FilterProductQuerySchema = z
 export const AddProductImageSchema = z
     .object({
         product_id: z.string().uuid(),
-        image_url: z.string().url(),
+        image_url: z.string().url().optional(),
         is_main: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
     })
     .strict()

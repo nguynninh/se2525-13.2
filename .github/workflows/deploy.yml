@@ -7,24 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -40,18 +26,7 @@ jobs:
           SERVER_IP: 34.27.61.12
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          tar czf /tmp/deploy.tar.gz \
-            --exclude='node_modules' \
-            --exclude='.git' \
-            --exclude='.env' \
-            --exclude='dist' \
-            .
-          
-          # Transfer tarball to server
-          scp /tmp/deploy.tar.gz ${SERVER_USER}@${SERVER_IP}:~/server/
-          
-          # Extract and deploy on server
           ssh ${SERVER_USER}@${SERVER_IP} "cd ~/server && \
-            tar xzf deploy.tar.gz && \
-            rm deploy.tar.gz && \
-            bash deploy.sh"
+            git checkout development && \
+            git pull && \
+            docker compose up -d --build"

@@ -14,8 +14,8 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'post',
         path: '/api/shipments',
-        tags: ['Shipment'],
-        summary: 'Create shipment',
+        tags: ['Shipment - Admin'],
+        summary: 'Tạo shipment',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -28,7 +28,7 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Shipment created',
+                description: 'Tạo shipment thành công',
                 content: {
                     'application/json': {
                         schema: ShipmentResponseSchema,
@@ -41,15 +41,15 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/shipments/{id}',
-        tags: ['Shipment'],
-        summary: 'Get shipment detail',
+        tags: ['Shipment - Admin'],
+        summary: 'Xem chi tiết shipment',
         security: [{ BearerAuth: [] }],
         request: {
             params: ShipmentIdParamSchema,
         },
         responses: {
             200: {
-                description: 'Shipment detail',
+                description: 'Chi tiết shipment',
                 content: {
                     'application/json': {
                         schema: ShipmentResponseSchema,
@@ -62,15 +62,15 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/orders/{id}/shipments',
-        tags: ['Shipment'],
-        summary: 'List shipments of an order',
+        tags: ['Shipment - Admin'],
+        summary: 'Danh sách shipment của đơn hàng',
         security: [{ BearerAuth: [] }],
         request: {
             params: OrderIdParamSchema,
         },
         responses: {
             200: {
-                description: 'Shipments of order',
+                description: 'Danh sách shipment của đơn',
                 content: {
                     'application/json': {
                         schema: ShipmentResponseSchema.array(),
@@ -83,8 +83,8 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/shipments/{id}/status',
-        tags: ['Shipment'],
-        summary: 'Update shipment status',
+        tags: ['Shipment - Admin'],
+        summary: 'Cập nhật trạng thái shipment',
         security: [{ BearerAuth: [] }],
         request: {
             params: ShipmentIdParamSchema,
@@ -98,7 +98,7 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Shipment updated',
+                description: 'Cập nhật shipment thành công',
                 content: {
                     'application/json': {
                         schema: ShipmentResponseSchema,
@@ -112,12 +112,12 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/shipping-rates',
-        tags: ['Shipment'],
-        summary: 'List shipping rates',
+        tags: ['Shipment - Admin'],
+        summary: 'Danh sách phí vận chuyển',
         security: [{ BearerAuth: [] }],
         responses: {
             200: {
-                description: 'Shipping rates',
+                description: 'Danh sách cấu hình phí',
                 content: {
                     'application/json': {
                         schema: ShippingRateResponseSchema.array(),
@@ -130,15 +130,15 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/shipping-rates/{id}',
-        tags: ['Shipment'],
-        summary: 'Get shipping rate detail',
+        tags: ['Shipment - Admin'],
+        summary: 'Xem chi tiết phí vận chuyển',
         security: [{ BearerAuth: [] }],
         request: {
             params: ShippingRateIdParamSchema,
         },
         responses: {
             200: {
-                description: 'Shipping rate detail',
+                description: 'Chi tiết cấu hình phí',
                 content: {
                     'application/json': {
                         schema: ShippingRateResponseSchema,
@@ -151,8 +151,8 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/shipping-rates/{id}',
-        tags: ['Shipment'],
-        summary: 'Update shipping rate',
+        tags: ['Shipment - Admin'],
+        summary: 'Cập nhật phí vận chuyển',
         security: [{ BearerAuth: [] }],
         request: {
             params: ShippingRateIdParamSchema,
@@ -166,7 +166,7 @@ export const registerShipmentOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Shipping rate updated',
+                description: 'Cập nhật phí thành công',
                 content: {
                     'application/json': {
                         schema: ShippingRateResponseSchema,

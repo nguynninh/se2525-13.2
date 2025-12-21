@@ -77,19 +77,14 @@ router.get('/test/redis', async (req: Request, res: Response) => {
     }
 });
 
-router.use('/v1/auth', authRoute);
-router.use('/v1/users', userRoute);
-router.use('/v1/seller-applications', sellerApplicationRoute);
-router.use('/v1', productRoute);
-router.use('/v1', locationRoute);
-router.use('/v1/cart', cartRoute);
 router.use('/auth', authRoute);
 router.use('/users', userRoute);
 router.use('/seller-applications', sellerApplicationRoute);
-router.use('/product', productRoute);
+router.use('/', productRoute);
+router.use('/', locationRoute);
+router.use('/cart', cartRoute);
 router.use('/shop', shopRoute);
 router.use('/', orderRoute);
 router.use('/', shipmentRoute);
-router.use('/', locationRoute);
 
 export default router;

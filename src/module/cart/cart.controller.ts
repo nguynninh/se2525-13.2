@@ -1,5 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { addToCart, updateCartItem, removeCartItem, clearCart, getCart, getCartSummary } from './cart.service';
+import {
+    addToCart,
+    updateCartItem,
+    removeCartItem,
+    clearCart,
+    getCart,
+    getCartSummary,
+    increaseCartItem,
+    decreaseCartItem,
+} from './cart.service';
 import { AddToCartDto, UpdateCartItemDto, CartResponseDto, CartItemResponseDto, CartSummaryDto } from './cart.dto';
 import response from '../../utils/response';
 
@@ -38,6 +47,28 @@ export const removeCartItemController = async (req: Request, res: Response, next
         await removeCartItem(userId, cartItemId);
 
         response.ok(res, null, 'cart:item_removed');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const increaseCartItemController = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = (req as any).user?.id;
+        const cartItemId = req.params.id;
+        const item = await increaseCartItem(userId, cartItemId);
+        response.ok(res, item, 'cart:item_increased');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const decreaseCartItemController = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = (req as any).user?.id;
+        const cartItemId = req.params.id;
+        const item = await decreaseCartItem(userId, cartItemId);
+        response.ok(res, item, 'cart:item_decreased');
     } catch (error) {
         next(error);
     }

@@ -99,7 +99,7 @@ services:
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
             - ./nginx/certs:/etc/letsencrypt
-            - certbot-var:/var/www/certbot
+            - ./nginx/certbot-var:/var/www/certbot
         depends_on:
             - backend
         networks:

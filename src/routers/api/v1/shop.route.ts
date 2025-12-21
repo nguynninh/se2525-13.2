@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticate, restrictTo } from '../../../middlewares/auth.middleware';
+import { redisCache } from '../../../middlewares/redisCache';
 import { v } from '../../../utils/zod.format';
 import {
     publicShopController,
@@ -26,9 +27,9 @@ const router = Router();
 const uploadShopImages = createImageUploadMiddleware(5);
 
 // GET /api/shop/public
-router.get('/public', v({ query: ShopListQuerySchema }), publicShopController.list);
+router.get('/public', redisCache(300), v({ query: ShopListQuerySchema }), publicShopController.list);
 // GET /api/shop/public/:slug
-router.get('/public/:slug', v({ params: ShopSlugParamSchema }), publicShopController.detail);
+router.get('/public/:slug', redisCache(300), v({ params: ShopSlugParamSchema }), publicShopController.detail);
 
 // GET /api/shop/me
 router.get('/me', authenticate, restrictTo('seller'), sellerShopController.getMine);
@@ -99,7 +100,7 @@ router.get(
     adminShopController.list,
 );
 // GET /api/shop/admin/featured
-router.get('/admin/featured', authenticate, restrictTo('admin'), adminShopController.listFeatured);
+router.get('/admin/featured', authenticate, restrictTo('admin'), redisCache(600), adminShopController.listFeatured);
 // GET /api/shop/admin/:id
 router.get(
     '/admin/:id',

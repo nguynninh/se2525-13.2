@@ -1,9 +1,9 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { authenticate, restrictTo } from '../../../middlewares/auth.middleware';
 import { createImageUploadMiddleware } from '../../../utils/upload';
 import { ProductController } from '../../../module/product/product.controller';
 import { v } from '../../../utils/zod.format';
-import { z } from 'zod';
 import {
     CreateCategorySchema,
     UpdateCategorySchema,

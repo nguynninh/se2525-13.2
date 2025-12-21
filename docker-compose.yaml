@@ -90,11 +90,43 @@ services:
             - '1025:1025'
             - '8025:8025'
 
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/certs:/etc/letsencrypt
+            - certbot-var:/var/www/certbot
+        depends_on:
+            - backend
+        networks:
+            - backend
+
+    certbot:
+        image: certbot/certbot
+        container_name: certbot
+        volumes:
+            - ./nginx/certs:/etc/letsencrypt
+            - certbot-var:/var/www/certbot
+        entrypoint: >
+            /bin/sh -c 'trap exit TERM; 
+            while :; do 
+                sleep 12h & wait $${!}; 
+                certbot renew --webroot -w /var/www/certbot; 
+            done'
+        networks:
+            - backend
+
+
 volumes:
     db-data:
     redis-data:
     pgadmin-data:
     minio-data:
+    certbot-var:
 
 networks:
     backend:

@@ -8,6 +8,8 @@ export interface CreateProductDto {
     status?: 'draft' | 'active' | 'hidden' | 'banned';
     price: number;
     quantity: number;
+    images?: AddProductImageDto[]; // array ảnh
+    variants?: CreateProductVariantDto[]; // array variant
 }
 
 export interface UpdateProductDto {
@@ -18,6 +20,8 @@ export interface UpdateProductDto {
     status?: 'draft' | 'active' | 'hidden' | 'banned';
     price?: number;
     quantity?: number;
+    images?: AddProductImageDto[]; // update ảnh
+    variants?: CreateProductVariantDto[]; // update variant
 }
 
 export interface FilterProductDto {
@@ -33,24 +37,18 @@ export interface FilterProductDto {
 }
 
 export interface AddProductImageDto {
-    product_id: string;
     image_url: string;
     is_main?: boolean;
 }
 
 export interface CreateProductVariantDto {
-    product_id: string;
     name: string;
-}
-
-export interface CreateProductVariantOptionDto {
-    variant_id: string;
-    value: string;
+    options: string[]; // array options như ["Red", "Blue"]
 }
 
 export interface CreateProductStockDto {
     product_id: string;
-    option_ids: string;
+    option_ids: string; // comma separated, ví dụ "option1,option2"
     sku?: string;
     price: number;
     quantity: number;

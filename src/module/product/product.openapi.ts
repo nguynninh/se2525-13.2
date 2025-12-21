@@ -170,6 +170,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
                     },
                 },
             },
+            404: {
+                description: 'Product not found',
+            },
         },
     });
 

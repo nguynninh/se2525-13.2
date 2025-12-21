@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticate, restrictTo } from '../../../middlewares/auth.middleware';
-import { uploadImage } from '../../../middlewares/upload.middleware';
+import { createImageUploadMiddleware } from '../../../utils/upload';
 import { ProductController } from '../../../module/product/product.controller';
 import { v } from '../../../utils/zod.format';
 import {
@@ -20,6 +20,7 @@ import {
 } from '../../../module/product/product.schema';
 
 const router = Router();
+const uploadImage = createImageUploadMiddleware(5);
 
 router.get('/categories', ProductController.getCategories);
 router.get('/products/categories', ProductController.getCategories);
@@ -40,14 +41,16 @@ router.patch(
     ProductController.updateCategory
 );
 
-router.get('/products', v({ query: FilterProductQuerySchema }), ProductController.getProducts);
-
-router.get(
-    '/products/my-products',
+// DELETE /api/product/categories/:id
+router.delete(
+    '/categories/:id',
     authenticate,
-    restrictTo('seller', 'admin'),
-    ProductController.getMyProducts
+    restrictTo('admin'),
+    v({ params: z.object({ id: z.string().uuid() }) }),
+    ProductController.deleteCategory
 );
+
+router.get('/products', v({ query: FilterProductQuerySchema }), ProductController.getProducts);
 
 router.post(
     '/products',
@@ -61,7 +64,7 @@ router.post(
     '/products/images',
     authenticate,
     restrictTo('seller', 'admin'),
-    uploadImage('file', 5),
+    uploadImage.single('file'),
     v({ body: AddProductImageSchema }),
     ProductController.addProductImage
 );

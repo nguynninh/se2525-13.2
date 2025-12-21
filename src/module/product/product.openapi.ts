@@ -30,12 +30,12 @@ import {
 export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
-        path: '/api/v1/categories',
+        path: '/api/product/categories',
         tags: ['Category'],
-        summary: 'Get all categories',
+        summary: 'Lấy danh sách danh mục',
         responses: {
             200: {
-                description: 'List of categories',
+                description: 'Danh sách danh mục',
                 content: {
                     'application/json': {
                         schema: z.array(CategoryResponseSchema),
@@ -47,9 +47,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/categories',
+        path: '/api/product/categories',
         tags: ['Category'],
-        summary: 'Create new category',
+        summary: 'Tạo danh mục',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -62,7 +62,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Category created successfully',
+                description: 'Tạo danh mục thành công',
                 content: {
                     'application/json': {
                         schema: CategoryResponseSchema,
@@ -74,9 +74,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'patch',
-        path: '/api/v1/categories/{id}',
+        path: '/api/product/categories/{id}',
         tags: ['Category'],
-        summary: 'Update category',
+        summary: 'Cập nhật danh mục',
         security: [{ BearerAuth: [] }],
         request: {
             params: z.object({ id: z.string().uuid() }),
@@ -90,7 +90,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Category updated successfully',
+                description: 'Cập nhật danh mục thành công',
                 content: {
                     'application/json': {
                         schema: CategoryResponseSchema,
@@ -101,10 +101,26 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
     });
 
     registry.registerPath({
+        method: 'delete',
+        path: '/api/product/categories/{id}',
+        tags: ['Category'],
+        summary: 'Xóa danh mục',
+        security: [{ BearerAuth: [] }],
+        request: {
+            params: z.object({ id: z.string().uuid() }),
+        },
+        responses: {
+            200: {
+                description: 'Xóa danh mục thành công',
+            },
+        },
+    });
+
+    registry.registerPath({
         method: 'get',
-        path: '/api/v1/products',
+        path: '/api/product/products',
         tags: ['Product'],
-        summary: 'Get list of products (Filter, Search, Sort)',
+        summary: 'Lấy danh sách sản phẩm (lọc / tìm kiếm / sắp xếp)',
         request: {
             query: z.object({
                 page: z.coerce.number().int().min(1).default(1),
@@ -120,7 +136,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'List of products',
+                description: 'Danh sách sản phẩm',
                 content: {
                     'application/json': {
                         schema: ProductListResponseSchema,
@@ -132,9 +148,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products',
+        path: '/api/product/products',
         tags: ['Product'],
-        summary: 'Create new product',
+        summary: 'Tạo sản phẩm',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -147,27 +163,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Product created successfully',
-                content: {
-                    'application/json': {
-                        schema: ProductResponseSchema,
-                    },
-                },
-            },
-        },
-    });
-
-    registry.registerPath({
-        method: 'get',
-        path: '/api/v1/products/{id}',
-        tags: ['Product'],
-        summary: 'Get product details by ID',
-        request: {
-            params: z.object({ id: z.string().uuid() }),
-        },
-        responses: {
-            200: {
-                description: 'Product details',
+                description: 'Tạo sản phẩm thành công',
                 content: {
                     'application/json': {
                         schema: ProductResponseSchema,
@@ -181,10 +177,33 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
     });
 
     registry.registerPath({
-        method: 'patch',
-        path: '/api/v1/products/{id}',
+        method: 'get',
+        path: '/api/product/products/{id}',
         tags: ['Product'],
-        summary: 'Update product',
+        summary: 'Lấy chi tiết sản phẩm theo ID',
+        request: {
+            params: z.object({ id: z.string().uuid() }),
+        },
+        responses: {
+            200: {
+                description: 'Chi tiết sản phẩm',
+                content: {
+                    'application/json': {
+                        schema: ProductResponseSchema,
+                    },
+                },
+            },
+            404: {
+                description: 'Không tìm thấy sản phẩm',
+            },
+        },
+    });
+
+    registry.registerPath({
+        method: 'patch',
+        path: '/api/product/products/{id}',
+        tags: ['Product'],
+        summary: 'Cập nhật sản phẩm',
         security: [{ BearerAuth: [] }],
         request: {
             params: z.object({ id: z.string().uuid() }),
@@ -198,7 +217,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Product updated successfully',
+                description: 'Cập nhật sản phẩm thành công',
                 content: {
                     'application/json': {
                         schema: ProductResponseSchema,
@@ -210,25 +229,25 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'delete',
-        path: '/api/v1/products/{id}',
+        path: '/api/product/products/{id}',
         tags: ['Product'],
-        summary: 'Delete product',
+        summary: 'Xóa sản phẩm',
         security: [{ BearerAuth: [] }],
         request: {
             params: z.object({ id: z.string().uuid() }),
         },
         responses: {
             200: {
-                description: 'Product deleted successfully',
+                description: 'Xóa sản phẩm thành công',
             },
         },
     });
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products/images',
+        path: '/api/product/products/images',
         tags: ['Product'],
-        summary: 'Add product image',
+        summary: 'Thêm ảnh sản phẩm',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -241,7 +260,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Image added successfully',
+                description: 'Thêm ảnh thành công',
                 content: {
                     'application/json': {
                         schema: ProductImageResponseSchema,
@@ -253,9 +272,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products/variants',
+        path: '/api/product/products/variants',
         tags: ['Product'],
-        summary: 'Create product variant',
+        summary: 'Tạo thuộc tính sản phẩm',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -268,7 +287,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Variant created successfully',
+                description: 'Tạo thuộc tính thành công',
                 content: {
                     'application/json': {
                         schema: ProductVariantResponseSchema,
@@ -280,9 +299,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products/variants/options',
+        path: '/api/product/products/variants/options',
         tags: ['Product'],
-        summary: 'Create product variant option',
+        summary: 'Tạo giá trị thuộc tính',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -295,7 +314,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Option created successfully',
+                description: 'Tạo giá trị thuộc tính thành công',
                 content: {
                     'application/json': {
                         schema: ProductVariantOptionResponseSchema,
@@ -307,9 +326,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products/stocks',
+        path: '/api/product/products/stocks',
         tags: ['Product'],
-        summary: 'Create product stock (SKU)',
+        summary: 'Tạo tồn kho (SKU)',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -322,7 +341,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Stock created successfully',
+                description: 'Tạo tồn kho thành công',
                 content: {
                     'application/json': {
                         schema: ProductStockResponseSchema,
@@ -334,9 +353,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'patch',
-        path: '/api/v1/products/stocks/{id}',
+        path: '/api/product/products/stocks/{id}',
         tags: ['Product'],
-        summary: 'Update product stock',
+        summary: 'Cập nhật tồn kho',
         security: [{ BearerAuth: [] }],
         request: {
             params: z.object({ id: z.string().uuid() }),
@@ -350,7 +369,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Stock updated successfully',
+                description: 'Cập nhật tồn kho thành công',
                 content: {
                     'application/json': {
                         schema: ProductStockResponseSchema,
@@ -362,9 +381,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'get',
-        path: '/api/v1/products/{id}/reviews',
+        path: '/api/product/products/{id}/reviews',
         tags: ['Review'],
-        summary: 'Get reviews of a product',
+        summary: 'Lấy đánh giá của sản phẩm',
         request: {
             params: z.object({ id: z.string().uuid() }),
             query: z.object({
@@ -374,7 +393,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'List of reviews',
+                description: 'Danh sách đánh giá',
                 content: {
                     'application/json': {
                         schema: ReviewListResponseSchema,
@@ -386,9 +405,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products/reviews',
+        path: '/api/product/products/reviews',
         tags: ['Review'],
-        summary: 'Create a review',
+        summary: 'Tạo đánh giá',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -401,7 +420,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Review created successfully',
+                description: 'Tạo đánh giá thành công',
                 content: {
                     'application/json': {
                         schema: ReviewResponseSchema,
@@ -413,9 +432,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'get',
-        path: '/api/v1/products/{id}/questions',
+        path: '/api/product/products/{id}/questions',
         tags: ['Question'],
-        summary: 'Get questions of a product',
+        summary: 'Lấy câu hỏi của sản phẩm',
         request: {
             params: z.object({ id: z.string().uuid() }),
             query: z.object({
@@ -425,7 +444,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'List of questions',
+                description: 'Danh sách câu hỏi',
                 content: {
                     'application/json': {
                         schema: QuestionListResponseSchema,
@@ -437,9 +456,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/products/questions',
+        path: '/api/product/products/questions',
         tags: ['Question'],
-        summary: 'Create a question',
+        summary: 'Tạo câu hỏi',
         security: [{ BearerAuth: [] }],
         request: {
             body: {
@@ -452,7 +471,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Question created successfully',
+                description: 'Tạo câu hỏi thành công',
                 content: {
                     'application/json': {
                         schema: QuestionResponseSchema,
@@ -464,9 +483,9 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'patch',
-        path: '/api/v1/products/questions/{id}/answer',
+        path: '/api/product/products/questions/{id}/answer',
         tags: ['Question'],
-        summary: 'Answer a question (Seller/Admin)',
+        summary: 'Trả lời câu hỏi (Seller/Admin)',
         security: [{ BearerAuth: [] }],
         request: {
             params: z.object({ id: z.string().uuid() }),
@@ -480,7 +499,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Question answered successfully',
+                description: 'Trả lời câu hỏi thành công',
                 content: {
                     'application/json': {
                         schema: QuestionResponseSchema,

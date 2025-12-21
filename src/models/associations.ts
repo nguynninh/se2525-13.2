@@ -20,6 +20,8 @@ import type ProductReview from './ProductReview.model';
 import type ProductQuestion from './ProductQuestion.model';
 import type Cart from './Cart.model';
 import type CartItem from './CartItem.model';
+import type FavoriteShop from './FavoriteShop.model';
+import type FavoriteItem from './FavoriteItem.model';
 
 type Models = {
     User: ModelStatic<User>;
@@ -43,6 +45,8 @@ type Models = {
     ProductQuestion?: ModelStatic<ProductQuestion>;
     Cart?: ModelStatic<Cart>;
     CartItem?: ModelStatic<CartItem>;
+    FavoriteShop?: ModelStatic<FavoriteShop>;
+    FavoriteItem?: ModelStatic<FavoriteItem>;
 };
 
 export function associations(models: Models) {
@@ -67,7 +71,9 @@ export function associations(models: Models) {
         ProductReview,
         ProductQuestion,
         Cart,
-        CartItem
+        CartItem,
+        FavoriteShop,
+        FavoriteItem
     } = models;
 
     if (User && Customer) {
@@ -227,5 +233,21 @@ export function associations(models: Models) {
     if (Product && CartItem) {
         Product.hasMany(CartItem, { foreignKey: 'product_id', as: 'cart_items' });
         CartItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (User && FavoriteShop && Shop) {
+        User.hasMany(FavoriteShop, { foreignKey: 'user_id', as: 'favorite_shops' });
+        FavoriteShop.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+        Shop.hasMany(FavoriteShop, { foreignKey: 'shop_id', as: 'favorites' });
+        FavoriteShop.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (User && FavoriteItem && Product) {
+        User.hasMany(FavoriteItem, { foreignKey: 'user_id', as: 'favorite_items' });
+        FavoriteItem.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+        Product.hasMany(FavoriteItem, { foreignKey: 'product_id', as: 'favorites' });
+        FavoriteItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
     }
 }

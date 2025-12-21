@@ -23,6 +23,8 @@ import ProductReview from './ProductReview.model';
 import ProductQuestion from './ProductQuestion.model';
 import Cart from './Cart.model';
 import CartItem from './CartItem.model';
+import FavoriteShop from './FavoriteShop.model';
+import FavoriteItem from './FavoriteItem.model';
 import { associations } from './associations';
 
 const env = process.env.NODE_ENV || 'development';
@@ -61,6 +63,8 @@ const ProductReviewModel = ProductReview.initModel(sequelize);
 const ProductQuestionModel = ProductQuestion.initModel(sequelize);
 const CartModel = Cart.initModel(sequelize);
 const CartItemModel = CartItem.initModel(sequelize);
+const FavoriteShopModel = FavoriteShop.initModel(sequelize);
+const FavoriteItemModel = FavoriteItem.initModel(sequelize);
 
 export const models = {
     User: UserModel,
@@ -84,6 +88,8 @@ export const models = {
     ProductQuestion: ProductQuestionModel,
     Cart: CartModel,
     CartItem: CartItemModel,
+    FavoriteShop: FavoriteShopModel,
+    FavoriteItem: FavoriteItemModel,
 };
 
 associations(models);

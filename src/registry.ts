@@ -5,6 +5,7 @@ import { registerSellerApplicationOpenApi } from './module/sellerApplication/sel
 import { registerLocationOpenApi } from './module/location/location.openapi';
 import { registerProductOpenApi } from './module/product/product.openapi';
 import { registerShopOpenApi } from './module/shop/shop.openapi';
+import { registerCartOpenApi } from './module/cart/cart.openapi';
 
 const registry = new OpenAPIRegistry();
 
@@ -20,6 +21,7 @@ registerSellerApplicationOpenApi(registry);
 registerLocationOpenApi(registry);
 registerProductOpenApi(registry);
 registerShopOpenApi(registry);
+registerCartOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 

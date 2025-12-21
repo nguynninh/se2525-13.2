@@ -2,6 +2,7 @@ import { Cart } from '../../models/Cart.model';
 import { CartItem } from '../../models/CartItem.model';
 import { Product } from '../../models/Product.model';
 import { ProductImage } from '../../models/ProductImage.model';
+import { Shop } from '../../models/Shop.model';
 import { NotFoundError, BadRequestError } from '../../exception/AppError';
 import type { AddToCartDto, UpdateCartItemDto, CartResponseDto, CartItemResponseDto, CartSummaryDto } from './cart.dto';
 
@@ -9,6 +10,11 @@ const getOrCreateCart = async (userId: string) => {
     let cart = await Cart.findOne({
         where: { user_id: userId },
         include: [
+            {
+                model: Shop,
+                as: 'shop',
+                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
+            },
             {
                 model: CartItem,
                 as: 'cart_items',
@@ -33,6 +39,7 @@ const getOrCreateCart = async (userId: string) => {
     if (!cart) {
         cart = await Cart.create({
             user_id: userId,
+            shop_id: null,
             total_items: 0,
             total_price: 0
         });
@@ -49,10 +56,13 @@ const calculateCartTotals = async (cartId: string) => {
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = cartItems.reduce((sum, item) => sum + Number(item.total_price), 0);
 
-    await Cart.update(
-        { total_items: totalItems, total_price: totalPrice },
-        { where: { id: cartId } }
-    );
+    // Reset shop_id if cart is empty
+    const updateData: any = { total_items: totalItems, total_price: totalPrice };
+    if (totalItems === 0) {
+        updateData.shop_id = null;
+    }
+
+    await Cart.update(updateData, { where: { id: cartId } });
 
     return { total_items: totalItems, total_price: totalPrice };
 };
@@ -75,6 +85,16 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
     }
 
     const cart = await getOrCreateCart(userId);
+
+    // Check if cart already has items from a different shop
+    if (cart.shop_id && cart.shop_id !== product.shop_id) {
+        throw new BadRequestError('cart:shop_mismatch');
+    }
+
+    // Set shop_id if cart is empty
+    if (!cart.shop_id && product.shop_id) {
+        await cart.update({ shop_id: product.shop_id });
+    }
 
     // Check if item already exists in cart
     let cartItem = await CartItem.findOne({
@@ -240,8 +260,9 @@ export const clearCart = async (userId: string): Promise<void> => {
         where: { cart_id: cart.id }
     });
 
-    // Reset cart totals
+    // Reset cart totals and shop_id
     await cart.update({
+        shop_id: null,
         total_items: 0,
         total_price: 0
     });
@@ -251,6 +272,11 @@ export const getCart = async (userId: string): Promise<CartResponseDto> => {
     const cart = await Cart.findOne({
         where: { user_id: userId },
         include: [
+            {
+                model: Shop,
+                as: 'shop',
+                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
+            },
             {
                 model: CartItem,
                 as: 'cart_items',
@@ -277,6 +303,7 @@ export const getCart = async (userId: string): Promise<CartResponseDto> => {
         return {
             id: '',
             user_id: userId,
+            shop_id: null,
             total_items: 0,
             total_price: 0,
             cart_items: [],

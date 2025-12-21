@@ -225,6 +225,11 @@ export function associations(models: Models) {
         Cart.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
     }
 
+    if (Shop && Cart) {
+        Shop.hasMany(Cart, { foreignKey: 'shop_id', as: 'carts' });
+        Cart.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
     if (Cart && CartItem) {
         Cart.hasMany(CartItem, { foreignKey: 'cart_id', as: 'cart_items' });
         CartItem.belongsTo(Cart, { foreignKey: 'cart_id', as: 'cart' });

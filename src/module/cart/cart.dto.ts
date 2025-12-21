@@ -36,9 +36,18 @@ export interface CartItemResponseDto {
 export interface CartResponseDto {
     id: string;
     user_id: string;
+    shop_id: string | null;
     total_items: number;
     total_price: number;
     cart_items: CartItemResponseDto[];
+    shop?: {
+        id: string;
+        name: string;
+        slug: string;
+        description?: string | null;
+        logo_url?: string | null;
+        status: string;
+    };
     created_at: Date;
     updated_at: Date;
 }

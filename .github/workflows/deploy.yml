@@ -61,19 +61,4 @@ jobs:
             rm deploy.tar.gz && \
             bash deploy.sh"
 
-      - name: Verify deployment
-        env:
-          SERVER_IP: 34.27.61.12
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          echo "Checking if containers are running..."
-          ssh ${SERVER_USER}@${SERVER_IP} "cd ~/se2025-13.2-server && docker compose ps"
 
-      - name: Notify deployment status
-        if: always()
-        run: |
-          if [ ${{ job.status }} == 'success' ]; then
-            echo "Deployment successful!"
-          else
-            echo "Deployment failed!"
-          fi

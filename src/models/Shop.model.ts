@@ -20,9 +20,10 @@ export class Shop extends Model<InferAttributes<Shop>, InferCreationAttributes<S
     declare banner_url: CreationOptional<string | null>;
     declare hotline: CreationOptional<string | null>;
     declare status: CreationOptional<ShopStatus>;
-    declare address_id: CreationOptional<string | null>;
-    declare rating_avg: CreationOptional<string>;
+    declare address_id: string;
+    declare rating_avg: CreationOptional<number>;
     declare rating_count: CreationOptional<number>;
+    declare is_featured: CreationOptional<boolean>;
 
     static initModel(sequelize: Sequelize) {
         Shop.init(
@@ -40,6 +41,7 @@ export class Shop extends Model<InferAttributes<Shop>, InferCreationAttributes<S
                 name: {
                     type: DataTypes.STRING(255),
                     allowNull: false,
+                    unique: true,
                 },
                 slug: {
                     type: DataTypes.TEXT,
@@ -79,12 +81,17 @@ export class Shop extends Model<InferAttributes<Shop>, InferCreationAttributes<S
                 rating_avg: {
                     type: DataTypes.DECIMAL(3, 2),
                     allowNull: false,
-                    defaultValue: '0',
+                    defaultValue: 0,
                 },
                 rating_count: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
                     defaultValue: 0,
+                },
+                is_featured: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: false,
+                    defaultValue: false,
                 },
             },
             {

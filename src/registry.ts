@@ -4,6 +4,7 @@ import { registerAuthOpenApi } from './module/auth/auth.openapi';
 import { registerSellerApplicationOpenApi } from './module/sellerApplication/sellerApplication.openapi';
 import { registerLocationOpenApi } from './module/location/location.openapi';
 import { registerProductOpenApi } from './module/product/product.openapi';
+import { registerShopOpenApi } from './module/shop/shop.openapi';
 
 const registry = new OpenAPIRegistry();
 
@@ -18,6 +19,7 @@ registerUserOpenApi(registry);
 registerSellerApplicationOpenApi(registry);
 registerLocationOpenApi(registry);
 registerProductOpenApi(registry);
+registerShopOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 

@@ -39,7 +39,7 @@ checkMinio();
 
         await connectRedis();
 
-        server.listen(port);
+        server.listen(typeof port === 'number' ? port : parseInt(port as string), '0.0.0.0');
         server.on('error', onError);
         server.on('listening', onListening);
     } catch (e) {

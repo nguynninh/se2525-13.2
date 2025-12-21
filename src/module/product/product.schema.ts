@@ -4,39 +4,27 @@ import { UserPublicSchema } from '../user/user.schema';
 
 extendZodWithOpenApi(z);
 
-export const CategoryResponseSchema = z
-    .object({
-        id: z.string().uuid(),
-        name: z.string(),
-        slug: z.string(),
-        parent_id: z.string().uuid().nullable(),
-        icon_url: z.string().url().nullable(),
-        created_at: z.date(),
-        updated_at: z.date(),
-    })
-    .strict()
-    .openapi('CategoryResponse');
+export const CategoryResponseSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    slug: z.string(),
+    parent_id: z.string().uuid().nullable(),
+    icon_url: z.string().url().nullable(),
+    created_at: z.date(),
+    updated_at: z.date(),
+}).strict().openapi('CategoryResponse');
 
-export const CreateCategorySchema = z
-    .object({
-        name: z.string().trim().min(1, 'category:name_required').max(255),
-        parent_id: z.string().uuid().optional().nullable(),
-        icon_url: z.string().trim().url().optional().nullable(),
-    })
-    .strict()
-    .openapi('CreateCategoryRequest');
+export const CreateCategorySchema = z.object({
+    name: z.string().trim().min(1, 'category:name_required').max(255),
+    parent_id: z.string().uuid().optional().nullable(),
+    icon_url: z.string().trim().url().optional().nullable(),
+}).strict().openapi('CreateCategoryRequest');
 
-export const UpdateCategorySchema = z
-    .object({
-        name: z.string().trim().min(1).max(255).optional(),
-        parent_id: z.string().uuid().optional().nullable(),
-        icon_url: z.string().trim().url().optional().nullable(),
-    })
-    .refine((data) => Object.keys(data).length > 0, {
-        message: 'category:update_empty',
-    })
-    .strict()
-    .openapi('UpdateCategoryRequest');
+export const UpdateCategorySchema = z.object({
+    name: z.string().trim().min(1).max(255).optional(),
+    parent_id: z.string().uuid().optional().nullable(),
+    icon_url: z.string().trim().url().optional().nullable(),
+}).refine((data) => Object.keys(data).length > 0, { message: 'category:update_empty' }).strict().openapi('UpdateCategoryRequest');
 
 export const ProductStatusSchema = z.enum(['draft', 'active', 'hidden', 'banned']).openapi('ProductStatus');
 
@@ -153,18 +141,19 @@ export const ProductVariantResponseSchema = z
     .object({
         id: z.string().uuid(),
         name: z.string(),
-        options: z.array(ProductVariantOptionResponseSchema).optional(),
+        options: z.array(z.string()),
     })
     .strict()
-    .openapi('ProductVariantResponse');
+    .openapi('ProductVariantOptionResponse');
 
 export const ProductStockResponseSchema = z
     .object({
         id: z.string().uuid(),
+        option_ids: z.string().nullable(),
         sku: z.string().nullable(),
         price: z.number(),
         quantity: z.number(),
-        option_ids: z.string(),
+        tier_index: z.array(z.number()).nullable(),
     })
     .strict()
     .openapi('ProductStockResponse');
@@ -172,8 +161,8 @@ export const ProductStockResponseSchema = z
 export const ProductResponseSchema = z
     .object({
         id: z.string().uuid(),
-        shop_id: z.string().uuid(),
         category_id: z.string().uuid(),
+        shop_id: z.string().uuid(),
         name: z.string(),
         slug: z.string(),
         sku: z.string().nullable(),

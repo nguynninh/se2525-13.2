@@ -35,9 +35,6 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H 34.27.61.12 >> ~/.ssh/known_hosts
 
-      - name: Install rsync
-        run: sudo apt-get update && sudo apt-get install -y rsync
-
       - name: Deploy to server
         env:
           SERVER_IP: 34.27.61.12
@@ -46,16 +43,23 @@ jobs:
           # Create deployment directory if not exists
           ssh ${SERVER_USER}@${SERVER_IP} "mkdir -p ~/se2025-13.2-server"
           
-          # Sync files to server (excluding node_modules and .git)
-          rsync -avz --delete \
-            --exclude 'node_modules' \
-            --exclude '.git' \
-            --exclude '.env' \
-            --exclude 'dist' \
-            ./ ${SERVER_USER}@${SERVER_IP}:~/se2025-13.2-server/
+          # Create tarball (excluding unnecessary files)
+          tar czf deploy.tar.gz \
+            --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='.env' \
+            --exclude='dist' \
+            --exclude='deploy.tar.gz' \
+            .
           
-          # Deploy on server
-          ssh ${SERVER_USER}@${SERVER_IP} "cd ~/se2025-13.2-server && bash deploy.sh"
+          # Transfer tarball to server
+          scp deploy.tar.gz ${SERVER_USER}@${SERVER_IP}:~/se2025-13.2-server/
+          
+          # Extract and deploy on server
+          ssh ${SERVER_USER}@${SERVER_IP} "cd ~/se2025-13.2-server && \
+            tar xzf deploy.tar.gz && \
+            rm deploy.tar.gz && \
+            bash deploy.sh"
 
       - name: Verify deployment
         env:

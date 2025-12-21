@@ -110,7 +110,7 @@ services:
         container_name: certbot
         volumes:
             - ./nginx/certs:/etc/letsencrypt
-            - certbot-var:/var/www/certbot
+            - ./nginx/certbot-var:/var/www/certbot
         entrypoint: >
             /bin/sh -c 'trap exit TERM; 
             while :; do 

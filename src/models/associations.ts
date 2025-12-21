@@ -30,6 +30,8 @@ import type Payment from './Payment.model';
 import type Shipment from './Shipment.model';
 import type ShipmentStatusHistory from './ShipmentStatusHistory.model';
 import type ShippingRate from './ShippingRate.model';
+import type Notification from './Notification.model';
+import type DeviceToken from './DeviceToken.model';
 
 type Models = {
     User: ModelStatic<User>;
@@ -63,6 +65,8 @@ type Models = {
     Shipment?: ModelStatic<Shipment>;
     ShipmentStatusHistory?: ModelStatic<ShipmentStatusHistory>;
     ShippingRate?: ModelStatic<ShippingRate>;
+    Notification?: ModelStatic<Notification>;
+    DeviceToken?: ModelStatic<DeviceToken>;
 };
 
 export function associations(models: Models) {
@@ -98,6 +102,8 @@ export function associations(models: Models) {
         Shipment,
         ShipmentStatusHistory,
         ShippingRate,
+        Notification,
+        DeviceToken,
     } = models;
 
     if (User && Customer) {
@@ -324,5 +330,15 @@ export function associations(models: Models) {
     if (Shipment && ShipmentStatusHistory) {
         Shipment.hasMany(ShipmentStatusHistory, { foreignKey: 'shipment_id', as: 'status_history' });
         ShipmentStatusHistory.belongsTo(Shipment, { foreignKey: 'shipment_id', as: 'shipment' });
+    }
+
+    if (User && Notification) {
+        User.hasMany(Notification, { foreignKey: 'user_id', as: 'notifications' });
+        Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+    }
+
+    if (User && DeviceToken) {
+        User.hasMany(DeviceToken, { foreignKey: 'user_id', as: 'device_tokens' });
+        DeviceToken.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
     }
 }

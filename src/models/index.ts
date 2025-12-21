@@ -21,6 +21,8 @@ import ProductVariantOption from './ProductVariantOption.model';
 import ProductStock from './ProductStock.model';
 import ProductReview from './ProductReview.model';
 import ProductQuestion from './ProductQuestion.model';
+import Cart from './Cart.model';
+import CartItem from './CartItem.model';
 import { associations } from './associations';
 
 const env = process.env.NODE_ENV || 'development';
@@ -57,6 +59,8 @@ const ProductVariantOptionModel = ProductVariantOption.initModel(sequelize);
 const ProductStockModel = ProductStock.initModel(sequelize);
 const ProductReviewModel = ProductReview.initModel(sequelize);
 const ProductQuestionModel = ProductQuestion.initModel(sequelize);
+const CartModel = Cart.initModel(sequelize);
+const CartItemModel = CartItem.initModel(sequelize);
 
 export const models = {
     User: UserModel,
@@ -78,6 +82,8 @@ export const models = {
     ProductStock: ProductStockModel,
     ProductReview: ProductReviewModel,
     ProductQuestion: ProductQuestionModel,
+    Cart: CartModel,
+    CartItem: CartItemModel,
 };
 
 associations(models);

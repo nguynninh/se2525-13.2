@@ -1,48 +1,45 @@
 import { ShippingRate } from '../../models/ShippingRate.model';
 import { NotFoundError } from '../../exception/AppError';
 
-export const listShippingRates = async () => {
-    const rows = await ShippingRate.findAll({ order: [['id', 'ASC']] });
-    return rows.map((r) => ({
-        id: r.id,
-        same_province: r.same_province,
-        shipping_method: r.shipping_method,
-        fee: Number(r.fee),
-        created_at: r.created_at,
-        updated_at: r.updated_at,
-    }));
+export type ShippingRateDto = {
+    id: number;
+    same_province: boolean;
+    shipping_method: 'fast' | 'economy';
+    fee: number;
+    created_at: Date;
+    updated_at: Date;
 };
 
-export const getShippingRateById = async (id: number) => {
+const mapRate = (r: ShippingRate): ShippingRateDto => ({
+    id: r.id,
+    same_province: r.same_province,
+    shipping_method: r.shipping_method,
+    fee: Number(r.fee),
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+});
+
+export const listShippingRates = async (): Promise<ShippingRateDto[]> => {
+    const rows = await ShippingRate.findAll({ order: [['id', 'ASC']] });
+    return rows.map(mapRate);
+};
+
+export const getShippingRateById = async (id: number): Promise<ShippingRateDto> => {
     const rate = await ShippingRate.findByPk(id);
     if (!rate) {
         throw new NotFoundError('shipping_rate:not_found');
     }
-    return {
-        id: rate.id,
-        same_province: rate.same_province,
-        shipping_method: rate.shipping_method,
-        fee: Number(rate.fee),
-        created_at: rate.created_at,
-        updated_at: rate.updated_at,
-    };
+    return mapRate(rate);
 };
 
-export const updateShippingRate = async (id: number, fee: number) => {
+export const updateShippingRate = async (id: number, fee: number): Promise<ShippingRateDto> => {
     const rate = await ShippingRate.findByPk(id);
     if (!rate) {
         throw new NotFoundError('shipping_rate:not_found');
     }
     rate.fee = fee;
     await rate.save();
-    return {
-        id: rate.id,
-        same_province: rate.same_province,
-        shipping_method: rate.shipping_method,
-        fee: Number(rate.fee),
-        created_at: rate.created_at,
-        updated_at: rate.updated_at,
-    };
+    return mapRate(rate);
 };
 
 export default {

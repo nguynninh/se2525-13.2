@@ -1,35 +1,33 @@
-import {
-    Model,
-    DataTypes,
-    Sequelize,
-    InferAttributes,
-    InferCreationAttributes,
-    CreationOptional,
-    ForeignKey,
-} from 'sequelize';
+import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export class FavoriteShop extends Model<InferAttributes<FavoriteShop>, InferCreationAttributes<FavoriteShop>> {
-    declare id: CreationOptional<string>;
-    declare user_id: ForeignKey<string>;
-    declare shop_id: ForeignKey<string>;
+export type ShippingRateMethod = 'fast' | 'economy';
+
+export class ShippingRate extends Model<InferAttributes<ShippingRate>, InferCreationAttributes<ShippingRate>> {
+    declare id: number;
+    declare same_province: boolean;
+    declare shipping_method: ShippingRateMethod;
+    declare fee: number;
     declare created_at: CreationOptional<Date>;
     declare updated_at: CreationOptional<Date>;
 
     static initModel(sequelize: Sequelize) {
-        FavoriteShop.init(
+        ShippingRate.init(
             {
                 id: {
-                    type: DataTypes.UUID,
+                    type: DataTypes.SMALLINT,
                     allowNull: false,
                     primaryKey: true,
-                    defaultValue: DataTypes.UUIDV4,
                 },
-                user_id: {
-                    type: DataTypes.UUID,
+                same_province: {
+                    type: DataTypes.BOOLEAN,
                     allowNull: false,
                 },
-                shop_id: {
-                    type: DataTypes.UUID,
+                shipping_method: {
+                    type: DataTypes.ENUM('fast', 'economy'),
+                    allowNull: false,
+                },
+                fee: {
+                    type: DataTypes.DECIMAL(12, 2),
                     allowNull: false,
                 },
                 created_at: {
@@ -45,8 +43,8 @@ export class FavoriteShop extends Model<InferAttributes<FavoriteShop>, InferCrea
             },
             {
                 sequelize,
-                tableName: 'favorite_shops',
-                modelName: 'FavoriteShop',
+                tableName: 'shipping_rates',
+                modelName: 'ShippingRate',
                 timestamps: true,
                 createdAt: 'created_at',
                 updatedAt: 'updated_at',
@@ -54,8 +52,8 @@ export class FavoriteShop extends Model<InferAttributes<FavoriteShop>, InferCrea
             },
         );
 
-        return FavoriteShop;
+        return ShippingRate;
     }
 }
 
-export default FavoriteShop;
+export default ShippingRate;

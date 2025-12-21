@@ -7,21 +7,25 @@ import {
     CreationOptional,
     ForeignKey,
 } from 'sequelize';
+import { OrderStatus } from './Order.model';
 
-export type OrderAddressType = 'shipping' | 'billing';
+export type OrderStatusChangerRole = 'customer' | 'seller' | 'admin';
 
-export class OrderAddress extends Model<InferAttributes<OrderAddress>, InferCreationAttributes<OrderAddress>> {
+export class OrderStatusHistory extends Model<
+    InferAttributes<OrderStatusHistory>,
+    InferCreationAttributes<OrderStatusHistory>
+> {
     declare id: CreationOptional<string>;
     declare order_id: ForeignKey<string>;
-    declare type: CreationOptional<OrderAddressType>;
-    declare receiver_name: string;
-    declare receiver_phone: string;
-    declare ward_id: ForeignKey<string>;
-    declare address_line: string;
+    declare old_status: CreationOptional<OrderStatus | null>;
+    declare new_status: OrderStatus;
+    declare changed_by_user_id: ForeignKey<string>;
+    declare changed_by_role: OrderStatusChangerRole;
+    declare reason: CreationOptional<string | null>;
     declare created_at: CreationOptional<Date>;
 
     static initModel(sequelize: Sequelize) {
-        OrderAddress.init(
+        OrderStatusHistory.init(
             {
                 id: {
                     type: DataTypes.UUID,
@@ -33,26 +37,27 @@ export class OrderAddress extends Model<InferAttributes<OrderAddress>, InferCrea
                     type: DataTypes.UUID,
                     allowNull: false,
                 },
-                type: {
-                    type: DataTypes.ENUM('shipping', 'billing'),
-                    allowNull: false,
-                    defaultValue: 'shipping',
+                old_status: {
+                    type: DataTypes.ENUM('pending', 'confirmed', 'shipping', 'completed', 'cancelled'),
+                    allowNull: true,
+                    defaultValue: null,
                 },
-                receiver_name: {
-                    type: DataTypes.STRING(255),
-                    allowNull: false,
-                },
-                receiver_phone: {
-                    type: DataTypes.STRING(20),
+                new_status: {
+                    type: DataTypes.ENUM('pending', 'confirmed', 'shipping', 'completed', 'cancelled'),
                     allowNull: false,
                 },
-                ward_id: {
+                changed_by_user_id: {
                     type: DataTypes.UUID,
                     allowNull: false,
                 },
-                address_line: {
-                    type: DataTypes.TEXT,
+                changed_by_role: {
+                    type: DataTypes.ENUM('customer', 'seller', 'admin'),
                     allowNull: false,
+                },
+                reason: {
+                    type: DataTypes.TEXT,
+                    allowNull: true,
+                    defaultValue: null,
                 },
                 created_at: {
                     type: DataTypes.DATE,
@@ -62,8 +67,8 @@ export class OrderAddress extends Model<InferAttributes<OrderAddress>, InferCrea
             },
             {
                 sequelize,
-                tableName: 'order_addresses',
-                modelName: 'OrderAddress',
+                tableName: 'order_status_history',
+                modelName: 'OrderStatusHistory',
                 timestamps: true,
                 createdAt: 'created_at',
                 updatedAt: false,
@@ -71,8 +76,8 @@ export class OrderAddress extends Model<InferAttributes<OrderAddress>, InferCrea
             },
         );
 
-        return OrderAddress;
+        return OrderStatusHistory;
     }
 }
 
-export default OrderAddress;
+export default OrderStatusHistory;

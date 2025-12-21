@@ -10,6 +10,8 @@ import sellerApplicationRoute from './api/v1/sellerApplication.route';
 import locationRoute from './api/v1/location.route';
 import cartRoute from './api/v1/cart.route';
 import shopRoute from './api/v1/shop.route';
+import orderRoute from './api/v1/order.route';
+import shipmentRoute from './api/v1/shipment.route';
 
 const router: Router = Router();
 
@@ -86,6 +88,8 @@ router.use('/users', userRoute);
 router.use('/seller-applications', sellerApplicationRoute);
 router.use('/product', productRoute);
 router.use('/shop', shopRoute);
+router.use('/', orderRoute);
+router.use('/', shipmentRoute);
 router.use('/', locationRoute);
 
 export default router;

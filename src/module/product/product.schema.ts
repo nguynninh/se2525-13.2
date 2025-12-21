@@ -142,29 +142,27 @@ export const ProductVariantResponseSchema = z
         id: z.string().uuid(),
         name: z.string(),
         options: z.array(z.string()),
-        stocks: z.array(z.object({
-            option_ids: z.string(),
-            price: z.number().min(1000),
-            quantity: z.number().int().nonnegative(),
-            sku: z.string().optional(),
-        })).optional(),
-    })).optional(),
-}).strict().openapi('CreateProductRequest');
+    })
+    .strict()
+    .openapi('ProductVariantOptionResponse');
 
-export const UpdateProductSchema = z.object({
-    category_id: z.string().uuid().optional(),
-    name: z.string().trim().min(10).max(255).optional(),
-    slug: z.string().trim().max(255).optional(),
-    sku: z.string().trim().regex(/^[A-Z0-9-_.]+$/).max(100).optional(),
-    description: z.string().trim().optional(),
-    status: ProductStatusSchema.optional(),
-    price: z.number().min(1000).optional(),
-    quantity: z.number().int().nonnegative().optional(),
-    images: z.array(z.object({
-        image_url: z.string().url(),
-        is_main: z.boolean().optional(),
-    })).optional(),
-    variants: z.array(z.object({
+export const ProductStockResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        option_ids: z.string().nullable(),
+        sku: z.string().nullable(),
+        price: z.number(),
+        quantity: z.number(),
+        tier_index: z.array(z.number()).nullable(),
+    })
+    .strict()
+    .openapi('ProductStockResponse');
+
+export const ProductResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        category_id: z.string().uuid(),
+        shop_id: z.string().uuid(),
         name: z.string(),
         slug: z.string(),
         sku: z.string().nullable(),

@@ -5,75 +5,75 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerComponent('schemas', 'CartItemImage', {
         type: 'object',
         properties: {
-            id: { type: 'string', format: 'uuid', description: 'Image ID' },
-            image_url: { type: 'string', description: 'Image URL' },
-            is_main: { type: 'boolean', description: 'Whether this is the main image' },
+            id: { type: 'string', format: 'uuid', description: 'ID ảnh' },
+            image_url: { type: 'string', description: 'Đường dẫn ảnh' },
+            is_main: { type: 'boolean', description: 'Ảnh chính hay không' },
         },
     });
 
     registry.registerComponent('schemas', 'CartItemProduct', {
         type: 'object',
         properties: {
-            id: { type: 'string', format: 'uuid', description: 'Product ID' },
-            name: { type: 'string', description: 'Product name' },
-            slug: { type: 'string', description: 'Product slug' },
-            sku: { type: 'string', nullable: true, description: 'Product SKU' },
-            description: { type: 'string', nullable: true, description: 'Product description' },
-            price: { type: 'number', description: 'Product price' },
-            quantity: { type: 'integer', description: 'Product stock quantity' },
-            status: { type: 'string', description: 'Product status' },
-            images: { type: 'array', items: { $ref: '#/components/schemas/CartItemImage' }, description: 'Product images' },
+            id: { type: 'string', format: 'uuid', description: 'ID sản phẩm' },
+            name: { type: 'string', description: 'Tên sản phẩm' },
+            slug: { type: 'string', description: 'Slug sản phẩm' },
+            sku: { type: 'string', nullable: true, description: 'Mã SKU' },
+            description: { type: 'string', nullable: true, description: 'Mô tả sản phẩm' },
+            price: { type: 'number', description: 'Giá' },
+            quantity: { type: 'integer', description: 'Tồn kho' },
+            status: { type: 'string', description: 'Trạng thái sản phẩm' },
+            images: { type: 'array', items: { $ref: '#/components/schemas/CartItemImage' }, description: 'Danh sách ảnh' },
         },
     });
 
     registry.registerComponent('schemas', 'CartItem', {
         type: 'object',
         properties: {
-            id: { type: 'string', format: 'uuid', description: 'Cart item ID' },
-            cart_id: { type: 'string', format: 'uuid', description: 'Cart ID' },
-            product_id: { type: 'string', format: 'uuid', description: 'Product ID' },
-            quantity: { type: 'integer', description: 'Item quantity' },
-            unit_price: { type: 'number', description: 'Unit price' },
-            total_price: { type: 'number', description: 'Total price for this item' },
-            product: { $ref: '#/components/schemas/CartItemProduct', description: 'Product details' },
-            created_at: { type: 'string', format: 'date-time', description: 'Creation date' },
-            updated_at: { type: 'string', format: 'date-time', description: 'Last update date' },
+            id: { type: 'string', format: 'uuid', description: 'ID item' },
+            cart_id: { type: 'string', format: 'uuid', description: 'ID giỏ' },
+            product_id: { type: 'string', format: 'uuid', description: 'ID sản phẩm' },
+            quantity: { type: 'integer', description: 'Số lượng' },
+            unit_price: { type: 'number', description: 'Đơn giá' },
+            total_price: { type: 'number', description: 'Thành tiền' },
+            product: { $ref: '#/components/schemas/CartItemProduct', description: 'Thông tin sản phẩm' },
+            created_at: { type: 'string', format: 'date-time', description: 'Ngày tạo' },
+            updated_at: { type: 'string', format: 'date-time', description: 'Ngày cập nhật' },
         },
     });
 
     registry.registerComponent('schemas', 'CartShop', {
         type: 'object',
         properties: {
-            id: { type: 'string', format: 'uuid', description: 'Shop ID' },
-            name: { type: 'string', description: 'Shop name' },
-            slug: { type: 'string', description: 'Shop slug' },
-            description: { type: 'string', nullable: true, description: 'Shop description' },
-            logo_url: { type: 'string', nullable: true, description: 'Shop logo URL' },
-            status: { type: 'string', enum: ['active', 'suspended', 'closed'], description: 'Shop status' },
+            id: { type: 'string', format: 'uuid', description: 'ID shop' },
+            name: { type: 'string', description: 'Tên shop' },
+            slug: { type: 'string', description: 'Slug shop' },
+            description: { type: 'string', nullable: true, description: 'Mô tả shop' },
+            logo_url: { type: 'string', nullable: true, description: 'Logo shop' },
+            status: { type: 'string', enum: ['active', 'suspended', 'closed'], description: 'Trạng thái shop' },
         },
     });
 
     registry.registerComponent('schemas', 'Cart', {
         type: 'object',
         properties: {
-            id: { type: 'string', format: 'uuid', description: 'Cart ID' },
-            user_id: { type: 'string', format: 'uuid', description: 'User ID' },
-            shop_id: { type: 'string', format: 'uuid', nullable: true, description: 'Shop ID (null if cart is empty)' },
-            total_items: { type: 'integer', description: 'Total number of items in cart' },
-            total_price: { type: 'number', description: 'Total price of all items' },
-            cart_items: { type: 'array', items: { $ref: '#/components/schemas/CartItem' }, description: 'Cart items' },
-            shop: { $ref: '#/components/schemas/CartShop', nullable: true, description: 'Shop details (null if cart is empty)' },
-            created_at: { type: 'string', format: 'date-time', description: 'Creation date' },
-            updated_at: { type: 'string', format: 'date-time', description: 'Last update date' },
+            id: { type: 'string', format: 'uuid', description: 'ID giỏ hàng' },
+            user_id: { type: 'string', format: 'uuid', description: 'ID người dùng' },
+            shop_id: { type: 'string', format: 'uuid', nullable: true, description: 'ID shop (null nếu giỏ trống)' },
+            total_items: { type: 'integer', description: 'Tổng số item' },
+            total_price: { type: 'number', description: 'Tổng tiền' },
+            cart_items: { type: 'array', items: { $ref: '#/components/schemas/CartItem' }, description: 'Danh sách item' },
+            shop: { $ref: '#/components/schemas/CartShop', nullable: true, description: 'Thông tin shop (null nếu giỏ trống)' },
+            created_at: { type: 'string', format: 'date-time', description: 'Ngày tạo' },
+            updated_at: { type: 'string', format: 'date-time', description: 'Ngày cập nhật' },
         },
     });
 
     registry.registerComponent('schemas', 'CartSummary', {
         type: 'object',
         properties: {
-            total_items: { type: 'integer', description: 'Total number of items in cart' },
-            total_price: { type: 'number', description: 'Total price of all items' },
-            items_count: { type: 'integer', description: 'Number of different items in cart' },
+            total_items: { type: 'integer', description: 'Tổng số item' },
+            total_price: { type: 'number', description: 'Tổng tiền' },
+            items_count: { type: 'integer', description: 'Số dòng hàng' },
         },
     });
 
@@ -81,8 +81,8 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         type: 'object',
         required: ['product_id', 'quantity'],
         properties: {
-            product_id: { type: 'string', format: 'uuid', description: 'Product ID to add to cart' },
-            quantity: { type: 'integer', minimum: 1, description: 'Quantity to add' },
+            product_id: { type: 'string', format: 'uuid', description: 'ID sản phẩm cần thêm' },
+            quantity: { type: 'integer', minimum: 1, description: 'Số lượng cần thêm' },
         },
     });
 
@@ -90,7 +90,7 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         type: 'object',
         required: ['quantity'],
         properties: {
-            quantity: { type: 'integer', minimum: 1, description: 'New quantity' },
+            quantity: { type: 'integer', minimum: 1, description: 'Số lượng mới' },
         },
     });
 
@@ -101,14 +101,14 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
     // GET /api/v1/cart - Get user cart
     registry.registerPath({
         method: 'get',
-        path: '/api/v1/cart',
-        tags: ['Cart'],
-        summary: 'Get user cart',
-        description: 'Retrieve current user cart with all items and shop information',
-        security: [{ bearerAuth: [] }],
+        path: '/api/cart',
+        tags: ['Cart - Customer'],
+        summary: 'Lấy giỏ hàng của tôi',
+        description: 'Lấy giỏ hàng hiện tại của người dùng cùng thông tin shop và sản phẩm',
+        security: [{ BearerAuth: [] }],
         responses: {
             200: {
-                description: 'Cart retrieved successfully',
+                description: 'Lấy giỏ hàng thành công',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' }, data: { $ref: '#/components/schemas/CartResponse' } } }
@@ -123,14 +123,14 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
     // DELETE /api/v1/cart - Clear cart
     registry.registerPath({
         method: 'delete',
-        path: '/api/v1/cart',
-        tags: ['Cart'],
-        summary: 'Clear cart',
-        description: 'Remove all items from user cart and reset shop association',
-        security: [{ bearerAuth: [] }],
+        path: '/api/cart',
+        tags: ['Cart - Customer'],
+        summary: 'Xóa toàn bộ giỏ hàng',
+        description: 'Xóa tất cả item trong giỏ và bỏ liên kết shop',
+        security: [{ BearerAuth: [] }],
         responses: {
             200: {
-                description: 'Cart cleared successfully',
+                description: 'Xóa giỏ hàng thành công',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' } } }
@@ -142,14 +142,14 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // POST /api/v1/cart/add - Add item to cart
+    // POST /api/cart - Add item to cart
     registry.registerPath({
         method: 'post',
-        path: '/api/v1/cart/add',
-        tags: ['Cart'],
-        summary: 'Add item to cart',
-        description: 'Add a product to user cart. Cart will be assigned to product shop if empty.',
-        security: [{ bearerAuth: [] }],
+        path: '/api/cart',
+        tags: ['Cart - Customer'],
+        summary: 'Thêm sản phẩm vào giỏ',
+        description: 'Thêm sản phẩm vào giỏ. Nếu giỏ trống sẽ gán shop của sản phẩm.',
+        security: [{ BearerAuth: [] }],
         request: {
             body: {
                 required: true,
@@ -162,7 +162,7 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             201: {
-                description: 'Item added to cart successfully',
+                description: 'Thêm sản phẩm thành công',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' }, data: { $ref: '#/components/schemas/CartItemResponse' } } }
@@ -170,7 +170,7 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
                 },
             },
             400: {
-                description: 'Bad request - Product not available, insufficient stock, or shop mismatch',
+                description: 'Lỗi: sản phẩm không khả dụng / hết hàng / khác shop',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' }, error: { type: 'string' } } }
@@ -182,20 +182,20 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // PUT /api/v1/cart/items/{id} - Update cart item
+    // PUT /api/cart/{id} - Update cart item
     registry.registerPath({
         method: 'put',
-        path: '/api/v1/cart/items/{id}',
-        tags: ['Cart'],
-        summary: 'Update cart item',
-        description: 'Update quantity of an item in cart',
-        security: [{ bearerAuth: [] }],
+        path: '/api/cart/{id}',
+        tags: ['Cart - Customer'],
+        summary: 'Cập nhật item trong giỏ',
+        description: 'Cập nhật số lượng 1 item trong giỏ',
+        security: [{ BearerAuth: [] }],
         parameters: [{
             name: 'id',
             in: 'path',
             required: true,
             schema: { type: 'string', format: 'uuid' },
-            description: 'Cart item ID'
+            description: 'ID cart item'
         }],
         request: {
             body: {
@@ -209,7 +209,7 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Cart item updated successfully',
+                description: 'Cập nhật item thành công',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' }, data: { $ref: '#/components/schemas/CartItemResponse' } } }
@@ -217,31 +217,81 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
                 },
             },
             400: {
-                description: 'Bad request - Invalid quantity or insufficient stock',
+                description: 'Sai dữ liệu hoặc hết hàng',
             },
             401: { description: 'Unauthorized' },
             404: { description: 'Cart item not found' },
         },
     });
 
-    // DELETE /api/v1/cart/items/{id} - Remove cart item
+    // PATCH /api/cart/{id}/increase - Increase quantity
     registry.registerPath({
-        method: 'delete',
-        path: '/api/v1/cart/items/{id}',
-        tags: ['Cart'],
-        summary: 'Remove cart item',
-        description: 'Remove an item from cart. If this was the last item, shop association will be cleared.',
-        security: [{ bearerAuth: [] }],
+        method: 'patch',
+        path: '/api/cart/{id}/increase',
+        tags: ['Cart - Customer'],
+        summary: 'Tăng số lượng item',
+        description: 'Tăng số lượng 1 đơn vị cho item trong giỏ',
+        security: [{ BearerAuth: [] }],
         parameters: [{
             name: 'id',
             in: 'path',
             required: true,
             schema: { type: 'string', format: 'uuid' },
-            description: 'Cart item ID'
+            description: 'ID cart item'
         }],
         responses: {
             200: {
-                description: 'Cart item removed successfully',
+                description: 'Tăng số lượng thành công',
+            },
+            400: { description: 'Sai dữ liệu hoặc hết hàng' },
+            401: { description: 'Unauthorized' },
+            404: { description: 'Cart item not found' },
+        },
+    });
+
+    // PATCH /api/cart/{id}/decrease - Decrease quantity
+    registry.registerPath({
+        method: 'patch',
+        path: '/api/cart/{id}/decrease',
+        tags: ['Cart - Customer'],
+        summary: 'Giảm số lượng item',
+        description: 'Giảm số lượng 1 đơn vị cho item trong giỏ',
+        security: [{ BearerAuth: [] }],
+        parameters: [{
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            description: 'ID cart item'
+        }],
+        responses: {
+            200: {
+                description: 'Giảm số lượng thành công',
+            },
+            400: { description: 'Sai dữ liệu hoặc hết hàng' },
+            401: { description: 'Unauthorized' },
+            404: { description: 'Cart item not found' },
+        },
+    });
+
+    // DELETE /api/cart/{id} - Remove cart item
+    registry.registerPath({
+        method: 'delete',
+        path: '/api/cart/{id}',
+        tags: ['Cart'],
+        summary: 'Xóa item khỏi giỏ',
+        description: 'Xóa 1 item khỏi giỏ. Nếu là item cuối, giỏ sẽ bỏ liên kết shop.',
+        security: [{ BearerAuth: [] }],
+        parameters: [{
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            description: 'ID cart item'
+        }],
+        responses: {
+            200: {
+                description: 'Xóa item thành công',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' } } }
@@ -253,17 +303,17 @@ export const registerCartOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // GET /api/v1/cart/summary - Get cart summary
+    // GET /api/cart/summary - Get cart summary
     registry.registerPath({
         method: 'get',
-        path: '/api/v1/cart/summary',
+        path: '/api/cart/summary',
         tags: ['Cart'],
-        summary: 'Get cart summary',
-        description: 'Get a summary of cart without detailed item information',
-        security: [{ bearerAuth: [] }],
+        summary: 'Xem tóm tắt giỏ hàng',
+        description: 'Lấy tóm tắt giỏ (không kèm chi tiết item)',
+        security: [{ BearerAuth: [] }],
         responses: {
             200: {
-                description: 'Cart summary retrieved successfully',
+                description: 'Lấy tóm tắt thành công',
                 content: {
                     'application/json': {
                         schema: { type: 'object', properties: { success: { type: 'boolean' }, message: { type: 'string' }, data: { $ref: '#/components/schemas/CartSummaryResponse' } } }

@@ -13,11 +13,10 @@ import {
 } from './order.schema';
 
 export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
-    // User routes
     registry.registerPath({
         method: 'post',
         path: '/api/orders',
-        tags: ['Order'],
+        tags: ['Order - Customer'],
         summary: 'User tạo đơn mới',
         security: [{ BearerAuth: [] }],
         request: {
@@ -44,7 +43,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/me/orders',
-        tags: ['Order'],
+        tags: ['Order - Customer'],
         summary: 'User xem danh sách đơn của mình',
         security: [{ BearerAuth: [] }],
         responses: {
@@ -62,7 +61,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/me/orders/{id}',
-        tags: ['Order'],
+        tags: ['Order - Customer'],
         summary: 'User xem chi tiết đơn',
         security: [{ BearerAuth: [] }],
         request: {
@@ -83,7 +82,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/user/me/orders/{id}/cancel',
-        tags: ['Order'],
+        tags: ['Order - Customer'],
         summary: 'User hủy đơn',
         security: [{ BearerAuth: [] }],
         request: {
@@ -104,7 +103,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/user/me/orders/{id}/confirm-received',
-        tags: ['Order'],
+        tags: ['Order - Customer'],
         summary: 'User xác nhận đã nhận hàng',
         security: [{ BearerAuth: [] }],
         request: {
@@ -125,7 +124,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/me/orders/{id}/status-history',
-        tags: ['Order'],
+        tags: ['Order - Customer'],
         summary: 'User xem lịch sử trạng thái đơn',
         security: [{ BearerAuth: [] }],
         request: {
@@ -147,7 +146,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/seller/me/orders',
-        tags: ['Order'],
+        tags: ['Order - Seller'],
         summary: 'Seller xem đơn của shop mình',
         security: [{ BearerAuth: [] }],
         request: {
@@ -168,7 +167,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/seller/me/orders/{id}',
-        tags: ['Order'],
+        tags: ['Order - Seller'],
         summary: 'Seller xem chi tiết đơn',
         security: [{ BearerAuth: [] }],
         request: {
@@ -189,7 +188,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/user/seller/me/orders/{id}/confirm',
-        tags: ['Order'],
+        tags: ['Order - Seller'],
         summary: 'Seller xác nhận đơn',
         security: [{ BearerAuth: [] }],
         request: { params: OrderIdParamSchema },
@@ -208,7 +207,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/user/seller/me/orders/{id}/reject',
-        tags: ['Order'],
+        tags: ['Order - Seller'],
         summary: 'Seller từ chối đơn',
         security: [{ BearerAuth: [] }],
         request: {
@@ -236,7 +235,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/user/seller/me/orders/{id}/status',
-        tags: ['Order'],
+        tags: ['Order - Seller'],
         summary: 'Seller cập nhật trạng thái giao hàng',
         security: [{ BearerAuth: [] }],
         request: {
@@ -265,7 +264,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/admin/orders',
-        tags: ['Order'],
+        tags: ['Order - Admin'],
         summary: 'Admin xem tất cả đơn',
         security: [{ BearerAuth: [] }],
         request: { query: AdminOrderListQuerySchema },
@@ -284,7 +283,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/admin/orders/{id}',
-        tags: ['Order'],
+        tags: ['Order - Admin'],
         summary: 'Admin xem chi tiết đơn',
         security: [{ BearerAuth: [] }],
         request: { params: OrderIdParamSchema },
@@ -303,7 +302,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'patch',
         path: '/api/user/admin/orders/{id}/status',
-        tags: ['Order'],
+        tags: ['Order - Admin'],
         summary: 'Admin cập nhật trạng thái đơn',
         security: [{ BearerAuth: [] }],
         request: {
@@ -331,7 +330,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/admin/orders/{id}/status-history',
-        tags: ['Order'],
+        tags: ['Order - Admin'],
         summary: 'Admin xem lịch sử trạng thái đơn',
         security: [{ BearerAuth: [] }],
         request: { params: OrderIdParamSchema },
@@ -350,7 +349,7 @@ export const registerOrderOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api/user/admin/orders/stats',
-        tags: ['Order'],
+        tags: ['Order - Admin'],
         summary: 'Thống kê đơn hàng',
         security: [{ BearerAuth: [] }],
         responses: {

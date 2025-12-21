@@ -13,10 +13,27 @@ import { ShippingRateIdParamSchema, UpdateShippingRateSchema } from '../../../mo
 
 const router = Router();
 
-// Admin endpoints for managing shipments
-router.post('/shipments', authenticate, restrictTo('admin'), v({ body: CreateShipmentSchema }), ShipmentController.create);
-router.get('/shipments/:id', authenticate, restrictTo('admin'), v({ params: ShipmentIdParamSchema }), ShipmentController.getDetail);
-router.get('/orders/:id/shipments', authenticate, restrictTo('admin'), v({ params: OrderIdParamSchema }), ShipmentController.listByOrder);
+router.post(
+    '/shipments',
+    authenticate,
+    restrictTo('admin'),
+    v({ body: CreateShipmentSchema }),
+    ShipmentController.create,
+);
+router.get(
+    '/shipments/:id',
+    authenticate,
+    restrictTo('admin'),
+    v({ params: ShipmentIdParamSchema }),
+    ShipmentController.getDetail,
+);
+router.get(
+    '/orders/:id/shipments',
+    authenticate,
+    restrictTo('admin'),
+    v({ params: OrderIdParamSchema }),
+    ShipmentController.listByOrder,
+);
 router.patch(
     '/shipments/:id/status',
     authenticate,
@@ -25,7 +42,6 @@ router.patch(
     ShipmentController.updateStatus,
 );
 
-// Admin endpoints for shipping rates
 router.get('/shipping-rates', authenticate, restrictTo('admin'), ShippingRateController.list);
 router.get(
     '/shipping-rates/:id',

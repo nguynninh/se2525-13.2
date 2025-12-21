@@ -4,32 +4,42 @@ import {
     addCartItem,
     updateCartItemController,
     removeCartItemController,
+    increaseCartItemController,
+    decreaseCartItemController,
     clearCartController,
     getCartController,
-    getCartSummaryController
+    getCartSummaryController,
 } from '../../../module/cart/cart.controller';
+import { v } from '../../../utils/zod.format';
+import { addToCartSchema, updateCartItemSchema, removeCartItemSchema } from '../../../module/cart/cart.schema';
 
 const router = Router();
 
 // Apply authentication middleware to all cart routes
 router.use(authenticate);
 
-// POST /api/v1/cart - Add item to cart
-router.post('/', addCartItem);
+// POST /api/cart - Add item to cart
+router.post('/', v(addToCartSchema), addCartItem);
 
-// PUT /api/v1/cart/:id - Update cart item quantity
-router.put('/:id', updateCartItemController);
+// PUT /api/cart/:id - Update cart item quantity
+router.put('/:id', v(updateCartItemSchema), updateCartItemController);
 
-// DELETE /api/v1/cart/:id - Remove item from cart
-router.delete('/:id', removeCartItemController);
+// PATCH /api/cart/:id/increase - Increase quantity by 1
+router.patch('/:id/increase', v({ params: updateCartItemSchema.shape.params }), increaseCartItemController);
 
-// DELETE /api/v1/cart - Clear entire cart
+// PATCH /api/cart/:id/decrease - Decrease quantity by 1
+router.patch('/:id/decrease', v({ params: updateCartItemSchema.shape.params }), decreaseCartItemController);
+
+// DELETE /api/cart/:id - Remove item from cart
+router.delete('/:id', v(removeCartItemSchema), removeCartItemController);
+
+// DELETE /api/cart - Clear entire cart
 router.delete('/', clearCartController);
 
-// GET /api/v1/cart - Get user's cart
+// GET /api/cart - Get user's cart
 router.get('/', getCartController);
 
-// GET /api/v1/cart/summary - Get cart summary
+// GET /api/cart/summary - Get cart summary
 router.get('/summary', getCartSummaryController);
 
 export default router;

@@ -141,42 +141,44 @@ export const ProductVariantResponseSchema = z
     .object({
         id: z.string().uuid(),
         name: z.string(),
-        options: z.array(ProductVariantOptionResponseSchema),
+        options: z.array(z.string()),
     })
     .strict()
-    .openapi('ProductVariantResponse');
+    .openapi('ProductVariantOptionResponse');
 
 export const ProductStockResponseSchema = z
     .object({
         id: z.string().uuid(),
-        product_id: z.string().uuid(),
-        option_ids: z.array(z.string()).nullable(),
+        option_ids: z.string().nullable(),
         sku: z.string().nullable(),
-        price: z.number().min(1000),
-        quantity: z.number().int().nonnegative(),
+        price: z.number(),
+        quantity: z.number(),
         tier_index: z.array(z.number()).nullable(),
     })
     .strict()
     .openapi('ProductStockResponse');
 
-export const ProductResponseSchema = z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    slug: z.string(),
-    sku: z.string().nullable(),
-    description: z.string().nullable(),
-    status: ProductStatusSchema,
-    price: z.number(),
-    quantity: z.number(),
-    sold_count: z.number(),
-    rating_avg: z.number(),
-    rating_count: z.number(),
-    images: z.array(ProductImageResponseSchema).optional(),
-    variants: z.array(ProductVariantResponseSchema).optional(),
-    stocks: z.array(ProductStockResponseSchema).optional(),
-    created_at: z.date(),
-    updated_at: z.date(),
-})
+export const ProductResponseSchema = z
+    .object({
+        id: z.string().uuid(),
+        category_id: z.string().uuid(),
+        shop_id: z.string().uuid(),
+        name: z.string(),
+        slug: z.string(),
+        sku: z.string().nullable(),
+        description: z.string().nullable(),
+        status: ProductStatusSchema,
+        price: z.number(),
+        quantity: z.number(),
+        sold_count: z.number(),
+        rating_avg: z.number(),
+        rating_count: z.number(),
+        images: z.array(ProductImageResponseSchema).optional(),
+        variants: z.array(ProductVariantResponseSchema).optional(),
+        stocks: z.array(ProductStockResponseSchema).optional(),
+        created_at: z.date(),
+        updated_at: z.date(),
+    })
     .strict()
     .openapi('ProductResponse');
 

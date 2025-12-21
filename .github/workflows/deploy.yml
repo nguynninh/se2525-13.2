@@ -40,17 +40,15 @@ jobs:
           SERVER_IP: 34.27.61.12
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          # Create tarball (excluding unnecessary files)
-          tar czf deploy.tar.gz \
+          tar czf /tmp/deploy.tar.gz \
             --exclude='node_modules' \
             --exclude='.git' \
             --exclude='.env' \
             --exclude='dist' \
-            --exclude='deploy.tar.gz' \
             .
           
           # Transfer tarball to server
-          scp deploy.tar.gz ${SERVER_USER}@${SERVER_IP}:~/server/
+          scp /tmp/deploy.tar.gz ${SERVER_USER}@${SERVER_IP}:~/server/
           
           # Extract and deploy on server
           ssh ${SERVER_USER}@${SERVER_IP} "cd ~/server && \

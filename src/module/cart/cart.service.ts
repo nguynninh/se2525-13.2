@@ -22,25 +22,25 @@ const getOrCreateCart = async (userId: string) => {
                                 model: ProductImage,
                                 as: 'images',
                                 where: { is_main: true },
-                                required: false
+                                required: false,
                             },
                             {
                                 model: Shop,
                                 as: 'shop',
-                                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
+                                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status'],
                             },
-                        ]
-                    }
-                ]
-            }
-        ]
+                        ],
+                    },
+                ],
+            },
+        ],
     });
 
     if (!cart) {
         cart = await Cart.create({
             user_id: userId,
             total_items: 0,
-            total_price: 0
+            total_price: 0,
         });
     }
 
@@ -49,7 +49,7 @@ const getOrCreateCart = async (userId: string) => {
 
 const calculateCartTotals = async (cartId: string) => {
     const cartItems = await CartItem.findAll({
-        where: { cart_id: cartId }
+        where: { cart_id: cartId },
     });
 
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -63,7 +63,6 @@ const calculateCartTotals = async (cartId: string) => {
 export const addToCart = async (userId: string, data: AddToCartDto): Promise<CartItemResponseDto> => {
     const { product_id, quantity } = data;
 
-    // Check if product exists and is active
     const product = await Product.findByPk(product_id);
     if (!product) {
         throw new NotFoundError('product:not_found');
@@ -81,9 +80,9 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
 
     // Check if item already exists in cart
     let cartItem = await CartItem.findOne({
-        where: { 
-            cart_id: cart.id, 
-            product_id 
+        where: {
+            cart_id: cart.id,
+            product_id,
         },
         include: [
             {
@@ -94,17 +93,17 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
                         model: ProductImage,
                         as: 'images',
                         where: { is_main: true },
-                        required: false
-                    }
-                ]
-            }
-        ]
+                        required: false,
+                    },
+                ],
+            },
+        ],
     });
 
     if (cartItem) {
         // Update existing item
         const newQuantity = cartItem.quantity + quantity;
-        
+
         if (product.quantity < newQuantity) {
             throw new BadRequestError('product:insufficient_stock');
         }
@@ -115,7 +114,7 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
         await cartItem.update({
             quantity: newQuantity,
             unit_price: unitPrice,
-            total_price: totalPrice
+            total_price: totalPrice,
         });
     } else {
         // Create new cart item
@@ -127,7 +126,7 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
             product_id,
             quantity,
             unit_price: unitPrice,
-            total_price: totalPrice
+            total_price: totalPrice,
         });
 
         // Reload with product data
@@ -141,11 +140,11 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
                             model: ProductImage,
                             as: 'images',
                             where: { is_main: true },
-                            required: false
-                        }
-                    ]
-                }
-            ]
+                            required: false,
+                        },
+                    ],
+                },
+            ],
         });
     }
 
@@ -155,7 +154,11 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
     return cartItem!.toJSON() as CartItemResponseDto;
 };
 
-export const updateCartItem = async (userId: string, cartItemId: string, data: UpdateCartItemDto): Promise<CartItemResponseDto> => {
+export const updateCartItem = async (
+    userId: string,
+    cartItemId: string,
+    data: UpdateCartItemDto,
+): Promise<CartItemResponseDto> => {
     const { quantity } = data;
 
     const cartItem = await CartItem.findByPk(cartItemId, {
@@ -163,7 +166,7 @@ export const updateCartItem = async (userId: string, cartItemId: string, data: U
             {
                 model: Cart,
                 as: 'cart',
-                where: { user_id: userId }
+                where: { user_id: userId },
             },
             {
                 model: Product,
@@ -173,16 +176,16 @@ export const updateCartItem = async (userId: string, cartItemId: string, data: U
                         model: ProductImage,
                         as: 'images',
                         where: { is_main: true },
-                        required: false
+                        required: false,
                     },
                     {
                         model: Shop,
                         as: 'shop',
-                        attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
-                    }
-                ]
-            }
-        ]
+                        attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status'],
+                    },
+                ],
+            },
+        ],
     });
 
     if (!cartItem) {
@@ -204,10 +207,9 @@ export const updateCartItem = async (userId: string, cartItemId: string, data: U
     await cartItem.update({
         quantity,
         unit_price: unitPrice,
-        total_price: totalPrice
+        total_price: totalPrice,
     });
 
-    // Update cart totals
     await calculateCartTotals(cartItem.cart_id);
 
     return cartItem.toJSON() as CartItemResponseDto;
@@ -219,13 +221,13 @@ const changeQuantity = async (userId: string, cartItemId: string, delta: number)
             {
                 model: Cart,
                 as: 'cart',
-                where: { user_id: userId }
+                where: { user_id: userId },
             },
             {
                 model: Product,
-                as: 'product'
-            }
-        ]
+                as: 'product',
+            },
+        ],
     });
 
     if (!cartItem) {
@@ -252,7 +254,7 @@ const changeQuantity = async (userId: string, cartItemId: string, delta: number)
     await cartItem.update({
         quantity: newQuantity,
         unit_price: unitPrice,
-        total_price: totalPrice
+        total_price: totalPrice,
     });
 
     await calculateCartTotals(cartItem.cart_id);
@@ -268,9 +270,9 @@ export const removeCartItem = async (userId: string, cartItemId: string): Promis
             {
                 model: Cart,
                 as: 'cart',
-                where: { user_id: userId }
-            }
-        ]
+                where: { user_id: userId },
+            },
+        ],
     });
 
     if (!cartItem) {
@@ -280,13 +282,12 @@ export const removeCartItem = async (userId: string, cartItemId: string): Promis
     const cartId = cartItem.cart_id;
     await cartItem.destroy();
 
-    // Update cart totals
     await calculateCartTotals(cartId);
 };
 
 export const clearCart = async (userId: string): Promise<void> => {
     const cart = await Cart.findOne({
-        where: { user_id: userId }
+        where: { user_id: userId },
     });
 
     if (!cart) {
@@ -294,14 +295,14 @@ export const clearCart = async (userId: string): Promise<void> => {
     }
 
     await CartItem.destroy({
-        where: { cart_id: cart.id }
+        where: { cart_id: cart.id },
     });
 
     // Reset cart totals and shop_id
     await cart.update({
         shop_id: null,
         total_items: 0,
-        total_price: 0
+        total_price: 0,
     });
 };
 
@@ -321,18 +322,18 @@ export const getCart = async (userId: string): Promise<CartResponseDto> => {
                                 model: ProductImage,
                                 as: 'images',
                                 where: { is_main: true },
-                                required: false
+                                required: false,
                             },
                             {
                                 model: Shop,
                                 as: 'shop',
-                                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
+                                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status'],
                             },
-                        ]
-                    }
-                ]
-            }
-        ]
+                        ],
+                    },
+                ],
+            },
+        ],
     });
 
     if (!cart) {
@@ -345,7 +346,7 @@ export const getCart = async (userId: string): Promise<CartResponseDto> => {
             total_price: 0,
             cart_items: [],
             created_at: new Date(),
-            updated_at: new Date()
+            updated_at: new Date(),
         };
     }
 
@@ -359,22 +360,22 @@ export const getCartSummary = async (userId: string): Promise<CartSummaryDto> =>
             {
                 model: CartItem,
                 as: 'cart_items',
-                required: false
-            }
-        ]
+                required: false,
+            },
+        ],
     });
 
     if (!cart) {
         return {
             total_items: 0,
             total_price: 0,
-            items_count: 0
+            items_count: 0,
         };
     }
 
     return {
         total_items: cart.total_items,
         total_price: Number(cart.total_price),
-        items_count: (cart as any).cart_items?.length || 0
+        items_count: (cart as any).cart_items?.length || 0,
     };
 };

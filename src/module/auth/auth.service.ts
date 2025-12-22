@@ -152,6 +152,7 @@ async function sendVerifyCodeEmail(email: string, code: string, ttlSec: number) 
     const minutes = Math.max(1, Math.floor(ttlSec / 60));
     const subject = 'Mã xác minh đăng ký';
     const text = `Mã OTP xác minh đăng ký của bạn là ${code}. Mã sẽ hết hạn sau ${minutes} phút.`;
+    console.log('[OTP][verify]', { email, code });
     await sendEmail(email, subject, text);
 }
 
@@ -160,6 +161,7 @@ async function sendResetCodeEmail(email: string, code: string, ttlSec: number) {
     const minutes = Math.max(1, Math.floor(ttlSec / 60));
     const subject = 'Mã đặt lại mật khẩu';
     const text = `Mã OTP đặt lại mật khẩu của bạn là ${code}. Mã sẽ hết hạn sau ${minutes} phút.`;
+    console.log('[OTP][reset]', { email, code });
     await sendEmail(email, subject, text);
 }
 

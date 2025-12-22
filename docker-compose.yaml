@@ -13,6 +13,7 @@ services:
             - minio
         networks:
             - backend
+            - admin
     admin:
         build:
             context: ../admin

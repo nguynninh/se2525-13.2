@@ -29,4 +29,4 @@ jobs:
           ssh ${SERVER_USER}@${SERVER_IP} "cd ~/server && \
             git checkout development && \
             git pull && \
-            docker compose up -d --build"
+            docker compose up -d --build backend"

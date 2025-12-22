@@ -9,20 +9,18 @@ function buildKey(host?: string, port?: number, secure?: boolean) {
 
 export async function getTransporter(): Promise<nodemailer.Transporter> {
     const host = process.env.SMTP_HOST || undefined;
-    const port = Number(process.env.SMTP_PORT || 1025); // MailHog: 1025
-    const secure = String(process.env.SMTP_SECURE).toLowerCase() === 'true'; // MailHog: false
+    const port = Number(process.env.SMTP_PORT || 1025);
+    const secure = String(process.env.SMTP_SECURE || '').toLowerCase() === 'true'; // MailHog: false
     const user = process.env.SMTP_USER || undefined;
     const pass = process.env.SMTP_PASS || undefined;
 
     const key = buildKey(host, port, secure);
 
-    // Nếu đã có transporter nhưng cấu hình thay đổi → tạo lại
     if (transporter && key === currentKey) {
         return transporter;
     }
 
     if (host) {
-        // SMTP thật (MailHog cũng là SMTP)
         transporter = nodemailer.createTransport({
             host,
             port,
@@ -35,9 +33,9 @@ export async function getTransporter(): Promise<nodemailer.Transporter> {
 
         try {
             await transporter.verify();
-            console.log('✅ SMTP transporter ready', { host, port, secure });
+            console.log('SMTP transporter ready', { host, port, secure });
         } catch (err) {
-            console.error('❌ SMTP verify failed:', err);
+            console.error('SMTP xác thực thất bại:', err);
         }
 
         currentKey = key;
@@ -78,6 +76,7 @@ export async function sendEmail(to: string, subject: string, text: string, html?
         to,
         subject,
         text,
+        html,
     });
 
     if (!process.env.SMTP_HOST) {

@@ -13,7 +13,6 @@ services:
             - minio
         networks:
             - backend
-            - admin
     admin:
         build:
             context: ../admin
@@ -114,6 +113,7 @@ services:
             - ./nginx/certbot-var:/var/www/certbot
         depends_on:
             - backend
+            - admin
         networks:
             - backend
 

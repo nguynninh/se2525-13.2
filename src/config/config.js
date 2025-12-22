@@ -1,12 +1,5 @@
 require('dotenv').config();
 
-console.log('[DB CFG]', {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USERNAME,
-    db: process.env.DB_NAME,
-});
-
 const isSSL = String(process.env.DB_SSL || '').toLowerCase() === 'true';
 
 const base = {

@@ -19,8 +19,6 @@ services:
             dockerfile: Dockerfile
         container_name: admin
         restart: unless-stopped
-        ports:
-            - "5555:80"
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
             - ./html:/usr/share/nginx/html

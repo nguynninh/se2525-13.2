@@ -6,11 +6,21 @@ services:
         env_file:
             - .env
         ports:
-            - "3001:3001"
+            - "8888:8888"
         depends_on:
             - postgres
             - redis
             - minio
+        networks:
+            - backend
+    admin:
+        build:
+            context: ../admin
+            dockerfile: Dockerfile
+        container_name: admin
+        restart: unless-stopped
+        ports:
+            - "5555:80"
         networks:
             - backend
 

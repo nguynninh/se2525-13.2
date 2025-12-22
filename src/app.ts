@@ -20,6 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+app.get('/', (_req, res) => {
+    res.send('Welcome to Hiki App');
+});
+
 const apiPrefix = process.env.API_PREFIX || '/api';
 
 app.get('/', (req, res) => {

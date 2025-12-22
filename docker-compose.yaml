@@ -6,7 +6,7 @@ services:
         env_file:
             - .env
         ports:
-            - "8888:8888"
+            - '8888:8888'
         depends_on:
             - postgres
             - redis
@@ -32,6 +32,8 @@ services:
             POSTGRES_DB: ${DB_NAME:-hiki_db}
             POSTGRES_USER: ${DB_USER:-postgres}
             POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+        ports:
+            - '5432:5432'
         volumes:
             - db-data:/var/lib/postgresql/data
         networks:
@@ -104,8 +106,8 @@ services:
         image: nginx:latest
         container_name: nginx
         ports:
-            - "80:80"
-            - "443:443"
+            - '80:80'
+            - '443:443'
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
             - ./nginx/certs:/etc/letsencrypt
@@ -130,7 +132,6 @@ services:
             done'
         networks:
             - backend
-
 
 volumes:
     db-data:

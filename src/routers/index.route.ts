@@ -12,12 +12,9 @@ import cartRoute from './api/v1/cart.route';
 import shopRoute from './api/v1/shop.route';
 import orderRoute from './api/v1/order.route';
 import shipmentRoute from './api/v1/shipment.route';
+import deviceTokenRoute from './api/v1/deviceToken.route';
 
 const router: Router = Router();
-
-router.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to Tiki API');
-});
 
 router.get('/test/success', (req: Request, res: Response) => {
     const data = { items: ['A', 'B', 'C'] };
@@ -86,5 +83,6 @@ router.use('/cart', cartRoute);
 router.use('/shop', shopRoute);
 router.use('/', orderRoute);
 router.use('/', shipmentRoute);
+router.use('/', deviceTokenRoute);
 
 export default router;

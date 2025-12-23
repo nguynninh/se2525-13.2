@@ -44,17 +44,76 @@ export const updateCategory = async (id: string, data: any) => {
     return await category.update(data);
 };
 
+export const deleteCategory = async (id: string) => {
+    const category = await Category.findByPk(id);
+    if (!category) {
+        throw new NotFoundError('product:category_not_found');
+    }
+    await category.destroy();
+};
+
 export const getCategories = async () => {
-    return await Category.findAll();
+    const categories = await Category.findAll();
+    return { categories };
 };
 
 export const createProduct = async (data: any) => {
-    if (!data.slug && data.name) {
+    const { variants, images, ...productData } = data;
+    
+    if (!productData.slug && productData.name) {
         const uniqueSuffix = Date.now().toString().slice(-4);
-        data.slug = `${generateSlug(data.name)}-${uniqueSuffix}`;
+        productData.slug = `${generateSlug(productData.name)}-${uniqueSuffix}`;
     }
     
-    return await Product.create(data);
+    const product = await Product.create(productData);
+    
+    if (images && images.length > 0) {
+        for (const img of images) {
+            await ProductImage.create({
+                product_id: product.id,
+                image_url: img.image_url,
+                is_main: img.is_main || false,
+            });
+        }
+    }
+    
+    if (variants && variants.length > 0) {
+        for (const varData of variants) {
+            const variant = await ProductVariant.create({
+                product_id: product.id,
+                name: varData.name,
+            });
+            
+            for (const opt of varData.options) {
+                await ProductVariantOption.create({
+                    variant_id: variant.id,
+                    value: opt,
+                });
+            }
+            
+            if (varData.stocks) {
+                for (const stock of varData.stocks) {
+                    await ProductStock.create({
+                        product_id: product.id,
+                        option_ids: stock.option_ids,
+                        sku: stock.sku,
+                        price: stock.price,
+                        quantity: stock.quantity,
+                    });
+                }
+            }
+        }
+    } else {
+        await ProductStock.create({
+            product_id: product.id,
+            option_ids: '',
+            sku: productData.sku || `${product.id}-DEFAULT`,
+            price: productData.price || 0,
+            quantity: productData.quantity || 0,
+        });
+    }
+    
+    return product;
 };
 
 export const updateProduct = async (id: string, data: any) => {
@@ -66,6 +125,49 @@ export const updateProduct = async (id: string, data: any) => {
         const uniqueSuffix = Date.now().toString().slice(-4);
         data.slug = `${generateSlug(data.name)}-${uniqueSuffix}`;
     }
+    
+    if (data.images) {
+        await ProductImage.destroy({ where: { product_id: id } });
+        for (const img of data.images) {
+            await ProductImage.create({
+                product_id: id,
+                image_url: img.image_url,
+                is_main: img.is_main || false,
+            });
+        }
+        delete data.images;
+    }
+    
+    if (data.variants) {
+        await ProductVariant.destroy({ where: { product_id: id } });
+        for (const varData of data.variants) {
+            const variant = await ProductVariant.create({
+                product_id: id,
+                name: varData.name,
+            });
+            
+            for (const opt of varData.options) {
+                await ProductVariantOption.create({
+                    variant_id: variant.id,
+                    value: opt,
+                });
+            }
+            
+            if (varData.stocks) {
+                for (const stock of varData.stocks) {
+                    await ProductStock.create({
+                        product_id: id,
+                        option_ids: stock.option_ids,
+                        sku: stock.sku,
+                        price: stock.price,
+                        quantity: stock.quantity,
+                    });
+                }
+            }
+        }
+        delete data.variants;
+    }
+    
     return await product.update(data);
 };
 
@@ -179,7 +281,7 @@ export const getProducts = async (query: any) => {
     });
 
     return {
-        data: rows,
+        products: rows,
         pagination: {
             total: count,
             page: Number(page),
@@ -202,7 +304,19 @@ export const createVariantOption = async (data: any) => {
 };
 
 export const createStock = async (data: any) => {
-    return await ProductStock.create(data);
+    const { option_ids, tier_index, ...rest } = data;
+    let optionIdsString = '';
+    
+    if (Array.isArray(option_ids)) {
+        optionIdsString = option_ids.join(','); 
+    } else if (typeof option_ids === 'string') {
+        optionIdsString = option_ids;
+    }
+
+    return await ProductStock.create({
+        ...rest,
+        option_ids: optionIdsString
+    });
 };
 
 export const updateStock = async (id: string, data: any) => {
@@ -210,10 +324,40 @@ export const updateStock = async (id: string, data: any) => {
     if (!stock) {
         throw new NotFoundError('product:stock_not_found');
     }
+
+    if (data.option_ids) {
+        if (Array.isArray(data.option_ids)) {
+            data.option_ids = data.option_ids.join(',');
+        }
+    }
+
     return await stock.update(data);
 };
 
 export const createReview = async (userId: string, data: any) => {
+    const product = await Product.findByPk(data.product_id);
+    if (!product) {
+        throw new NotFoundError('product:not_found');
+    }
+
+    const user = await User.findByPk(userId); 
+    
+    if (user?.role === 'seller') {
+        try {
+            const shop = await Shop.findOne({ where: { id: product.shop_id } });
+            
+            const shopOwnerId = shop ? (shop as any).user_id : null; 
+
+            if (shopOwnerId && shopOwnerId === userId) {
+                 throw new Error('review:cannot_review_own_product');
+            }
+        } catch (error) {
+            if ((error as Error).message === 'review:cannot_review_own_product') {
+                throw error;
+            }
+        }
+    }
+
     return await ProductReview.create({
         ...data,
         user_id: userId

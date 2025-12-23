@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
     createCategory,
     updateCategory,
+    deleteCategory,
     getCategories,
     createProduct,
     updateProduct,
@@ -22,6 +23,8 @@ import {
 import { Shop } from '../../models/Shop.model';
 import { Seller } from '../../models/Seller.model';
 import { AppError } from '../../exception/AppError';
+import { ValidationError } from '../../exception/AppError';
+import { uploadFileToMinIO } from '../../utils/upload';
 
 export const ProductController = {
     createCategory: async (req: Request, res: Response, next: NextFunction) => {
@@ -51,11 +54,19 @@ export const ProductController = {
         }
     },
 
+    deleteCategory: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await deleteCategory(req.params.id);
+            res.status(204).send();
+        } catch (error) {
+            next(error);
+        }
+    },
+
     createProduct: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = (req as any).user.id;
 
-            // --- ĐÃ SỬA LẠI: Dùng user_id để khớp với Database ---
             const seller = await Seller.findOne({ where: { user_id: userId } });
             
             if (!seller) {
@@ -75,6 +86,31 @@ export const ProductController = {
 
             const result = await createProduct(productData);
             res.status(201).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    getMyProducts: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = (req as any).user.id;
+            const seller = await Seller.findOne({ where: { user_id: userId } });
+            
+            if (!seller) {
+                throw new AppError('product:user_is_not_seller', 403);
+            }
+
+            const shop = await Shop.findOne({ where: { seller_id: seller.id } as any });
+            
+            if (!shop) {
+                throw new AppError('product:user_has_no_shop', 403);
+            }
+
+            const result = await getProducts({ 
+                ...req.query, 
+                shop_id: shop.id 
+            });
+            res.status(200).json({ products: result.products });
         } catch (error) {
             next(error);
         }
@@ -118,7 +154,18 @@ export const ProductController = {
 
     addProductImage: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await addProductImage(req.body);
+            const file = req.file;
+            if (!file) {
+                throw new ValidationError('upload:file_required');
+            }
+
+            const imageUrl = await uploadFileToMinIO(file.originalname, file.buffer, file.mimetype, 'uploads/products');
+            const payload = {
+                ...req.body,
+                image_url: imageUrl,
+            };
+
+            const result = await addProductImage(payload);
             res.status(201).json(result);
         } catch (error) {
             next(error);

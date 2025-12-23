@@ -1,15 +1,24 @@
-import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import {
+    Model,
+    DataTypes,
+    Sequelize,
+    InferAttributes,
+    InferCreationAttributes,
+    CreationOptional,
+    ForeignKey,
+} from 'sequelize';
 
 export type OrderAddressType = 'shipping' | 'billing';
 
 export class OrderAddress extends Model<InferAttributes<OrderAddress>, InferCreationAttributes<OrderAddress>> {
     declare id: CreationOptional<string>;
-    declare order_id: string;
+    declare order_id: ForeignKey<string>;
     declare type: CreationOptional<OrderAddressType>;
     declare receiver_name: string;
     declare receiver_phone: string;
+    declare ward_id: ForeignKey<string>;
     declare address_line: string;
-    declare ward_id: string;
+    declare created_at: CreationOptional<Date>;
 
     static initModel(sequelize: Sequelize) {
         OrderAddress.init(
@@ -37,24 +46,28 @@ export class OrderAddress extends Model<InferAttributes<OrderAddress>, InferCrea
                     type: DataTypes.STRING(20),
                     allowNull: false,
                 },
-                address_line: {
-                    type: DataTypes.STRING(255),
-                    allowNull: false,
-                },
                 ward_id: {
                     type: DataTypes.UUID,
                     allowNull: false,
+                },
+                address_line: {
+                    type: DataTypes.TEXT,
+                    allowNull: false,
+                },
+                created_at: {
+                    type: DataTypes.DATE,
+                    allowNull: false,
+                    defaultValue: DataTypes.NOW,
                 },
             },
             {
                 sequelize,
                 tableName: 'order_addresses',
                 modelName: 'OrderAddress',
-                underscored: true,
-
                 timestamps: true,
                 createdAt: 'created_at',
                 updatedAt: false,
+                underscored: true,
             },
         );
 

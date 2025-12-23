@@ -4,7 +4,6 @@ import { z } from 'zod';
 import {
     CreateSellerApplicationSchema,
     ReviewSellerApplicationSchema,
-    HistoryQuerySchema,
     SellerApplicationResponseSchema,
     GetMySellerApplicationResponseSchema,
     SellerApplicationWithUserResponseSchema,
@@ -92,9 +91,6 @@ export const registerSellerApplicationOpenApi = (registry: OpenAPIRegistry) => {
         tags: ['SellerApplication', 'Admin'],
         summary: 'Admin xem lịch sử các đơn đăng ký seller đã được xử lý',
         security: [{ BearerAuth: [] }],
-        request: {
-            query: HistoryQuerySchema,
-        },
         responses: {
             200: {
                 description: 'Danh sách history các đơn đăng ký đã approved/rejected',

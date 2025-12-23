@@ -1,16 +1,9 @@
 require('dotenv').config();
 
-console.log('[DB CFG]', {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    db: process.env.DB_NAME,
-});
-
 const isSSL = String(process.env.DB_SSL || '').toLowerCase() === 'true';
 
 const base = {
-    username: process.env.DB_USER || 'postgres',
+    username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'hiki_db',
     host: process.env.DB_HOST || 'localhost',

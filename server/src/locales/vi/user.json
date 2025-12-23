@@ -58,5 +58,6 @@
     "get_sellers_successfully": "Gửi thông tin người bán thành công",
     "seller_id_required": "Cần có id của người bán",
     "update_seller_status_successfully": "Cập nhật trạng thái người bán thành công",
-    "delete_seller_successfully": "Xóa người bán thành công"
+    "delete_seller_successfully": "Xóa người bán thành công",
+    "application_id_required": "Cần có id của đơn đăng ký"
 }

@@ -16,6 +16,7 @@ import {
     AdminUserDetailResponseDto,
     MeResponseDto,
 } from './user.dto';
+import { listMyShippingAddresses } from '../location/location.service';
 import { NotFoundError, ValidationError, InternalServerError } from '../../exception/AppError';
 import bcrypt from 'bcrypt';
 
@@ -128,47 +129,6 @@ export const deleteMe = async (userId: string): Promise<void> => {
 
     await user.destroy();
 };
-
-// Admin list seller
-// export const adminListSellers = async (params: ListSellersQueryDto): Promise<SellerWithUserResponseDto[]> => {
-//     const where: any = {};
-//     if (params.status) {
-//         where.status = params.status;
-//     }
-
-//     const sellers = await Seller.findAll({
-//         where,
-//         include: [
-//             {
-//                 model: User,
-//                 as: 'user',
-//                 attributes: ['id', 'first_name', 'last_name', 'email', 'phone', 'profile_url'],
-//             },
-//         ],
-//         order: [['updated_at', 'DESC']],
-//     });
-
-//     return sellers.map((seller) => {
-//         const user = (seller as Seller & { user?: User }).user;
-//         if (!user) {
-//             throw new InternalServerError('user:user_not_found_for_seller');
-//         }
-
-//         return {
-//             id: seller.id,
-//             user_id: seller.user_id,
-//             status: seller.status as SellerStatusDto,
-//             user: {
-//                 id: user.id,
-//                 first_name: user.first_name,
-//                 last_name: user.last_name,
-//                 email: user.email,
-//                 phone: user.phone,
-//                 profile_url: user.profile_url,
-//             },
-//         };
-//     });
-// };
 
 // đổi status seller
 export const adminUpdateSellerStatus = async (
@@ -300,10 +260,11 @@ export const adminGetUserFullDetail = async (userId: string): Promise<AdminUserD
         throw new NotFoundError('user:user_not_found');
     }
 
-    const [customer, seller, admin] = await Promise.all([
+    const [customer, seller, admin, shippingAddresses] = await Promise.all([
         Customer.findOne({ where: { user_id: userId } }),
         Seller.findOne({ where: { user_id: userId } }),
         Admin.findOne({ where: { user_id: userId } }),
+        listMyShippingAddresses(userId),
     ]);
 
     const customerDto: CustomerResponseDto | null = customer
@@ -342,5 +303,6 @@ export const adminGetUserFullDetail = async (userId: string): Promise<AdminUserD
         customer: customerDto,
         seller: sellerDto,
         admin: adminDto,
+        shipping_addresses: shippingAddresses,
     };
 };

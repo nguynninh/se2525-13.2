@@ -9,7 +9,6 @@ import type Province from './Provinces.model';
 import type Ward from './Wards.model';
 import type Address from './Address.model';
 import type ShippingAddress from './ShippingAddress.model';
-import type OrderAddress from './OrderAddress.model';
 import type Category from './Category.model';
 import type Product from './Product.model';
 import type ProductImage from './ProductImage.model';
@@ -18,6 +17,21 @@ import type ProductVariantOption from './ProductVariantOption.model';
 import type ProductStock from './ProductStock.model';
 import type ProductReview from './ProductReview.model';
 import type ProductQuestion from './ProductQuestion.model';
+import type Cart from './Cart.model';
+import type CartItem from './CartItem.model';
+import type FavoriteShop from './FavoriteShop.model';
+import type FavoriteItem from './FavoriteItem.model';
+import type PaymentMethod from './PaymentMethod.model';
+import type Order from './Order.model';
+import type OrderItem from './OrderItem.model';
+import type OrderAddress from './OrderAddress.model';
+import type OrderStatusHistory from './OrderStatusHistory.model';
+import type Payment from './Payment.model';
+import type Shipment from './Shipment.model';
+import type ShipmentStatusHistory from './ShipmentStatusHistory.model';
+import type ShippingRate from './ShippingRate.model';
+import type Notification from './Notification.model';
+import type DeviceToken from './DeviceToken.model';
 
 type Models = {
     User: ModelStatic<User>;
@@ -30,7 +44,6 @@ type Models = {
     Ward?: ModelStatic<Ward>;
     Address?: ModelStatic<Address>;
     ShippingAddress?: ModelStatic<ShippingAddress>;
-    OrderAddress?: ModelStatic<OrderAddress>;
     Category?: ModelStatic<Category>;
     Product?: ModelStatic<Product>;
     ProductImage?: ModelStatic<ProductImage>;
@@ -39,6 +52,21 @@ type Models = {
     ProductStock?: ModelStatic<ProductStock>;
     ProductReview?: ModelStatic<ProductReview>;
     ProductQuestion?: ModelStatic<ProductQuestion>;
+    Cart?: ModelStatic<Cart>;
+    CartItem?: ModelStatic<CartItem>;
+    FavoriteShop?: ModelStatic<FavoriteShop>;
+    FavoriteItem?: ModelStatic<FavoriteItem>;
+    PaymentMethod?: ModelStatic<PaymentMethod>;
+    Order?: ModelStatic<Order>;
+    OrderItem?: ModelStatic<OrderItem>;
+    OrderAddress?: ModelStatic<OrderAddress>;
+    OrderStatusHistory?: ModelStatic<OrderStatusHistory>;
+    Payment?: ModelStatic<Payment>;
+    Shipment?: ModelStatic<Shipment>;
+    ShipmentStatusHistory?: ModelStatic<ShipmentStatusHistory>;
+    ShippingRate?: ModelStatic<ShippingRate>;
+    Notification?: ModelStatic<Notification>;
+    DeviceToken?: ModelStatic<DeviceToken>;
 };
 
 export function associations(models: Models) {
@@ -53,7 +81,6 @@ export function associations(models: Models) {
         Ward,
         Address,
         ShippingAddress,
-        OrderAddress,
         Category,
         Product,
         ProductImage,
@@ -61,7 +88,22 @@ export function associations(models: Models) {
         ProductVariantOption,
         ProductStock,
         ProductReview,
-        ProductQuestion
+        ProductQuestion,
+        Cart,
+        CartItem,
+        FavoriteShop,
+        FavoriteItem,
+        PaymentMethod,
+        Order,
+        OrderItem,
+        OrderAddress,
+        OrderStatusHistory,
+        Payment,
+        Shipment,
+        ShipmentStatusHistory,
+        ShippingRate,
+        Notification,
+        DeviceToken,
     } = models;
 
     if (User && Customer) {
@@ -114,8 +156,15 @@ export function associations(models: Models) {
     }
 
     if (Address && Shop) {
-        Shop.hasOne(Address, { foreignKey: 'shop_id', as: 'address' });
-        Address.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+        Address.hasOne(Shop, {
+            foreignKey: 'address_id',
+            as: 'shop',
+        });
+
+        Shop.belongsTo(Address, {
+            foreignKey: 'address_id',
+            as: 'address',
+        });
     }
 
     if (Address && ShippingAddress) {
@@ -133,12 +182,12 @@ export function associations(models: Models) {
     if (Ward && OrderAddress) {
         Ward.hasMany(OrderAddress, {
             foreignKey: 'ward_id',
-            as: 'order_addresses',
+            as: 'ward_order_addresses',
         });
 
         OrderAddress.belongsTo(Ward, {
             foreignKey: 'ward_id',
-            as: 'ward',
+            as: 'order_address_ward',
         });
     }
 
@@ -181,7 +230,7 @@ export function associations(models: Models) {
         Product.hasMany(ProductReview, { foreignKey: 'product_id', as: 'reviews' });
         ProductReview.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
     }
-    
+
     if (User && ProductReview) {
         User.hasMany(ProductReview, { foreignKey: 'user_id', as: 'product_reviews' });
         ProductReview.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
@@ -193,10 +242,103 @@ export function associations(models: Models) {
     }
 
     if (User && ProductQuestion) {
-        User.hasMany(ProductQuestion, { foreignKey: 'user_id', as: 'questions_asked' });
-        ProductQuestion.belongsTo(User, { foreignKey: 'user_id', as: 'asker' });
-        
+        User.hasMany(ProductQuestion, { foreignKey: 'user_id', as: 'questions' });
+        ProductQuestion.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
         User.hasMany(ProductQuestion, { foreignKey: 'answered_by', as: 'questions_answered' });
         ProductQuestion.belongsTo(User, { foreignKey: 'answered_by', as: 'answerer' });
+    }
+
+    // Cart associations
+    if (User && Cart) {
+        User.hasOne(Cart, { foreignKey: 'user_id', as: 'cart' });
+        Cart.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+    }
+
+    if (Shop && Cart) {
+        Shop.hasMany(Cart, { foreignKey: 'shop_id', as: 'carts' });
+        Cart.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (Cart && CartItem) {
+        Cart.hasMany(CartItem, { foreignKey: 'cart_id', as: 'cart_items' });
+        CartItem.belongsTo(Cart, { foreignKey: 'cart_id', as: 'cart' });
+    }
+
+    if (Product && CartItem) {
+        Product.hasMany(CartItem, { foreignKey: 'product_id', as: 'cart_items' });
+        CartItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (User && FavoriteShop && Shop) {
+        User.hasMany(FavoriteShop, { foreignKey: 'user_id', as: 'favorite_shops' });
+        FavoriteShop.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+        Shop.hasMany(FavoriteShop, { foreignKey: 'shop_id', as: 'favorites' });
+        FavoriteShop.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (User && FavoriteItem && Product) {
+        User.hasMany(FavoriteItem, { foreignKey: 'user_id', as: 'favorite_items' });
+        FavoriteItem.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+        Product.hasMany(FavoriteItem, { foreignKey: 'product_id', as: 'favorites' });
+        FavoriteItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (User && Order) {
+        User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
+        Order.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+    }
+
+    if (Shop && Order) {
+        Shop.hasMany(Order, { foreignKey: 'shop_id', as: 'orders' });
+        Order.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (Order && OrderItem) {
+        Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
+        OrderItem.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+    }
+
+    if (Order && OrderAddress && Ward) {
+        Order.hasMany(OrderAddress, { foreignKey: 'order_id', as: 'order_addresses' });
+        OrderAddress.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+    }
+
+    if (Order && OrderStatusHistory && User) {
+        Order.hasMany(OrderStatusHistory, { foreignKey: 'order_id', as: 'status_history' });
+        OrderStatusHistory.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+
+        User.hasMany(OrderStatusHistory, { foreignKey: 'changed_by_user_id', as: 'order_status_changes' });
+        OrderStatusHistory.belongsTo(User, { foreignKey: 'changed_by_user_id', as: 'changer' });
+    }
+
+    if (Order && Payment && PaymentMethod) {
+        Order.hasOne(Payment, { foreignKey: 'order_id', as: 'payment' });
+        Payment.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+
+        PaymentMethod.hasMany(Payment, { foreignKey: 'payment_method_id', as: 'payments' });
+        Payment.belongsTo(PaymentMethod, { foreignKey: 'payment_method_id', as: 'payment_method' });
+    }
+
+    if (Order && Shipment) {
+        Order.hasMany(Shipment, { foreignKey: 'order_id', as: 'shipments' });
+        Shipment.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+    }
+
+    if (Shipment && ShipmentStatusHistory) {
+        Shipment.hasMany(ShipmentStatusHistory, { foreignKey: 'shipment_id', as: 'status_history' });
+        ShipmentStatusHistory.belongsTo(Shipment, { foreignKey: 'shipment_id', as: 'shipment' });
+    }
+
+    if (User && Notification) {
+        User.hasMany(Notification, { foreignKey: 'user_id', as: 'notifications' });
+        Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+    }
+
+    if (User && DeviceToken) {
+        User.hasMany(DeviceToken, { foreignKey: 'user_id', as: 'device_tokens' });
+        DeviceToken.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
     }
 }

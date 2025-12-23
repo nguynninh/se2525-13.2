@@ -57,44 +57,53 @@ module.exports = {
         const addressHanoiCauGiayId = findAddressId('Hà Nội', 'Cầu Giấy');
         const addressHcmBenThanhId = findAddressId('Hồ Chí Minh', 'Bến Thành');
 
-        await queryInterface.bulkInsert(
-            'shops',
-            [
-                {
-                    seller_id: byEmail['seller1@example.com'],
-                    name: 'Seller One Shop',
-                    slug: 'seller-one-shop',
-                    description:
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-                    logo_url: null,
-                    banner_url: null,
-                    hotline: '0900001001',
-                    status: 'active',
-                    address_id: addressHanoiCauGiayId,
-                    rating_avg: 0,
-                    rating_count: 0,
-                    created_at: now,
-                    updated_at: now,
-                },
-                {
-                    seller_id: byEmail['seller2@example.com'],
-                    name: 'Seller Two Shop',
-                    slug: 'seller-two-shop',
-                    description:
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-                    logo_url: null,
-                    banner_url: null,
-                    hotline: '0900001002',
-                    status: 'active',
-                    address_id: addressHcmBenThanhId,
-                    rating_avg: 0,
-                    rating_count: 0,
-                    created_at: now,
-                    updated_at: now,
-                },
-            ],
-            {},
+        // Skip insert if shops already exist for these sellers (idempotent)
+        const existingShops = await queryInterface.sequelize.query(
+            `SELECT seller_id FROM shops WHERE seller_id IN (:sellerIds)`,
+            { replacements: { sellerIds: Object.values(byEmail) }, type: Sequelize.QueryTypes.SELECT },
         );
+        const existingSellerIds = new Set(existingShops.map((r) => r.seller_id));
+
+        const rows = [
+            {
+                seller_id: byEmail['seller1@example.com'],
+                name: 'Seller One Shop',
+                slug: 'seller-one-shop',
+                description:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+                logo_url: null,
+                banner_url: null,
+                hotline: '0900001001',
+                status: 'active',
+                address_id: addressHanoiCauGiayId,
+                rating_avg: 0,
+                rating_count: 0,
+                is_featured: true,
+                created_at: now,
+                updated_at: now,
+            },
+            {
+                seller_id: byEmail['seller2@example.com'],
+                name: 'Seller Two Shop',
+                slug: 'seller-two-shop',
+                description:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+                logo_url: null,
+                banner_url: null,
+                hotline: '0900001002',
+                status: 'active',
+                address_id: addressHcmBenThanhId,
+                rating_avg: 0,
+                rating_count: 0,
+                is_featured: false,
+                created_at: now,
+                updated_at: now,
+            },
+        ].filter((r) => r.seller_id && !existingSellerIds.has(r.seller_id));
+
+        if (rows.length > 0) {
+            await queryInterface.bulkInsert('shops', rows, {});
+        }
     },
 
     async down(queryInterface, Sequelize) {

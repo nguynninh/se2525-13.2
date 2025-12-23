@@ -12,6 +12,12 @@ module.exports = {
 
         const idByEmail = Object.fromEntries(rows.map((r) => [r.email, r.id]));
 
+        const existing = await queryInterface.sequelize.query(
+            `SELECT user_id FROM customers WHERE user_id IN (:ids)`,
+            { replacements: { ids: Object.values(idByEmail) }, type: Sequelize.QueryTypes.SELECT },
+        );
+        const existingIds = new Set(existing.map((r) => r.user_id));
+
         const customers = [
             {
                 user_id: idByEmail['customer1@example.com'],
@@ -33,7 +39,11 @@ module.exports = {
             },
         ];
 
-        await queryInterface.bulkInsert('customers', customers, {});
+        const filtered = customers.filter((c) => c.user_id && !existingIds.has(c.user_id));
+
+        if (filtered.length > 0) {
+            await queryInterface.bulkInsert('customers', filtered, { ignoreDuplicates: true });
+        }
     },
 
     async down(queryInterface, Sequelize) {

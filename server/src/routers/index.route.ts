@@ -8,6 +8,10 @@ import userRoute from './api/v1/user.route';
 import productRoute from './api/v1/product.route';
 import sellerApplicationRoute from './api/v1/sellerApplication.route';
 import locationRoute from './api/v1/location.route';
+import cartRoute from './api/v1/cart.route';
+import shopRoute from './api/v1/shop.route';
+import orderRoute from './api/v1/order.route';
+import shipmentRoute from './api/v1/shipment.route';
 
 const router: Router = Router();
 
@@ -73,10 +77,14 @@ router.get('/test/redis', async (req: Request, res: Response) => {
     }
 });
 
-router.use('/v1/auth', authRoute);
-router.use('/v1/users', userRoute);
-router.use('/v1/seller-applications', sellerApplicationRoute);
-router.use('/v1', productRoute);
-router.use('/v1', locationRoute);
+router.use('/auth', authRoute);
+router.use('/users', userRoute);
+router.use('/seller-applications', sellerApplicationRoute);
+router.use('/', productRoute);
+router.use('/', locationRoute);
+router.use('/cart', cartRoute);
+router.use('/shop', shopRoute);
+router.use('/', orderRoute);
+router.use('/', shipmentRoute);
 
 export default router;

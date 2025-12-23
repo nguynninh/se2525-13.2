@@ -36,14 +36,7 @@ export const ReviewSellerApplicationSchema = z
     ])
     .openapi('ReviewSellerApplication');
 
-export const HistoryQuerySchema = z
-    .object({
-        status: z.enum(['approved', 'rejected']).optional(),
-    })
-    .strict()
-    .openapi('HistorySellerApplication');
-
-export const SellerApplicationStatus = z.enum(['pending', 'approved', 'rejected']).openapi('SellerApplicationStatus');
+export const SellerApplicationStatus = z.enum(['approved', 'rejected']).openapi('SellerApplicationStatus');
 
 export const SellerApplicationResponseSchema = z
     .object({

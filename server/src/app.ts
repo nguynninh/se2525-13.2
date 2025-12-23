@@ -20,7 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use('/api', indexRouter);
+const apiPrefix = process.env.API_PREFIX || '/api';
+
+app.get('/', (req, res) => {
+    res.status(200).send('Server is running');
+});
+
+app.use(apiPrefix, indexRouter);
 
 app.use(errorHandler);
 

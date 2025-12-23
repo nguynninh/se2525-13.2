@@ -7,6 +7,7 @@ import authRoute from './api/v1/auth.route';
 import userRoute from './api/v1/user.route';
 import productRoute from './api/v1/product.route';
 import sellerApplicationRoute from './api/v1/sellerApplication.route';
+import locationRoute from './api/v1/location.route';
 
 const router: Router = Router();
 
@@ -76,5 +77,6 @@ router.use('/v1/auth', authRoute);
 router.use('/v1/users', userRoute);
 router.use('/v1/seller-applications', sellerApplicationRoute);
 router.use('/v1', productRoute);
+router.use('/v1', locationRoute);
 
 export default router;

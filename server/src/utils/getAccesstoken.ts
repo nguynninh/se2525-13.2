@@ -4,12 +4,18 @@ import crypto from 'crypto';
 
 dotenv.config();
 
-const buildScope = (roles: string[]): string => {
+const buildScope = (roles: string[], permissions: string[]): string => {
     const scopes: string[] = [];
 
     if (roles && roles.length > 0) {
         roles.forEach((role: string) => {
             scopes.push(`ROLE_${role}`);
+        });
+    }
+
+    if (permissions && permissions.length > 0) {
+        permissions.forEach((permission: string) => {
+            scopes.push(`ROLE_${permission}`);
         });
     }
 
@@ -19,6 +25,7 @@ const buildScope = (roles: string[]): string => {
 export const getAccesstoken = async (
     id: string,
     roles: string[],
+    permissions: string[] = [],
     durationSeconds: number = 600,
     isRefresh: boolean = false
 ): Promise<string> => {
@@ -30,7 +37,7 @@ export const getAccesstoken = async (
         iat: now,
         exp: now + durationSeconds,
         jti: crypto.randomUUID(),
-        scope: buildScope(roles)
+        scope: buildScope(roles, permissions)
     };
 
     const key = isRefresh ? process.env.REFRESH_SECRET_KEY : process.env.SECRET_KEY;

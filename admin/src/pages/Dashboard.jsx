@@ -112,9 +112,9 @@ const Dashboard = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Header />
-        <main className="flex-1 overflow-y-auto bg-white p-4 lg:p-6 min-w-0">
+        <main className="flex-1 overflow-y-auto bg-white p-3 lg:p-5 min-w-0">
           {/* Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
             <StatCard
               icon="heart"
               label="Total number of visitors"
@@ -144,12 +144,12 @@ const Dashboard = () => {
           </div>
 
           {/* Recent Orders and Best Seller */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-5">
             {/* Recent Orders */}
-            <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-4 overflow-hidden">
+            <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-3 overflow-hidden">
               <h3 className="text-base font-semibold text-gray-800 mb-4">Recent Orders</h3>
-              <div className="overflow-x-auto -mx-4 px-4">
-                <table className="w-full text-sm min-w-[600px]">
+              <div className="overflow-x-auto -mx-3 px-3">
+                <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-2 px-3 text-gray-600 font-semibold text-xs uppercase whitespace-nowrap">
@@ -202,7 +202,7 @@ const Dashboard = () => {
             </div>
 
             {/* Best Seller */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-3">
               <h3 className="text-base font-semibold text-gray-800 mb-4">Best seller</h3>
               <div className="space-y-3">
                 {bestSellers.map((product, index) => (

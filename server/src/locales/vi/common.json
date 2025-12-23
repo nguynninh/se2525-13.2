@@ -1,9 +1,0 @@
-{
-  "success": "Thành công",
-  "error": "Đã xảy ra lỗi",
-  "internal_server_error": "Lỗi máy chủ nội bộ",
-  "validation_error": "Lỗi xác thực dữ liệu",
-  "not_found": "Không tìm thấy tài nguyên",
-  "unauthorized": "Không được phép truy cập",
-  "forbidden": "Bị cấm truy cập"
-}

@@ -1,55 +1,70 @@
-version: '3.8'
-
 services:
     postgres:
-        container_name: se-postgres
         image: postgres:16-alpine
-        ports: ['5432:5432']
+        container_name: postgres
         environment:
-            - POSTGRES_USER=${DB_USERNAME:-postgres}
-            - POSTGRES_PASSWORD=${DB_PASSWORD:-se202513}
-            - POSTGRES_DB=${DB_NAME:-se_database}
+            POSTGRES_DB: ${DB_NAME:-hiki_db}
+            POSTGRES_USER: ${DB_USER:-postgres}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+        ports:
+            - '${DB_PORT:-5432}:5432'
         volumes:
-            - postgres-data:/var/lib/postgresql/data
-        healthcheck:
-            test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres}']
-            interval: 5s
-            timeout: 5s
-            retries: 5
+            - db-data:/var/lib/postgresql/data
 
     redis:
-        container_name: se-redis
-        image: redis:7.0-alpine
-        ports: ['6379:6379']
+        image: redis:7-alpine
+        container_name: redis
+        command: ['redis-server', '--requirepass', '${REDIS_PASSWORD:-redis123}']
+        ports:
+            - '${REDIS_PORT:-6379}:6379'
         volumes:
             - redis-data:/data
+
+    redis-commander:
+        image: rediscommander/redis-commander:latest
+        container_name: redis-commander
         environment:
-            - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-        healthcheck:
-            test: ['CMD', 'redis-cli', 'ping']
-            interval: 5s
-            timeout: 3s
-            retries: 5
+            REDIS_HOSTS: 'local:redis:6379:0:${REDIS_PASSWORD:-redis123}'
+        depends_on:
+            - redis
+        ports:
+            - '${REDIS_COMMANDER_PORT:-6380}:8081'
+
+    pgadmin:
+        image: dpage/pgadmin4:8.12
+        container_name: pgadmin
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin123}
+        ports:
+            - '${PGADMIN_PORT:-5050}:80'
+        volumes:
+            - pgadmin-data:/var/lib/pgadmin
+        depends_on:
+            - postgres
 
     minio:
-        container_name: se-minio
         image: minio/minio:latest
+        container_name: minio
+        environment:
+            MINIO_ROOT_USER: ${S3_ACCESS_KEY:-MinIOAccessKey123}
+            MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-MinIOSecretKey123}
+        command: server /data --console-address ":9001"
         ports:
             - '9000:9000'
             - '9001:9001'
-        environment:
-            - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID:-minioadmin}
-            - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY:-minioadmin}
         volumes:
             - minio-data:/data
-        command: server /data --console-address ":9001"
-        healthcheck:
-            test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
-            interval: 30s
-            timeout: 20s
-            retries: 3
+
+    mailhog:
+        image: mailhog/mailhog
+        container_name: mailhog
+        ports:
+            - '1025:1025'
+            - '8025:8025'
 
 volumes:
-    postgres-data:
+    db-data:
     redis-data:
+    pgadmin-data:
     minio-data:

@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import Product from './pages/Product';
 import AddProduct from './pages/AddProduct';
+import AddCategory from './pages/AddCategory';
 import Delivery from './pages/Delivery';
 
 const AppContent = () => {
@@ -19,6 +20,8 @@ const AppContent = () => {
     title = 'Add Product';
   } else if (location.pathname === '/delivery') {
     title = 'Delivery';
+  } else if (location.pathname === '/add-category') {
+    title = 'Add Category';
   }
 
   const isDeliveryPage = location.pathname === '/delivery';
@@ -34,6 +37,7 @@ const AppContent = () => {
             <Route path="/chat" element={<Chat />} />
             <Route path="/product" element={<Product />} />
             <Route path="/add-product" element={<AddProduct />} />
+            <Route path="/add-category" element={<AddCategory />} />
             <Route path="/delivery" element={<Delivery />} />
           </Routes>
         </main>

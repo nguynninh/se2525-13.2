@@ -12,12 +12,12 @@
   "verification_code_expired_or_not_found": "Verification code has expired or does not exist",
   "verification_attempts_exceeded": "Maximum verification attempts exceeded. Please request a new code",
   "verification_code_invalid": "Verification code is incorrect. {{attempts_left}} attempts remaining",
+  "user_id_required": "User ID is required",
+  "user_id_invalid": "User ID is invalid. Must be a valid UUID",
   "user_created_successfully": "User created successfully",
   "user_created": "User created successfully",
-  "user_updated": "User updated successfully",
-  "user_deleted": "User deleted successfully",
+  "user_retrieved_successfully": "User information retrieved successfully",
   "user_not_found": "User not found",
-  "user_already_exists": "User already exists",
   "email_already_in_use": "Email is already in use",
   "verification_code_sent": "Verification code has been sent to {{email}}"
 }

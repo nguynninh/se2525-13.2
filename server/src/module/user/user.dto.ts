@@ -115,5 +115,4 @@ export interface AdminUserDetailResponseDto {
     customer: CustomerResponseDto | null;
     seller: SellerResponseDto | null;
     admin: AdminResponseDto | null;
-    shipping_addresses: ShippingAddressResponseDto[];
 }

@@ -58,6 +58,5 @@
     "get_sellers_successfully": "Get seller information successfully",
     "seller_id_required": "Seller id is required",
     "update_seller_status_successfully": "Update seller status successfully",
-    "delete_seller_successfully": "Delete seller successfully",
-    "application_id_required": "Application id is required"
+    "delete_seller_successfully": "Delete seller successfully"
 }

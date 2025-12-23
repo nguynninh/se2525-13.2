@@ -2,19 +2,14 @@ import { Router, Request, Response } from 'express';
 import response from '../utils/response';
 import { Client as PgClient } from 'pg';
 import { createClient as createRedisClient } from 'redis';
-
-import authRoute from './api/v1/auth.route';
-import userRoute from './api/v1/user.route';
-import productRoute from './api/v1/product.route';
-import sellerApplicationRoute from './api/v1/sellerApplication.route';
-import locationRoute from './api/v1/location.route';
-import cartRoute from './api/v1/cart.route';
-import shopRoute from './api/v1/shop.route';
-import orderRoute from './api/v1/order.route';
-import shipmentRoute from './api/v1/shipment.route';
-import deviceTokenRoute from './api/v1/deviceToken.route';
+import { AppError, InternalServerError } from '../exception/AppError';
 
 const router: Router = Router();
+
+// Root endpoint
+router.get('/', (req: Request, res: Response) => {
+    res.send('Welcome to Tiki API');
+});
 
 router.get('/test/success', (req: Request, res: Response) => {
     const data = { items: ['A', 'B', 'C'] };

@@ -106,7 +106,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <>
+    <div className="space-y-4 bg-content-bg min-h-screen p-3 lg:p-5">
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <StatCard
@@ -231,7 +231,7 @@ const Dashboard = () => {
 
       {/* Total Product Sales Chart */}
       <AreaChart />
-    </>
+    </div>
   );
 };
 

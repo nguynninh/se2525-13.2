@@ -10,7 +10,6 @@ import {
     RefreshTokenResponseDto,
     LoginResponseDto,
     ForgotPasswordDto,
-    ForgotPasswordResponseDto,
 } from './auth.dto';
 import {
     RegisterStartDto,

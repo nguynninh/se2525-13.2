@@ -1,9 +1,0 @@
-{
-  "success": "成功",
-  "error": "エラーが発生しました",
-  "internal_server_error": "内部サーバーエラー",
-  "validation_error": "検証エラー",
-  "not_found": "リソースが見つかりません",
-  "unauthorized": "認証されていません",
-  "forbidden": "アクセスが禁止されています"
-}

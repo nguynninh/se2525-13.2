@@ -43,39 +43,41 @@ const Product = () => {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg shadow p-4 mb-4">
-        <div className="flex space-x-4 mb-4">
-          <Link to="/product" className="bg-gray-800 text-white px-4 py-2 rounded-lg">Product</Link>
-          <Link to="/add-product" className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Add products</Link>
+      <div className="mb-4 rounded-lg bg-white p-4 shadow">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Link to="/product" className="rounded-md bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow">Product</Link>
+          <Link to="/add-product" className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Add products</Link>
+          <Link to="/add-category" className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Add Category</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-6">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">Product name</label>
-            <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input type="text" className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
           </div>
-          <div>
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">Category</label>
-            <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input type="text" className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Stock</label>
-            <div className="flex space-x-2">
-              <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-              <span className="mt-2">-</span>
-              <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <div className="mt-2 flex items-center gap-2">
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
+              <span className="text-sm text-gray-500">-</span>
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Sale</label>
-            <div className="flex space-x-2">
-              <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-              <span className="mt-2">-</span>
-              <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <div className="mt-2 flex items-center gap-2">
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
+              <span className="text-sm text-gray-500">-</span>
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
             </div>
           </div>
-          <div className="col-span-1 lg:col-span-4 flex justify-end space-x-2">
-            <button className="bg-gray-800 text-white px-4 py-2 rounded-lg">Search</button>
-            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Reset</button>
+          <div className="md:col-span-2 flex items-end gap-2">
+            <button className="w-full rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-gray-900">Search</button>
+            <button className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">Reset</button>
           </div>
         </div>
       </div>
@@ -119,6 +121,7 @@ const Product = () => {
           </tbody>
         </table>
       </div>
+
     </div>
   );
 };

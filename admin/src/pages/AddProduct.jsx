@@ -1,76 +1,103 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const AddProduct = () => {
+  const categories = [
+    {
+      name: 'T-Shirts',
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=120&h=120&fit=crop',
+      description: 'Easy-to-pair tees that match a wide range of looks.',
+    },
+    {
+      name: 'Jeans',
+      image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=120&h=120&fit=crop',
+      description: 'Youthful, energetic denim in slim, straight, or baggy fits.',
+    },
+    {
+      name: 'Hoodies',
+      image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=120&h=120&fit=crop&sat=-40',
+      description: 'Relaxed hoodies with drawstrings—perfect for cool weather.',
+    },
+    {
+      name: 'Vests',
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&h=120&fit=crop&sat=-70',
+      description: 'Lightweight vests designed to layer over shirts or long sleeves.',
+    },
+  ];
+
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg shadow p-4 mb-4">
-        <div className="flex space-x-4 mb-4">
-          <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Product</button>
-          <button className="bg-gray-800 text-white px-4 py-2 rounded-lg">Add products</button>
+      <div className="mb-4 rounded-lg bg-white p-4 shadow">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Link to="/product" className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Product</Link>
+          <Link to="/add-product" className="rounded-md bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow">Add products</Link>
+          <Link to="/add-category" className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Add Category</Link>
         </div>
-        <h2 className="text-xl font-bold mb-4">Add New Product</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
+        <h2 className="mb-4 text-xl font-bold">Add New Product</h2>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-6">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">Product name</label>
-            <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input type="text" className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Category Name</label>
-            <input type="text" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700">Category</label>
+            <input type="text" className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Stock</label>
-            <input type="text" className="mt-1 block w-24 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <div className="mt-2 flex items-center gap-2">
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
+              <span className="text-sm text-gray-500">-</span>
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
+            </div>
           </div>
-          <div className="col-span-1 lg:col-span-3 flex justify-end space-x-2">
-            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Edit</button>
-            <button className="bg-gray-800 text-white px-4 py-2 rounded-lg">Send</button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Sale</label>
+            <div className="mt-2 flex items-center gap-2">
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
+              <span className="text-sm text-gray-500">-</span>
+              <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
+            </div>
+          </div>
+          <div className="md:col-span-2 flex items-end gap-2">
+            <button className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">Edit</button>
+            <button className="w-full rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-gray-900">Send</button>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="rounded-lg bg-white p-4 shadow">
         <div className="mb-4">
-          <input type="text" placeholder="Category Name" className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          <h3 className="text-lg font-semibold text-gray-900">Product Categories</h3>
+          <p className="text-sm text-gray-500">Browse existing categories and their descriptions.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="col-span-1 border-r pr-4">
-            <ul>
-              <li className="text-red-500 font-bold">Menswear</li>
-              <li>Women's Clothing</li>
-              <li>Men's Shoes</li>
-              <li>Women's Shoes</li>
-              <li>Electronic</li>
-              <li>Mobile Phones</li>
-              <li>Computers & Accessories</li>
-              <li>Grooming & Beauty</li>
-              <li>Home Supplies</li>
-            </ul>
-          </div>
-          <div className="col-span-1 border-r pr-4">
-            <ul>
-              <li>Superior</li>
-              <li>Long pants</li>
-              <li>Shorts</li>
-              <li>Jeans</li>
-              <li className="text-red-500">Jackets, Cardigans, Sweaters</li>
-              <li>Coats & Vests</li>
-            </ul>
-          </div>
-          <div className="col-span-1">
-            <div className="grid grid-cols-3 gap-2">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="border-2 border-dashed rounded-lg h-24 flex items-center justify-center">
-                  <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-100">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Category</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Image</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Description</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {categories.map((category, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-semibold text-gray-900">{category.name}</td>
+                  <td className="px-4 py-3">
+                    <img src={category.image} alt={category.name} className="h-16 w-16 rounded-md object-cover" />
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700">{category.description}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <button className="rounded-lg border px-3 py-1 text-gray-700 shadow-sm transition hover:bg-gray-100">⋯</button>
+                  </td>
+                </tr>
               ))}
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end mt-4">
-          <button className="bg-gray-800 text-white px-4 py-2 rounded-lg">Save</button>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

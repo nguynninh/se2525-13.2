@@ -38,6 +38,7 @@ export interface UserResponseDto {
     last_name: string;
     email: string;
     role: UserRole;
+    phone: string | null;
     profile_url?: string | null;
 }
 
@@ -48,6 +49,8 @@ export interface UpdateUserDto {
     last_name?: string;
     email?: string;
     password?: string;
+    phone?: string | null;
+    profile_url?: string | null;
 }
 
 export interface VerifyUserDto {

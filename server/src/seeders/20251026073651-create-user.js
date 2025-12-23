@@ -8,21 +8,24 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const now = new Date();
 
-        const [seller1Hash, seller2Hash, customer1Hash, customer2Hash] = await Promise.all([
+        const [seller1Hash, seller2Hash, customer1Hash, customer2Hash, customer3Hash] = await Promise.all([
             bcrypt.hash('Seller@123', SALT_ROUNDS),
             bcrypt.hash('Seller@123', SALT_ROUNDS),
+            bcrypt.hash('User@123', SALT_ROUNDS),
             bcrypt.hash('User@123', SALT_ROUNDS),
             bcrypt.hash('User@123', SALT_ROUNDS),
         ]);
         await queryInterface.bulkInsert(
             'users',
             [
+                // Sellers
                 {
                     first_name: 'Alice',
                     last_name: 'Seller',
                     email: 'seller1@example.com',
                     password: seller1Hash,
                     role: 'seller',
+                    phone: '1234567890',
                     profile_url: null,
                 },
                 {
@@ -31,6 +34,7 @@ module.exports = {
                     email: 'seller2@example.com',
                     password: seller2Hash,
                     role: 'seller',
+                    phone: '0987654321',
                     profile_url: null,
                 },
 
@@ -41,6 +45,7 @@ module.exports = {
                     email: 'customer1@example.com',
                     password: customer1Hash,
                     role: 'customer',
+                    phone: '5551234567',
                     profile_url: null,
                 },
                 {
@@ -49,6 +54,16 @@ module.exports = {
                     email: 'customer2@example.com',
                     password: customer2Hash,
                     role: 'customer',
+                    phone: '5559876543',
+                    profile_url: null,
+                },
+                {
+                    first_name: 'Thomas',
+                    last_name: 'Customer',
+                    email: 'customer3@example.com',
+                    password: customer3Hash,
+                    role: 'customer',
+                    phone: '5556789123',
                     profile_url: null,
                 },
             ],
@@ -67,6 +82,7 @@ module.exports = {
                         'seller2@example.com',
                         'customer1@example.com',
                         'customer2@example.com',
+                        'customer3@example.com',
                     ],
                 },
             },

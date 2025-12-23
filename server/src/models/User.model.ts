@@ -9,6 +9,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare email: string;
     declare password: string;
     declare role: CreationOptional<UserRole>;
+    declare phone: CreationOptional<string | null>;
     declare profile_url: CreationOptional<string | null>;
     declare created_at: CreationOptional<Date>;
     declare updated_at: CreationOptional<Date>;
@@ -26,6 +27,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
                     allowNull: false,
                     defaultValue: 'customer',
                 },
+                phone: { type: DataTypes.STRING(20), allowNull: true, defaultValue: null },
                 profile_url: { type: DataTypes.TEXT, allowNull: true, defaultValue: null },
                 created_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
                 updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
@@ -41,10 +43,6 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
             },
         );
         return User;
-    }
-
-    static associate(models: any) {
-        // User.hasMany(models.Order, { foreignKey: 'user_id', as: 'orders' });
     }
 }
 

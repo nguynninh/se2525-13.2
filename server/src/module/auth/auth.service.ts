@@ -395,6 +395,7 @@ export const authRegister = {
             last_name: user.getDataValue('last_name'),
             email: user.getDataValue('email'),
             role: user.getDataValue('role'),
+            phone: user.getDataValue('phone'),
             profile_url: user.getDataValue('profile_url'),
         };
     },
@@ -427,6 +428,7 @@ export const authLogin = {
                 last_name: user.last_name,
                 email: user.email,
                 role: user.role,
+                phone: user.phone ?? null,
                 profile_url: user.profile_url,
             },
             accessToken,
@@ -485,6 +487,7 @@ export const authLogin = {
                 last_name: user.last_name,
                 email: user.email,
                 role: user.role,
+                phone: user.phone ?? null,
                 profile_url: user.profile_url ?? null,
             },
             accessToken,

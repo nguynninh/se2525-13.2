@@ -21,7 +21,7 @@ import { ValidationError } from '../../exception/AppError';
 
 export const createSellerApplicationController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId = req.user?.id;
+        const userId = (req as any).user?.id;
         if (!userId) {
             throw new ValidationError('auth:unauthenticated');
         }
@@ -37,7 +37,7 @@ export const createSellerApplicationController = async (req: Request, res: Respo
 
 export const getMyLatestSellerApplicationController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId = req.user?.id;
+        const userId = (req as any).user?.id;
         if (!userId) {
             throw new ValidationError('auth:unauthenticated');
         }
@@ -82,7 +82,7 @@ export const listSellerHistoryApplicationsController = async (req: Request, res:
 
 export const reviewSellerApplicationController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const adminId = req.user?.id;
+        const adminId = (req as any).user?.id;
         if (!adminId) {
             throw new ValidationError('auth:unauthenticated');
         }

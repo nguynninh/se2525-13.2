@@ -3,9 +3,14 @@ import response from '../utils/response';
 import { Client as PgClient } from 'pg';
 import { createClient as createRedisClient } from 'redis';
 
+import authRoute from './api/v1/auth.route';
+import userRoute from './api/v1/user.route';
+import productRoute from './api/v1/product.route';
+import sellerApplicationRoute from './api/v1/sellerApplication.route';
+import locationRoute from './api/v1/location.route';
+
 const router: Router = Router();
 
-// Root endpoint
 router.get('/', (req: Request, res: Response) => {
     res.send('Welcome to Tiki API');
 });
@@ -15,18 +20,15 @@ router.get('/test/success', (req: Request, res: Response) => {
     return response.ok(res, data, 'OK');
 });
 
-// Test created (201)
 router.get('/test/created', (req: Request, res: Response) => {
     const data = { id: 123, name: 'Item' };
     return response.created(res, data, 'Created');
 });
 
-// Test error/fail (422 + errors)
 router.get('/test/error', (_req, res) => {
     return response.fail(res, 422, 'validation:failed', [{ field: 'name', message: 'required' }]);
 });
 
-/** ========== Test PostgreSQL connection ========== */
 router.get('/test/postgres', async (req: Request, res: Response) => {
     const client = new PgClient({
         host: process.env.DB_HOST || 'localhost',
@@ -40,7 +42,6 @@ router.get('/test/postgres', async (req: Request, res: Response) => {
         await client.connect();
         const r = await client.query('SELECT 1 as ok');
         await client.end();
-
         const pgStatus = r.rows?.[0]?.ok === 1 ? 'connected' : 'unknown';
         return response.ok(res, { status: pgStatus }, 'PostgreSQL connected');
     } catch (err: any) {
@@ -51,7 +52,6 @@ router.get('/test/postgres', async (req: Request, res: Response) => {
     }
 });
 
-/** ========== Test Redis connection ========== */
 router.get('/test/redis', async (req: Request, res: Response) => {
     const redis = createRedisClient({
         url:
@@ -61,9 +61,8 @@ router.get('/test/redis', async (req: Request, res: Response) => {
 
     try {
         await redis.connect();
-        const pong = await redis.ping(); // 'PONG' nếu ok
+        const pong = await redis.ping();
         await redis.quit();
-
         const redisStatus = pong === 'PONG' ? 'connected' : 'unknown';
         return response.ok(res, { status: redisStatus }, 'Redis connected');
     } catch (err: any) {
@@ -73,5 +72,11 @@ router.get('/test/redis', async (req: Request, res: Response) => {
         return response.fail(res, 500, 'Redis connection failed', { error: err?.message });
     }
 });
+
+router.use('/v1/auth', authRoute);
+router.use('/v1/users', userRoute);
+router.use('/v1/seller-applications', sellerApplicationRoute);
+router.use('/v1', productRoute);
+router.use('/v1', locationRoute);
 
 export default router;

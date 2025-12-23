@@ -18,6 +18,8 @@ import type ProductVariantOption from './ProductVariantOption.model';
 import type ProductStock from './ProductStock.model';
 import type ProductReview from './ProductReview.model';
 import type ProductQuestion from './ProductQuestion.model';
+import type FavoriteShop from './FavoriteShop.model';
+import type FavoriteItem from './FavoriteItem.model';
 
 type Models = {
     User: ModelStatic<User>;
@@ -39,6 +41,8 @@ type Models = {
     ProductStock?: ModelStatic<ProductStock>;
     ProductReview?: ModelStatic<ProductReview>;
     ProductQuestion?: ModelStatic<ProductQuestion>;
+    FavoriteShop?: ModelStatic<FavoriteShop>;
+    FavoriteItem?: ModelStatic<FavoriteItem>;
 };
 
 export function associations(models: Models) {
@@ -61,7 +65,9 @@ export function associations(models: Models) {
         ProductVariantOption,
         ProductStock,
         ProductReview,
-        ProductQuestion
+        ProductQuestion,
+        FavoriteShop,
+        FavoriteItem
     } = models;
 
     if (User && Customer) {
@@ -205,5 +211,21 @@ export function associations(models: Models) {
         
         User.hasMany(ProductQuestion, { foreignKey: 'answered_by', as: 'questions_answered' });
         ProductQuestion.belongsTo(User, { foreignKey: 'answered_by', as: 'answerer' });
+    }
+
+    if (User && FavoriteShop && Shop) {
+        User.hasMany(FavoriteShop, { foreignKey: 'user_id', as: 'favorite_shops' });
+        FavoriteShop.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+        Shop.hasMany(FavoriteShop, { foreignKey: 'shop_id', as: 'favorites' });
+        FavoriteShop.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (User && FavoriteItem && Product) {
+        User.hasMany(FavoriteItem, { foreignKey: 'user_id', as: 'favorite_items' });
+        FavoriteItem.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+        Product.hasMany(FavoriteItem, { foreignKey: 'product_id', as: 'favorites' });
+        FavoriteItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
     }
 }

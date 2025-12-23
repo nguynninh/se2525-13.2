@@ -1,5 +1,4 @@
 // Xử lý logic nghiệp vụ cho xác thực người dùng
-// Bao gồm đăng ký, đăng nhập, đăng nhập xã hội, làm mới token, và lấy hồ sơ
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';

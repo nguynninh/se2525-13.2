@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
     createCategory,
     updateCategory,
+    deleteCategory,
     getCategories,
     createProduct,
     updateProduct,
@@ -22,6 +23,8 @@ import {
 import { Shop } from '../../models/Shop.model';
 import { Seller } from '../../models/Seller.model';
 import { AppError } from '../../exception/AppError';
+import { ValidationError } from '../../exception/AppError';
+import { uploadFileToMinIO } from '../../utils/upload';
 
 export const ProductController = {
     createCategory: async (req: Request, res: Response, next: NextFunction) => {
@@ -46,6 +49,15 @@ export const ProductController = {
         try {
             const result = await getCategories();
             res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    deleteCategory: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await deleteCategory(req.params.id);
+            res.status(204).send();
         } catch (error) {
             next(error);
         }
@@ -118,7 +130,18 @@ export const ProductController = {
 
     addProductImage: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await addProductImage(req.body);
+            const file = req.file;
+            if (!file) {
+                throw new ValidationError('upload:file_required');
+            }
+
+            const imageUrl = await uploadFileToMinIO(file.originalname, file.buffer, file.mimetype, 'uploads/products');
+            const payload = {
+                ...req.body,
+                image_url: imageUrl,
+            };
+
+            const result = await addProductImage(payload);
             res.status(201).json(result);
         } catch (error) {
             next(error);

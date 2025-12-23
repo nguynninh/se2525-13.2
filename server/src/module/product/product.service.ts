@@ -44,6 +44,14 @@ export const updateCategory = async (id: string, data: any) => {
     return await category.update(data);
 };
 
+export const deleteCategory = async (id: string) => {
+    const category = await Category.findByPk(id);
+    if (!category) {
+        throw new NotFoundError('product:category_not_found');
+    }
+    await category.destroy();
+};
+
 export const getCategories = async () => {
     return await Category.findAll();
 };

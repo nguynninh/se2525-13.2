@@ -31,7 +31,45 @@ jobs:
           SERVER_IP: 34.27.61.12
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          ssh ${SERVER_USER}@${SERVER_IP} "cd ~/server && \
-            git checkout development && \
-            git pull && \
-            docker compose up -d --build backend admin"
+
+          ssh ${SERVER_USER}@${SERVER_IP} "
+            set -e
+            
+            # Function to re-clone if needed
+            reclone_repo() {
+                echo 'Repository corrupted or missing using self-healing...'
+                cd ~
+                
+                # Backup .env
+                if [ -f server/server/.env ]; then cp server/server/.env .env.backup; 
+                elif [ -f server/.env ]; then cp server/.env .env.backup; fi
+                
+                rm -rf server
+                git clone https://github.com/nguynninh/se2525-13.2.git server
+                
+                # Restore .env
+                if [ -f .env.backup ]; then
+                    mkdir -p server/server
+                    cp .env.backup server/server/.env
+                    # existing docker-compose update pointed to ./server/.env, ensure it is there
+                    cp .env.backup server/.env
+                fi
+            }
+
+            # Check if directory exists and is a git repo
+            if [ ! -d ~/server/.git ]; then
+                reclone_repo
+            fi
+
+            cd ~/server
+            
+            # Try to checkout/pull, if simple git commands fail, re-clone
+            if ! git checkout development || ! git pull; then
+                reclone_repo
+                cd ~/server
+                git checkout development
+                git pull
+            fi
+            
+            docker compose up -d --build backend admin
+          "

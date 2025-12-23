@@ -13,30 +13,20 @@ const guessCategoryType = (value) => {
 };
 
 const EditProductModal = ({ product, onClose }) => {
+  if (!product) return null;
+
   const [activeTab, setActiveTab] = useState("details");
-  const [category, setCategory] = useState(product?.category || "tshirts");
+  const [category, setCategory] = useState(product.category || "tshirts");
   const categoryType = useMemo(() => guessCategoryType(category), [category]);
 
-  const [variants, setVariants] = useState([
-    { size: "S", color: "Black", stock: 10 },
-  ]);
-
-  const [deviceCompat, setDeviceCompat] = useState({ brand: "", model: "", stock: "" });
   const [customAttrs, setCustomAttrs] = useState([{ key: "", value: "" }]);
-
-  const addVariant = () => setVariants((prev) => [...prev, { size: "", color: "", stock: "" }]);
-  const updateVariant = (idx, field, value) => {
-    setVariants((prev) => prev.map((row, i) => (i === idx ? { ...row, [field]: value } : row)));
-  };
-  const removeVariant = (idx) => setVariants((prev) => prev.filter((_, i) => i !== idx));
+  const [trackingNumber, setTrackingNumber] = useState(""); // placeholder if needed later
 
   const updateAttr = (idx, field, value) => {
     setCustomAttrs((prev) => prev.map((row, i) => (i === idx ? { ...row, [field]: value } : row)));
   };
   const addAttr = () => setCustomAttrs((prev) => [...prev, { key: "", value: "" }]);
   const removeAttr = (idx) => setCustomAttrs((prev) => prev.filter((_, i) => i !== idx));
-
-  if (!product) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/60 px-4 py-8 backdrop-blur-sm">
@@ -98,11 +88,27 @@ const EditProductModal = ({ product, onClose }) => {
           <form className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
+                <label className="block text-sm font-medium text-gray-800">Category</label>
+                <select
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="">Select category</option>
+                  <option value="tshirts">T-Shirts</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="hoodies">Hoodies</option>
+                  <option value="vests">Vests</option>
+                  <option value="phone-case">Phone Case</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-800">Product name</label>
                 <input
                   type="text"
-                  defaultValue={product.name}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  value={product.name}
+                  readOnly
+                  className="mt-2 w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
                 />
               </div>
               <div>
@@ -121,96 +127,7 @@ const EditProductModal = ({ product, onClose }) => {
                   className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-800">Product category</label>
-                <select
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="">Select category</option>
-                  <option value="tshirts">T-Shirts</option>
-                  <option value="jeans">Jeans</option>
-                  <option value="hoodies">Hoodies</option>
-                  <option value="vests">Vests</option>
-                  <option value="phone-case">Phone Case</option>
-                </select>
-              </div>
             </div>
-
-            {categoryType === "clothing" && (
-              <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-800">Variations (Size / Color / Stock)</p>
-                  <button type="button" className="text-sm font-semibold text-blue-600 hover:underline" onClick={addVariant}>
-                    + Add variant
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {variants.map((variant, idx) => (
-                    <div key={idx} className="grid grid-cols-1 md:grid-cols-7 gap-2 items-center">
-                      <input
-                        type="text"
-                        placeholder="Size"
-                        value={variant.size}
-                        onChange={(e) => updateVariant(idx, "size", e.target.value)}
-                        className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Color"
-                        value={variant.color}
-                        onChange={(e) => updateVariant(idx, "color", e.target.value)}
-                        className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Stock"
-                        value={variant.stock}
-                        onChange={(e) => updateVariant(idx, "stock", e.target.value)}
-                        className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeVariant(idx)}
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {categoryType === "phone" && (
-              <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
-                <p className="text-sm font-semibold text-gray-800">Compatibility / Model</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    placeholder="Brand / Series (e.g., iPhone, Samsung S)"
-                    value={deviceCompat.brand}
-                    onChange={(e) => setDeviceCompat({ ...deviceCompat, brand: e.target.value })}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Model (e.g., iPhone 14 / Galaxy S23)"
-                    value={deviceCompat.model}
-                    onChange={(e) => setDeviceCompat({ ...deviceCompat, model: e.target.value })}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Stock"
-                    value={deviceCompat.stock}
-                    onChange={(e) => setDeviceCompat({ ...deviceCompat, stock: e.target.value })}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  />
-                </div>
-              </div>
-            )}
 
             <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
               <div className="flex items-center justify-between">

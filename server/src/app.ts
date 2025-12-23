@@ -1,5 +1,4 @@
 import express, { Express } from 'express';
-import express, { Express } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -9,8 +8,6 @@ import { openApiDocument } from './registry';
 import i18nMiddleware from './i18n';
 import { errorHandler } from './middlewares/errorHandler';
 import indexRouter from './routers/index.route';
-import authRouter from './routers/api/v1/auth.route';
-import sellerApplicationRouter from './routers/api/v1/sellerApplication.route';
 
 dotenv.config();
 
@@ -23,13 +20,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use('/', indexRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/seller-applications', sellerApplicationRouter);
-app.use('/api/user', userRouter);
-app.use('/api', locationRouter);
+app.get('/', (_req, res) => {
+    res.send('Welcome to Hiki App');
+});
 
-// Bắt Lỗi
+const apiPrefix = process.env.API_PREFIX || '/api';
+
+app.get('/', (req, res) => {
+    res.status(200).send('Server is running');
+});
+
+app.use(apiPrefix, indexRouter);
+
 app.use(errorHandler);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));

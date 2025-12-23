@@ -23,6 +23,7 @@ services:
             - ./nginx/admin-internal.conf:/etc/nginx/conf.d/default.conf
         networks:
             - backend
+
     postgres:
         image: postgres:16-alpine
         container_name: postgres
@@ -100,6 +101,37 @@ services:
         ports:
             - '1025:1025'
             - '8025:8025'
+
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        ports:
+            - '80:80'
+            - '443:443'
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/certs:/etc/letsencrypt
+            - ./nginx/certbot-var:/var/www/certbot
+        depends_on:
+            - backend
+            - admin
+        networks:
+            - backend
+
+    certbot:
+        image: certbot/certbot
+        container_name: certbot
+        volumes:
+            - ./nginx/certs:/etc/letsencrypt
+            - ./nginx/certbot-var:/var/www/certbot
+        entrypoint: >
+            /bin/sh -c 'trap exit TERM; 
+            while :; do 
+                sleep 12h & wait $${!}; 
+                certbot renew --webroot -w /var/www/certbot; 
+            done'
+        networks:
+            - backend
 
 volumes:
     db-data:

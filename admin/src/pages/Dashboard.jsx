@@ -116,31 +116,37 @@ const Dashboard = () => {
           {/* Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
             <StatCard
-              icon="heart"
+              icon="/icons/Heart.png"
               label="Total number of visitors"
               value="2.761"
               iconBg="bg-red-50"
               iconColor="text-red-500"
             />
+
             <StatCard
-              icon="order"
+              icon="/icons/Order.png"
               label="Order"
               value="580"
+              iconBg="bg-blue-100"
+              iconColor="text-blue-500"
             />
+
             <StatCard
-              icon="revenue"
+              icon="/icons/Revenue.png"
               label="Revenue"
               value="22.000.000₫"
               iconBg="bg-pink-50"
               iconColor="text-pink-500"
             />
+
             <StatCard
-              icon="/icons/Bag 2.png"
+              icon="/icons/Canceled.png"
               label="Canceled"
               value="90"
               iconBg="bg-blue-50"
               iconColor="text-blue-400"
-            />
+/>
+
           </div>
 
           {/* Recent Orders and Best Seller */}

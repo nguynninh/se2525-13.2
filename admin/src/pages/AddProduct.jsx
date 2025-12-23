@@ -59,16 +59,15 @@ const AddProduct = () => {
           </button>
         </div>
 
+        <h2 className="text-xl font-bold mb-4">Add New Product</h2>
 
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
           <label className="block text-sm font-medium text-gray-700 mb-2">Search product</label>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search product..."
-              className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Search product..."
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+          />
         </div>
       </div>
 

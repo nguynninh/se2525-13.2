@@ -1,4 +1,8 @@
 import { UserRole } from '../../models/User.model';
+import { SellerStatus } from '../../models/Seller.model';
+import { ShippingAddressResponseDto } from '../location/location.dto';
+
+export type SellerStatusDto = SellerStatus;
 
 /*
  * ---------- INPUT DTOs ----------
@@ -99,4 +103,16 @@ export interface VerifyUserDto {
 
 export interface UserIdDto {
     id: string;
+}
+
+export interface AdminResponseDto {
+    id: string;
+    user_id: string;
+}
+
+export interface AdminUserDetailResponseDto {
+    user: UserResponseDto;
+    customer: CustomerResponseDto | null;
+    seller: SellerResponseDto | null;
+    admin: AdminResponseDto | null;
 }

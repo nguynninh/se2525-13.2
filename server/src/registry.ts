@@ -8,6 +8,7 @@ import { registerOrderOpenApi } from './module/order/order.openapi';
 import { registerShopOpenApi } from './module/shop/shop.openapi';
 import { registerShipmentOpenApi } from './module/shipment/shipment.openapi';
 import { registerCartOpenApi } from './module/cart/cart.openapi';
+import { registerDeviceTokenOpenApi } from './module/deviceToken/deviceToken.openapi';
 
 const registry = new OpenAPIRegistry();
 
@@ -21,11 +22,6 @@ registerAuthOpenApi(registry);
 registerUserOpenApi(registry);
 registerSellerApplicationOpenApi(registry);
 registerLocationOpenApi(registry);
-registerProductOpenApi(registry);
-registerOrderOpenApi(registry);
-registerShopOpenApi(registry);
-registerShipmentOpenApi(registry);
-registerCartOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 
@@ -37,7 +33,7 @@ export const openApiDocument = generator.generateDocument({
     },
     servers: [
         {
-            url: 'http://localhost:3001',
+            url: process.env.SWAGGER_ENDPOINT || 'http://localhost:3001',
             description: 'API SWAGGER',
         },
     ],

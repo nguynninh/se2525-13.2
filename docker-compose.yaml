@@ -24,17 +24,6 @@ services:
         networks:
             - backend
 
-    seller:
-        build:
-            context: ./seller
-            dockerfile: Dockerfile
-        container_name: seller
-        restart: unless-stopped
-        volumes:
-            - ./nginx/seller-internal.conf:/etc/nginx/conf.d/default.conf
-        networks:
-            - backend
-
     postgres:
         image: postgres:16-alpine
         container_name: postgres
@@ -126,7 +115,6 @@ services:
         depends_on:
             - backend
             - admin
-            - seller
         networks:
             - backend
 

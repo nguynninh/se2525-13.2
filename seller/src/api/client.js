@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://api.hiki.io.vn').replace(/\/$/, '');
+const API_PREFIX = 'api';
 
 const getStoredToken = () => localStorage.getItem('accessToken') || localStorage.getItem('token');
 
@@ -34,10 +35,12 @@ api.interceptors.response.use(
 
 export const apiRequest = async (path, options = {}) => {
   const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  const hasPrefix = normalizedPath.startsWith(`${API_PREFIX}/`);
+  const url = hasPrefix ? normalizedPath : `${API_PREFIX}/${normalizedPath}`;
   const method = (options.method || 'get').toLowerCase();
 
   const config = {
-    url: normalizedPath,
+    url,
     method,
     headers: options.headers,
     params: options.params,

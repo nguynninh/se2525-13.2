@@ -1,39 +1,31 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Truck, Navigation, Edit, RefreshCcw, Plus, PackageCheck } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { getSellerOrders, confirmSellerOrder, rejectSellerOrder } from '../api/seller';
+import { Truck, Navigation, RefreshCcw, Plus, Check, X } from 'lucide-react';
 import {
-  fetchShipments,
-  fetchShippingRates,
+  getSellerOrders,
+  confirmSellerOrder,
+  rejectSellerOrder,
+} from '../api/seller';
+import {
   fetchMyAddresses,
   createMyAddress,
   deleteMyAddress,
   setDefaultMyAddress,
   fetchProvinces,
   fetchWards,
-  createShipment,
-  updateShipmentStatus,
   updateMyAddress,
 } from '../api/shipping';
 
+// Simplified shipping page for seller: manage pending orders and addresses only.
+// Shipments/rates are admin-only on backend, so we avoid calling those endpoints.
+
 const Shipping = () => {
-  const navigate = useNavigate();
-  const [shipments, setShipments] = useState([]);
-  const [rates, setRates] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
   const [provinces, setProvinces] = useState([]);
   const [wards, setWards] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState('');
-  const [approvedOrderId, setApprovedOrderId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [shipmentForm, setShipmentForm] = useState({
-    order_id: '',
-    address_id: '',
-    carrier: '',
-    eta: '',
-  });
   const [editAddrId, setEditAddrId] = useState('');
   const [editAddrForm, setEditAddrForm] = useState({
     receiver: '',
@@ -50,35 +42,26 @@ const Shipping = () => {
     ward_code: '',
   });
 
-  const statusBadge = (status) => {
-    const map = {
-      shipping: 'bg-purple-50 text-purple-700 border-purple-200',
-      completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      pending: 'bg-amber-50 text-amber-700 border-amber-200',
-    };
-    return (
-      <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border ${map[status] || map.pending}`}>
-        {status}
-      </span>
-    );
+  const normalizeList = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    const candidates = ['items', 'data', 'provinces', 'wards', 'results', 'list'];
+    for (const key of candidates) {
+      if (Array.isArray(payload?.[key])) return payload[key];
+      if (Array.isArray(payload?.data?.[key])) return payload.data[key];
+    }
+    if (Array.isArray(payload?.data)) return payload.data;
+    return [];
   };
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const [shipmentData, rateData, addressData, provinceData] = await Promise.all([
-        fetchShipments(),
-        fetchShippingRates(),
-        fetchMyAddresses(),
-        fetchProvinces(),
-      ]);
-      const orderData = await getSellerOrders({ status: 'pending' });
-      setOrders(Array.isArray(orderData?.items) ? orderData.items : Array.isArray(orderData) ? orderData : []);
-      setShipments(Array.isArray(shipmentData?.items) ? shipmentData.items : Array.isArray(shipmentData) ? shipmentData : []);
-      setRates(Array.isArray(rateData?.items) ? rateData.items : Array.isArray(rateData) ? rateData : []);
-      setAddresses(Array.isArray(addressData?.items) ? addressData.items : Array.isArray(addressData) ? addressData : []);
-      setProvinces(Array.isArray(provinceData?.items) ? provinceData.items : Array.isArray(provinceData) ? provinceData : []);
+      const [addressData, provinceData] = await Promise.all([fetchMyAddresses(), fetchProvinces()]);
+      const allOrdersData = await getSellerOrders();
+      setOrders(normalizeList(allOrdersData));
+      setAddresses(normalizeList(addressData));
+      setProvinces(normalizeList(provinceData));
     } catch (err) {
       setError(err.message || 'Failed to load shipping data.');
     } finally {
@@ -90,21 +73,23 @@ const Shipping = () => {
     loadData();
   }, [loadData]);
 
+  const activeProvince = selectedProvince || addrForm.province_code || editAddrForm.province_code || '';
+
   useEffect(() => {
     const fetchWardList = async () => {
-      if (!selectedProvince) {
+      if (!activeProvince) {
         setWards([]);
         return;
       }
       try {
-        const wardData = await fetchWards(selectedProvince);
-        setWards(Array.isArray(wardData?.items) ? wardData.items : Array.isArray(wardData) ? wardData : []);
+        const wardData = await fetchWards(activeProvince);
+        setWards(normalizeList(wardData));
       } catch (err) {
         setError(err.message || 'Failed to load wards.');
       }
     };
     fetchWardList();
-  }, [selectedProvince]);
+  }, [activeProvince]);
 
   const handleAddressSubmit = async (e) => {
     e.preventDefault();
@@ -116,26 +101,6 @@ const Shipping = () => {
       await loadData();
     } catch (err) {
       setError(err.message || 'Failed to create address.');
-    }
-  };
-
-  const handleCreateShipment = async () => {
-    if (!shipmentForm.order_id) {
-      setError('Order ID is required.');
-      return;
-    }
-    setError('');
-    try {
-      await createShipment({
-        order_id: shipmentForm.order_id,
-        address_id: shipmentForm.address_id || undefined,
-        carrier: shipmentForm.carrier || undefined,
-        eta: shipmentForm.eta || undefined,
-      });
-      setShipmentForm({ order_id: '', address_id: '', carrier: '', eta: '' });
-      await loadData();
-    } catch (err) {
-      setError(err.message || 'Failed to create shipment.');
     }
   };
 
@@ -194,8 +159,7 @@ const Shipping = () => {
           <Truck className="w-5 h-5" />
         </div>
         <div className="flex-1">
-          <p className="text-sm text-gray-500">Shipments & Rates</p>
-          <p className="text-lg font-semibold text-gray-900">Shipping management</p>
+          <p className="text-sm text-gray-500">Shipping & Addresses</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -217,126 +181,6 @@ const Shipping = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="space-y-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="font-semibold text-gray-900">Pending orders</p>
-                <p className="text-xs text-gray-500">Approve/reject before creating shipment</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              {loading ? (
-                <div className="border border-dashed border-gray-200 rounded-lg p-3 text-sm text-gray-600">Loading orders...</div>
-              ) : orders.length === 0 ? (
-                <div className="border border-dashed border-gray-200 rounded-lg p-3 text-sm text-gray-600">No pending orders.</div>
-              ) : (
-                orders.map((order) => (
-                  <div key={order.id || order._id} className="border border-gray-100 rounded-lg p-3 text-sm space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <div>
-                        <p className="font-semibold text-gray-900">Order #{order.id || order._id}</p>
-                        <p className="text-xs text-gray-500">{order.customer?.name || order.customer_name || 'Customer'}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          className="text-xs font-semibold text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg hover:bg-emerald-50"
-                          onClick={async () => {
-                            setError('');
-                            try {
-                              await confirmSellerOrder(order.id || order._id);
-                              const oid = order.id || order._id;
-                              setApprovedOrderId(oid);
-                              setShipmentForm((prev) => ({ ...prev, order_id: oid }));
-                              await loadData();
-                            } catch (err) {
-                              setError(err.message || 'Failed to confirm order.');
-                            }
-                          }}
-                          disabled={loading}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          className="text-xs font-semibold text-rose-700 border border-rose-200 px-2 py-1 rounded-lg hover:bg-rose-50"
-                          onClick={async () => {
-                            const reason = window.prompt('Reject reason (optional):', '');
-                            setError('');
-                            try {
-                              await rejectSellerOrder(order.id || order._id, reason ? { reason } : {});
-                              await loadData();
-                            } catch (err) {
-                              setError(err.message || 'Failed to reject order.');
-                            }
-                          }}
-                          disabled={loading}
-                        >
-                          Reject
-                        </button>
-                        <button
-                          className="text-xs font-semibold text-gray-700 border border-gray-200 px-2 py-1 rounded-lg hover:bg-gray-50"
-                          onClick={() => {
-                            const oid = order.id || order._id;
-                            setApprovedOrderId(oid);
-                            setShipmentForm((prev) => ({ ...prev, order_id: oid }));
-                          }}
-                        >
-                          Use for shipment
-                        </button>
-                      </div>
-                    </div>
-                    <p className="text-gray-700">{order.shipping_address?.address || order.address || 'No address'}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="font-semibold text-gray-900">Shipping rates</p>
-                <p className="text-xs text-gray-500">Manage rate settings</p>
-              </div>
-              <button
-                className="text-sm font-semibold text-gray-700 border px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-1"
-                onClick={() => navigate('/shipping/rates')}
-              >
-                <Edit className="w-4 h-4" />
-                Edit
-              </button>
-            </div>
-            <div className="space-y-2">
-              {loading ? (
-                <div className="border border-dashed border-gray-200 rounded-lg p-3 text-sm text-gray-600">
-                  Loading rates...
-                </div>
-              ) : rates.length === 0 ? (
-                <div className="border border-dashed border-gray-200 rounded-lg p-3 text-sm text-gray-600">
-                  No shipping rate configured.
-                </div>
-              ) : (
-                rates.map((rate) => (
-                  <div key={rate.name} className="flex items-center justify-between border border-gray-100 rounded-lg px-3 py-2 text-sm">
-                    <div>
-                      <p className="font-semibold text-gray-900">{rate.name}</p>
-                      <p className="text-xs text-gray-500">{rate.eta}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-gray-900">{rate.fee}</p>
-                      <button
-                        className="text-xs font-semibold text-blue-700 border border-blue-200 px-2 py-1 rounded-lg hover:bg-blue-50"
-                        onClick={() => navigate('/shipping/rates')}
-                        disabled={loading}
-                      >
-                        Update fee
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-9 h-9 rounded-lg bg-gray-100 grid place-items-center">
@@ -384,7 +228,7 @@ const Shipping = () => {
                   value={addrForm.ward_code}
                   onChange={(e) => setAddrForm((prev) => ({ ...prev, ward_code: e.target.value }))}
                   className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  disabled={!selectedProvince}
+                  disabled={!activeProvince}
                 >
                   <option value="">Select ward/district</option>
                   {wards.map((w) => (
@@ -462,7 +306,7 @@ const Shipping = () => {
                             value={editAddrForm.ward_code}
                             onChange={(e) => setEditAddrForm((prev) => ({ ...prev, ward_code: e.target.value }))}
                             className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                            disabled={!selectedProvince}
+                            disabled={!activeProvince}
                           >
                             <option value="">Select ward/district</option>
                             {wards.map((w) => (
@@ -546,137 +390,66 @@ const Shipping = () => {
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4 xl:col-span-2">
-          {approvedOrderId ? (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="font-semibold text-gray-900">Create shipment</p>
-                  <p className="text-xs text-gray-500">Order {approvedOrderId} · select address</p>
-                </div>
-              </div>
-              <div className="grid gap-3 md:grid-cols-2 mb-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-800">Order ID</label>
-                  <input
-                    type="text"
-                    value={shipmentForm.order_id}
-                    onChange={(e) => setShipmentForm((prev) => ({ ...prev, order_id: e.target.value }))}
-                    placeholder="Enter order ID"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-800">Destination address</label>
-                  <select
-                    value={shipmentForm.address_id}
-                    onChange={(e) => setShipmentForm((prev) => ({ ...prev, address_id: e.target.value }))}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  >
-                    <option value="">Select saved address (optional)</option>
-                    {addresses.map((addr) => (
-                      <option key={addr.id || addr._id} value={addr.id || addr._id}>
-                        {addr.receiver} - {addr.address}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-800">Carrier</label>
-                  <input
-                    type="text"
-                    value={shipmentForm.carrier}
-                    onChange={(e) => setShipmentForm((prev) => ({ ...prev, carrier: e.target.value }))}
-                    placeholder="Carrier (optional)"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-800">ETA</label>
-                  <input
-                    type="text"
-                    value={shipmentForm.eta}
-                    onChange={(e) => setShipmentForm((prev) => ({ ...prev, eta: e.target.value }))}
-                    placeholder="e.g. 2-3 days"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end mb-6">
-                <button
-                  onClick={handleCreateShipment}
-                  className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 disabled:opacity-60"
-                  disabled={loading}
-                >
-                  <PackageCheck className="w-4 h-4" />
-                  Create shipment
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="border border-dashed border-gray-200 rounded-lg p-4 mb-6 text-sm text-gray-700">
-              Approve an order first, then you can create its shipment.
-            </div>
-          )}
-
           <div className="flex items-center justify-between mb-3">
-            <p className="font-semibold text-gray-900">Shipment list</p>
-            <span className="text-xs text-gray-500">By order</span>
+            <div>
+              <p className="font-semibold text-gray-900">Seller orders</p>
+              <p className="text-xs text-gray-500">Manage and update delivery status</p>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50 text-gray-700 text-xs uppercase border-b border-gray-100">
                 <tr>
-                  <th className="px-3 py-2 text-left font-semibold">Code</th>
                   <th className="px-3 py-2 text-left font-semibold">Order</th>
-                  <th className="px-3 py-2 text-left font-semibold">Destination</th>
-                  <th className="px-3 py-2 text-left font-semibold">Carrier</th>
+                  <th className="px-3 py-2 text-left font-semibold">Customer</th>
+                  <th className="px-3 py-2 text-left font-semibold">Total</th>
                   <th className="px-3 py-2 text-left font-semibold">Status</th>
-                  <th className="px-3 py-2 text-left font-semibold">ETA</th>
-                  <th className="px-3 py-2 text-left font-semibold">Actions</th>
+                  <th className="px-3 py-2 text-left font-semibold">Updated</th>
+                      <th className="px-3 py-2 text-left font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="7" className="px-3 py-4 text-center text-sm text-gray-600">
-                      Loading shipments...
+                    <td colSpan="6" className="px-3 py-4 text-center text-sm text-gray-600">
+                      Loading orders...
                     </td>
                   </tr>
-                ) : shipments.length === 0 ? (
+                ) : orders.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="px-3 py-4 text-center text-sm text-gray-600">
-                      No shipments yet.
+                    <td colSpan="6" className="px-3 py-4 text-center text-sm text-gray-600">
+                      No orders yet.
                     </td>
                   </tr>
                 ) : (
-                  shipments.map((item) => (
-                    <tr key={item.id} className="border-b border-gray-100">
-                      <td className="px-3 py-2 font-semibold text-gray-900">{item.id}</td>
-                      <td className="px-3 py-2 text-gray-700">{item.order_id || item.orderId}</td>
-                      <td className="px-3 py-2 text-gray-700">
-                        {item.address?.address || item.address || '-'}
-                      </td>
-                      <td className="px-3 py-2 text-gray-700">{item.carrier || '-'}</td>
-                      <td className="px-3 py-2">{statusBadge(item.status)}</td>
-                      <td className="px-3 py-2 text-gray-700">{item.eta || '-'}</td>
+                  orders.map((order) => (
+                    <tr key={order.id || order._id} className="border-b border-gray-100">
+                      <td className="px-3 py-2 font-semibold text-gray-900">{order.id || order._id}</td>
+                      <td className="px-3 py-2 text-gray-700">{order.customer?.name || order.customer_name || 'N/A'}</td>
+                      <td className="px-3 py-2 text-gray-700">{order.total_price || order.total || '-'}</td>
+                      <td className="px-3 py-2 text-gray-700">{order.status || 'pending'}</td>
+                      <td className="px-3 py-2 text-gray-700">{order.updated_at || order.updatedAt || '-'}</td>
                       <td className="px-3 py-2 text-sm text-gray-700">
                         <div className="flex items-center gap-2">
-                          <select
-                            value={item.status}
-                            onChange={(e) => {
-                              const status = e.target.value;
-                              setError('');
-                              updateShipmentStatus(item.id, { status })
-                                .then(loadData)
-                                .catch((err) => setError(err.message || 'Failed to update shipment.'));
-                            }}
-                            className="rounded-lg border border-gray-200 px-2 py-1 text-xs"
+                          <button
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-semibold text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+                            onClick={() => confirmSellerOrder(order.id || order._id).then(loadData).catch((err) => setError(err.message || 'Failed to confirm'))}
                             disabled={loading}
                           >
-                            <option value="shipping">shipping</option>
-                            <option value="pending">pending</option>
-                            <option value="completed">completed</option>
-                          </select>
+                            <Check className="w-3.5 h-3.5" /> Confirm
+                          </button>
+                          <button
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-semibold text-rose-700 border-rose-200 hover:bg-rose-50"
+                            onClick={() => {
+                              const reason = window.prompt('Reject reason (optional):', '');
+                              rejectSellerOrder(order.id || order._id, reason ? { reason } : {})
+                                .then(loadData)
+                                .catch((err) => setError(err.message || 'Failed to reject'));
+                            }}
+                            disabled={loading}
+                          >
+                            <X className="w-3.5 h-3.5" /> Reject
+                          </button>
                         </div>
                       </td>
                     </tr>

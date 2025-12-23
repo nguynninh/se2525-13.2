@@ -1,7 +1,7 @@
 import React from 'react';
-import { LogOut, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
-const Header = ({ title, user, onLogout }) => {
+const Header = ({ title, user }) => {
   return (
     <div className="bg-white px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between border-b border-gray-200">
       <div>
@@ -15,12 +15,6 @@ const Header = ({ title, user, onLogout }) => {
             <Shield className="w-3.5 h-3.5" /> Seller
           </span>
         </div>
-        <button
-          onClick={onLogout}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-sm font-semibold text-gray-800 hover:bg-gray-50"
-        >
-          <LogOut className="w-4 h-4" /> Logout
-        </button>
       </div>
     </div>
   );

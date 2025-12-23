@@ -15,21 +15,18 @@ module.exports = {
         const customers = [
             {
                 user_id: idByEmail['customer1@example.com'],
-                default_address_id: null,
                 loyalty_points: 100,
                 created_at: now,
                 updated_at: now,
             },
             {
                 user_id: idByEmail['customer2@example.com'],
-                default_address_id: null,
                 loyalty_points: 50,
                 created_at: now,
                 updated_at: now,
             },
             {
                 user_id: idByEmail['customer3@example.com'],
-                default_address_id: null,
                 loyalty_points: 150,
                 created_at: now,
                 updated_at: now,

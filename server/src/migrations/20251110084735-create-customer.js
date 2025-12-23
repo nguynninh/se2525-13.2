@@ -19,10 +19,6 @@ module.exports = {
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
             },
-            default_address_id: {
-                type: Sequelize.UUID,
-                allowNull: true,
-            },
             loyalty_points: {
                 type: Sequelize.INTEGER,
                 allowNull: false,

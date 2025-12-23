@@ -11,11 +11,6 @@ const getOrCreateCart = async (userId: string) => {
         where: { user_id: userId },
         include: [
             {
-                model: Shop,
-                as: 'shop',
-                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
-            },
-            {
                 model: CartItem,
                 as: 'cart_items',
                 include: [
@@ -28,7 +23,12 @@ const getOrCreateCart = async (userId: string) => {
                                 as: 'images',
                                 where: { is_main: true },
                                 required: false
-                            }
+                            },
+                            {
+                                model: Shop,
+                                as: 'shop',
+                                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
+                            },
                         ]
                     }
                 ]
@@ -39,7 +39,6 @@ const getOrCreateCart = async (userId: string) => {
     if (!cart) {
         cart = await Cart.create({
             user_id: userId,
-            shop_id: null,
             total_items: 0,
             total_price: 0
         });
@@ -56,13 +55,7 @@ const calculateCartTotals = async (cartId: string) => {
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = cartItems.reduce((sum, item) => sum + Number(item.total_price), 0);
 
-    // Reset shop_id if cart is empty
-    const updateData: any = { total_items: totalItems, total_price: totalPrice };
-    if (totalItems === 0) {
-        updateData.shop_id = null;
-    }
-
-    await Cart.update(updateData, { where: { id: cartId } });
+    await Cart.update({ total_items: totalItems, total_price: totalPrice }, { where: { id: cartId } });
 
     return { total_items: totalItems, total_price: totalPrice };
 };
@@ -85,16 +78,6 @@ export const addToCart = async (userId: string, data: AddToCartDto): Promise<Car
     }
 
     const cart = await getOrCreateCart(userId);
-
-    // Check if cart already has items from a different shop
-    if (cart.shop_id && cart.shop_id !== product.shop_id) {
-        throw new BadRequestError('cart:shop_mismatch');
-    }
-
-    // Set shop_id if cart is empty
-    if (!cart.shop_id && product.shop_id) {
-        await cart.update({ shop_id: product.shop_id });
-    }
 
     // Check if item already exists in cart
     let cartItem = await CartItem.findOne({
@@ -191,6 +174,11 @@ export const updateCartItem = async (userId: string, cartItemId: string, data: U
                         as: 'images',
                         where: { is_main: true },
                         required: false
+                    },
+                    {
+                        model: Shop,
+                        as: 'shop',
+                        attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
                     }
                 ]
             }
@@ -224,6 +212,55 @@ export const updateCartItem = async (userId: string, cartItemId: string, data: U
 
     return cartItem.toJSON() as CartItemResponseDto;
 };
+
+const changeQuantity = async (userId: string, cartItemId: string, delta: number) => {
+    const cartItem = await CartItem.findByPk(cartItemId, {
+        include: [
+            {
+                model: Cart,
+                as: 'cart',
+                where: { user_id: userId }
+            },
+            {
+                model: Product,
+                as: 'product'
+            }
+        ]
+    });
+
+    if (!cartItem) {
+        throw new NotFoundError('cart:item_not_found');
+    }
+
+    const product = (cartItem as any).product as Product | undefined;
+    if (!product) {
+        throw new NotFoundError('product:not_found');
+    }
+
+    const newQuantity = cartItem.quantity + delta;
+    if (newQuantity < 1) {
+        throw new BadRequestError('cart:invalid_quantity');
+    }
+
+    if (product.quantity < newQuantity) {
+        throw new BadRequestError('product:insufficient_stock');
+    }
+
+    const unitPrice = Number(product.price);
+    const totalPrice = unitPrice * newQuantity;
+
+    await cartItem.update({
+        quantity: newQuantity,
+        unit_price: unitPrice,
+        total_price: totalPrice
+    });
+
+    await calculateCartTotals(cartItem.cart_id);
+    return cartItem.toJSON() as CartItemResponseDto;
+};
+
+export const increaseCartItem = (userId: string, cartItemId: string) => changeQuantity(userId, cartItemId, 1);
+export const decreaseCartItem = (userId: string, cartItemId: string) => changeQuantity(userId, cartItemId, -1);
 
 export const removeCartItem = async (userId: string, cartItemId: string): Promise<void> => {
     const cartItem = await CartItem.findByPk(cartItemId, {
@@ -273,11 +310,6 @@ export const getCart = async (userId: string): Promise<CartResponseDto> => {
         where: { user_id: userId },
         include: [
             {
-                model: Shop,
-                as: 'shop',
-                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
-            },
-            {
                 model: CartItem,
                 as: 'cart_items',
                 include: [
@@ -290,7 +322,12 @@ export const getCart = async (userId: string): Promise<CartResponseDto> => {
                                 as: 'images',
                                 where: { is_main: true },
                                 required: false
-                            }
+                            },
+                            {
+                                model: Shop,
+                                as: 'shop',
+                                attributes: ['id', 'name', 'slug', 'description', 'logo_url', 'status']
+                            },
                         ]
                     }
                 ]

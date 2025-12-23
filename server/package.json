@@ -7,6 +7,7 @@
     "dev": "nodemon --watch src --ext ts --exec \"node -r ts-node/register ./src/server.ts\"",
     "build": "tsc -p .",
     "start": "node ./dist/server.js",
+    "seed:admin": "node -r ts-node/register ./src/seeds/createAdmin.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +23,10 @@
   },
   "homepage": "https://github.com/nguynninh/se2025-13.2-server#readme",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.7.0",
     "@types/pg": "^8.15.5",
     "dotenv": "^17.2.3",
@@ -36,9 +40,14 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "i18next": "^25.5.3",
     "i18next-fs-backend": "^2.6.0",
     "i18next-http-middleware": "^3.8.1",
-    "pg": "^8.16.3"
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
   }
 }

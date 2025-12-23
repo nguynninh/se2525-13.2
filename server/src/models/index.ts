@@ -20,6 +20,8 @@ import ProductVariantOption from './ProductVariantOption.model';
 import ProductStock from './ProductStock.model';
 import ProductReview from './ProductReview.model';
 import ProductQuestion from './ProductQuestion.model';
+import Cart from './Cart.model';
+import CartItem from './CartItem.model';
 import FavoriteShop from './FavoriteShop.model';
 import FavoriteItem from './FavoriteItem.model';
 import PaymentMethod from './PaymentMethod.model';
@@ -66,6 +68,8 @@ const ProductVariantOptionModel = ProductVariantOption.initModel(sequelize);
 const ProductStockModel = ProductStock.initModel(sequelize);
 const ProductReviewModel = ProductReview.initModel(sequelize);
 const ProductQuestionModel = ProductQuestion.initModel(sequelize);
+const CartModel = Cart.initModel(sequelize);
+const CartItemModel = CartItem.initModel(sequelize);
 const FavoriteShopModel = FavoriteShop.initModel(sequelize);
 const FavoriteItemModel = FavoriteItem.initModel(sequelize);
 const PaymentMethodModel = PaymentMethod.initModel(sequelize);
@@ -98,6 +102,8 @@ export const models = {
     ProductStock: ProductStockModel,
     ProductReview: ProductReviewModel,
     ProductQuestion: ProductQuestionModel,
+    Cart: CartModel,
+    CartItem: CartItemModel,
     FavoriteShop: FavoriteShopModel,
     FavoriteItem: FavoriteItemModel,
     PaymentMethod: PaymentMethodModel,

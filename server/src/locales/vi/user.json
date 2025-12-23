@@ -1,0 +1,15 @@
+{
+  "email_required": "Email không được để trống",
+  "email_invalid": "Email không hợp lệ",
+  "password_required": "Mật khẩu không được để trống",
+  "password_min_length": "Mật khẩu phải có ít nhất {{min}} ký tự",
+  "first_name_required": "Tên không được để trống",
+  "first_name_max_length": "Tên không được vượt quá {{max}} ký tự",
+  "last_name_required": "Họ không được để trống",
+  "last_name_max_length": "Họ không được vượt quá {{max}} ký tự",
+  "user_created": "Tạo người dùng thành công",
+  "user_updated": "Cập nhật người dùng thành công",
+  "user_deleted": "Xóa người dùng thành công",
+  "user_not_found": "Không tìm thấy người dùng",
+  "user_already_exists": "Người dùng đã tồn tại"
+}

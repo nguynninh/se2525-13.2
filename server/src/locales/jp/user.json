@@ -1,0 +1,15 @@
+{
+  "email_required": "メールアドレスは必須です",
+  "email_invalid": "メールアドレスが無効です",
+  "password_required": "パスワードは必須です",
+  "password_min_length": "パスワードは{{min}}文字以上である必要があります",
+  "first_name_required": "名は必須です",
+  "first_name_max_length": "名は{{max}}文字を超えてはなりません",
+  "last_name_required": "姓は必須です",
+  "last_name_max_length": "姓は{{max}}文字を超えてはなりません",
+  "user_created": "ユーザーが正常に作成されました",
+  "user_updated": "ユーザーが正常に更新されました",
+  "user_deleted": "ユーザーが正常に削除されました",
+  "user_not_found": "ユーザーが見つかりません",
+  "user_already_exists": "ユーザーは既に存在します"
+}

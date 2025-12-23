@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from "react";
 
 const AddProductModal = ({ onClose }) => {
   return (
@@ -42,16 +42,6 @@ const AddProductModal = ({ onClose }) => {
               placeholder="Purchase price"
               className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Gender</label>
-            <select className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400">
-              <option value="">Select gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="unisex">Unisex</option>
-            </select>
           </div>
 
           <div>

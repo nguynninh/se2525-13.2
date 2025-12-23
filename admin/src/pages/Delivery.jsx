@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const orders = [
   {
@@ -51,16 +51,26 @@ const flattenedProducts = orders.flatMap((order) =>
 );
 
 const Delivery = () => {
+  const [activeTopTab, setActiveTopTab] = useState("Need to Send (5)");
+  const [activeSubTab, setActiveSubTab] = useState("All (18)");
+
+  const topTabs = ["All", "Not Paid (3)", "Need to Send (5)", "Sent (10)", "Finished (2)", "Cancellation", "Return"];
+  const subTabs = ["All (18)", "Need to handle", "Return"];
+
   return (
     <div className="p-4 lg:p-5 space-y-4 bg-content-bg min-h-screen">
       <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          {['All', 'Not Paid (3)', 'Need to Send (5)', 'Sent (10)', 'Finished (2)', 'Cancellation', 'Return'].map((tab, idx) => (
+          {topTabs.map((tab) => (
             <button
               key={tab}
               className={`rounded border px-4 py-2 text-xs font-semibold ${
-                idx === 2 ? 'border-blue-500 text-blue-600' : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                activeTopTab === tab
+                  ? "border-blue-500 text-blue-600 bg-white"
+                  : "border-gray-200 text-gray-700 hover:bg-gray-50"
               }`}
+              type="button"
+              onClick={() => setActiveTopTab(tab)}
             >
               {tab}
             </button>
@@ -101,12 +111,16 @@ const Delivery = () => {
 
       <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          {['All (18)', 'Need to handle', 'Return'].map((tab, idx) => (
+          {subTabs.map((tab) => (
             <button
               key={tab}
               className={`rounded border px-4 py-2 text-xs font-semibold ${
-                idx === 0 ? 'border-yellow-600 bg-yellow-100 text-gray-800' : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                activeSubTab === tab
+                  ? "border-yellow-600 bg-yellow-100 text-gray-800"
+                  : "border-gray-200 text-gray-700 hover:bg-gray-50"
               }`}
+              type="button"
+              onClick={() => setActiveSubTab(tab)}
             >
               {tab}
             </button>

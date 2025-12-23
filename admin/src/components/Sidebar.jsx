@@ -13,7 +13,6 @@ const Sidebar = () => {
   return (
     <div className="w-52 bg-gray-50 h-screen flex flex-col border-r border-gray-200">
       <div className="p-6">
-        <h1 className="text-lg font-bold text-gray-800 mb-8">Dashboard</h1>
         <nav className="space-y-2">
           {menuItems.map((item, index) => (
             <button
@@ -27,7 +26,7 @@ const Sidebar = () => {
               <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
                   item.active ? 'bg-gray-200' : 'bg-gray-100'
-                }`}>
+              }`}>
                   {item.icon === 'dashboard-grid' ? (
                     <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                       <rect x="3" y="3" width="6" height="6" rx="1.5" />
@@ -51,31 +50,13 @@ const Sidebar = () => {
               {typeof item.badge === 'number' && item.badge > 0 && (
                 <span className="ml-auto inline-flex items-center justify-center flex-shrink-0 text-[10px] leading-none font-semibold px-2 py-0.5 rounded-full bg-pink-100 text-pink-600">
                   {item.badge}
-                </span>
+              </span>
               )}
             </button>
           ))}
         </nav>
       </div>
       
-      <div className="mt-auto p-4">
-        <div className="flex items-center gap-3 px-3 py-2 bg-white rounded-lg border border-gray-200">
-          <img
-            src="https://randomuser.me/api/portraits/men/32.jpg"
-            alt="Profile"
-            className="w-8 h-8 rounded-full"
-          />
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-gray-800 truncate">Charles</p>
-            <p className="text-[11px] text-gray-500 truncate">Electroby Store</p>
-          </div>
-          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <circle cx="10" cy="4" r="1.5" />
-            <circle cx="10" cy="10" r="1.5" />
-            <circle cx="10" cy="16" r="1.5" />
-          </svg>
-        </div>
-      </div>
     </div>
   );
 };

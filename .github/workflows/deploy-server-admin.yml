@@ -44,7 +44,7 @@ jobs:
                 if [ -f server/server/.env ]; then cp server/server/.env .env.backup; 
                 elif [ -f server/.env ]; then cp server/.env .env.backup; fi
                 
-                rm -rf server
+                sudo rm -rf server
                 git clone https://github.com/nguynninh/se2525-13.2.git server
                 
                 # Restore .env

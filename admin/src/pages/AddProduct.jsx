@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import AddProductModal from '../components/AddProductModal';
 
 const AddProduct = () => {
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+
   const categories = [
     {
       name: 'T-Shirts',
@@ -32,12 +35,17 @@ const AddProduct = () => {
           <Link to="/product" className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Product</Link>
           <Link to="/add-product" className="rounded-md bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow">Add products</Link>
           <Link to="/add-category" className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Add Category</Link>
+          <button
+            onClick={() => setIsAddProductOpen(true)}
+            className="ml-auto rounded-md bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600"
+          >
+            + Add Product
+          </button>
         </div>
-        <h2 className="mb-4 text-xl font-bold">Add New Product</h2>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-6">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Product name</label>
+            <label className="block text-sm font-medium text-gray-700">Search product</label>
             <input type="text" className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
           </div>
           <div className="md:col-span-2">
@@ -60,10 +68,15 @@ const AddProduct = () => {
               <input type="text" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400" />
             </div>
           </div>
-          <div className="md:col-span-2 flex items-end gap-2">
-            <button className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">Edit</button>
-            <button className="w-full rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-gray-900">Send</button>
-          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 md:w-32">
+            Edit
+          </button>
+          <button className="w-full rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-gray-900 md:w-32">
+            Send
+          </button>
         </div>
       </div>
 
@@ -100,6 +113,8 @@ const AddProduct = () => {
           </table>
         </div>
       </div>
+
+      {isAddProductOpen && <AddProductModal onClose={() => setIsAddProductOpen(false)} />}
     </div>
   );
 };

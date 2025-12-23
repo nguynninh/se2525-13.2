@@ -1,9 +1,10 @@
 .delivery-container {
     font-family: -apple-system, BlinkMacMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #333;
-    padding: 2rem;
-    background-color: #f5f7fa; /* Light grey background for the main content area */
-    border-radius: 12px; /* Rounded corners for the main content area */
+    padding: 1.5rem;
+    background-color: #eef2f5; /* Match global gray backdrop */
+    min-height: 100vh;
+    border-radius: 0;
 }
 
 .delivery-header {

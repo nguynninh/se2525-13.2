@@ -7,6 +7,7 @@ import i18nMiddleware from './i18n';
 import { errorHandler } from './middlewares/errorHandler';
 import indexRouter from './routers/index.route';
 import authRouter from './routers/api/v1/auth.route';
+import sellerApplicationRouter from './routers/api/v1/sellerApplication.route';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(cors());
 // Áp dụng router
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/seller-applications', sellerApplicationRouter);
 
 // Bắt Lỗi
 app.use(errorHandler);

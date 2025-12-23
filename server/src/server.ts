@@ -3,6 +3,8 @@ import http from 'http';
 import debug from 'debug';
 import { sequelize } from './models';
 import { connectRedis } from './config/redis';
+import { ListBucketsCommand } from '@aws-sdk/client-s3';
+import { minioClient } from './config/minio';
 require('dotenv').config();
 
 const debugLog = debug('SE2025-13.2-SEVER:server');
@@ -19,10 +21,21 @@ function normalizePort(val: string): number | string | false {
     return false;
 }
 
+async function checkMinio() {
+    try {
+        await minioClient.send(new ListBucketsCommand({}));
+        console.log('MinIO đã kết nối');
+    } catch (e) {
+        console.error('MinIO kết nối thất bại', e);
+    }
+}
+
+checkMinio();
+
 (async () => {
     try {
         await sequelize.authenticate();
-        console.log('✅ DB connected!');
+        console.log(' Cơ sở dữ liệu đã kết nối!');
 
         await connectRedis();
 
@@ -30,7 +43,7 @@ function normalizePort(val: string): number | string | false {
         server.on('error', onError);
         server.on('listening', onListening);
     } catch (e) {
-        console.error('❌ DB connection failed:', (e as Error).message);
+        console.error(' Kết nối cơ sở dữ liệu thất bại:', (e as Error).message);
         process.exit(1);
     }
 })();
@@ -44,7 +57,7 @@ function onError(error: NodeJS.ErrnoException): void {
             process.exit(1);
             break;
         case 'EADDRINUSE':
-            console.error(`${bind} is already in use`);
+            console.error(`${bind} đã được sử dụng`);
             process.exit(1);
             break;
         default:

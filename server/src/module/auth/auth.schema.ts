@@ -1,6 +1,7 @@
-// Validate input cho auth
-
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+
+extendZodWithOpenApi(z);
 
 const NAME_REGEX = /^[\p{L}\s'-]+$/u;
 
@@ -34,13 +35,15 @@ export const RegisterStartSchema = z
             });
         }
     })
-    .strict();
+    .strict()
+    .openapi('RegisterStart');
 
 export const RegisterResendSchema = z
     .object({
         email: z.string().trim().toLowerCase().min(1, 'auth:email_required').email('auth:email_invalid'),
     })
-    .strict();
+    .strict()
+    .openapi('RegisterResend');
 
 export const RegisterFinalizeSchema = z
     .object({
@@ -50,7 +53,8 @@ export const RegisterFinalizeSchema = z
             .min(1, 'auth:otp_required')
             .regex(/^\d{4}$/, 'auth:otp_invalid'),
     })
-    .strict();
+    .strict()
+    .openapi('RegisterFinalize');
 
 export const LoginSchema = z
     .object({
@@ -60,26 +64,37 @@ export const LoginSchema = z
             .min(1, 'auth:password_required')
             .refine((s) => s.length >= 6, 'auth:password_min_length'),
     })
-    .strict();
+    .strict()
+    .openapi('Login');
 
 export const SocialLoginSchema = z
     .object({
         provider: z.enum(['google', 'facebook']),
         credential: z.string().min(1, 'auth:credential_required'),
     })
-    .strict();
+    .strict()
+    .openapi('SocialLogin');
 
 export const RefreshTokenSchema = z
     .object({
         refreshToken: z.string().min(1, 'auth:token_required'),
     })
-    .strict();
+    .strict()
+    .openapi('RefreshToken');
 
 export const ResetRequestSchema = z
     .object({
         email: z.string().trim().toLowerCase().min(1, 'auth:email_required').email('auth:email_invalid'),
     })
-    .strict();
+    .strict()
+    .openapi('ResetRequest');
+
+export const ResetResendSchema = z
+    .object({
+        email: z.string().trim().toLowerCase().min(1, 'auth:email_required').email('auth:email_invalid'),
+    })
+    .strict()
+    .openapi('ResetResend');
 
 export const ResetVerifySchema = z
     .object({
@@ -89,7 +104,8 @@ export const ResetVerifySchema = z
             .min(1, 'auth:otp_required')
             .regex(/^\d{4}$/, 'auth:otp_invalid'),
     })
-    .strict();
+    .strict()
+    .openapi('ResetVerify');
 
 export const ResetFinalizeSchema = z
     .object({
@@ -113,4 +129,55 @@ export const ResetFinalizeSchema = z
             });
         }
     })
-    .strict();
+    .strict()
+    .openapi('ResetFinalize');
+
+export const UserResponseSchema = z
+    .object({
+        first_name: z.string(),
+        last_name: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+        role: z.enum(['customer', 'seller', 'admin']),
+        profile_url: z.string().url().nullable().optional(),
+    })
+    .strict()
+    .openapi('UserResponse');
+
+export const UserResponsePublicSchema = z
+    .object({
+        id: z.string().uuid(),
+        first_name: z.string(),
+        last_name: z.string(),
+        email: z.string().email(),
+        role: z.enum(['customer', 'seller', 'admin']),
+        phone: z.string().nullable(),
+        profile_url: z.string().url().nullable().optional(),
+    })
+    .strict()
+    .openapi('UserPublic');
+
+export const LoginResponseSchema = z
+    .object({
+        user: UserResponsePublicSchema,
+        access_token: z.string(),
+        refresh_token: z.string(),
+    })
+    .strict()
+    .openapi('LoginResponse');
+
+export const TokenResponseSchema = z
+    .object({
+        sub: z.string().uuid(),
+        access_token: z.string(),
+        refresh_token: z.string(),
+    })
+    .strict()
+    .openapi('TokenResponse');
+
+export const ResetResponseSchema = UserResponsePublicSchema.pick({
+    id: true,
+    email: true,
+})
+    .strict()
+    .openapi('ResetResponse');

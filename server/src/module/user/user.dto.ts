@@ -1,7 +1,7 @@
-// định nghĩa các DTO cho module User
-// Bao gồm cấu trúc dữ liệu đầu vào/đầu ra cho các hành động như tạo, cập nhật, và lấy thông tin người dùng
-
 import { UserRole } from '../../models/User.model';
+import { SellerStatus } from '../../models/Seller.model';
+
+export type SellerStatusDto = SellerStatus;
 
 /*
  * ---------- INPUT DTOs ----------
@@ -20,6 +20,16 @@ export interface RegisterResendDto {
 
 export interface RegisterFinalizeDto {
     code: string;
+}
+
+export interface ChangePasswordDto {
+    current_password: string;
+    new_password: string;
+}
+
+export interface ListUsersQueryDto {
+    role?: UserRole;
+    search?: string;
 }
 
 /*
@@ -53,10 +63,55 @@ export interface UpdateUserDto {
     profile_url?: string | null;
 }
 
+export type UpdateMeDto = Pick<UpdateUserDto, 'first_name' | 'last_name' | 'phone' | 'profile_url'>;
+
+export interface MeCustomerDto {
+    id: string;
+    loyalty_points: number;
+}
+
+export interface MeResponseDto extends UserResponseDto {
+    customer: MeCustomerDto | null;
+}
+
+// Seller
+
+export interface SellerResponseDto {
+    id: string;
+    user_id: string;
+    status: SellerStatus;
+}
+
+export interface SellerWithUserResponseDto extends SellerResponseDto {
+    user: Pick<UserResponseDto, 'id' | 'first_name' | 'last_name' | 'email' | 'phone' | 'profile_url'>;
+}
+
+export interface CustomerResponseDto {
+    id: string;
+    user_id: string;
+    loyalty_points: number;
+}
+
+export interface ListSellersQueryDto {
+    status?: SellerStatus;
+}
+
 export interface VerifyUserDto {
     email: string;
 }
 
 export interface UserIdDto {
     id: string;
+}
+
+export interface AdminResponseDto {
+    id: string;
+    user_id: string;
+}
+
+export interface AdminUserDetailResponseDto {
+    user: UserResponseDto;
+    customer: CustomerResponseDto | null;
+    seller: SellerResponseDto | null;
+    admin: AdminResponseDto | null;
 }

@@ -332,7 +332,7 @@ export const authRegister = {
         const code = String(dto.code || '').trim();
         if (!code) throw new ValidationError('auth:otp_required');
 
-        // Từ code → email (nếu không có: code hết hạn/không hợp lệ)
+        // Từ code → email
         const emailFromCode = (await redisHelper.get(kVerifyCodeByCode(code))) as string | null;
         if (!emailFromCode) throw new ValidationError('auth:otp_expired');
 

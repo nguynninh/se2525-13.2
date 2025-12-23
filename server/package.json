@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "nodemon --watch src --ext ts --exec \"node -r ts-node/register ./src/server.ts\"",
-        "build": "tsc && cp -r src/locales dist/locales",
+        "build": "tsc && node -e \"require('fs').cpSync('src/locales','dist/locales',{recursive:true})\"",
         "start": "node dist/server.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "migrate": "npx sequelize-cli db:migrate",

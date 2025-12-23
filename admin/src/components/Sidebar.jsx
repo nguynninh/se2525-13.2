@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 const Sidebar = () => {
   const menuItems = [
     { icon: 'dashboard-grid', label: 'Dashboard', path: '/' },
-    { icon: '/icons/Buy-1.png', label: 'Product', path: '/products' },
+    { icon: '/icons/Buy-1.png', label: 'Product', path: '/product' },
     { icon: '/icons/Ticket.png', label: 'Delivery', path: '/delivery' },
     { icon: '/icons/message.png', label: 'Chat', path: '/chat', badge: 49 },
     { icon: '/icons/Notification.png', label: 'Notification', path: '/notifications' },

@@ -71,5 +71,5 @@ jobs:
                 git pull
             fi
             
-            docker compose up -d --build backend admin
+            docker compose up -d --build backend admin nginx
           "

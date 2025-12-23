@@ -13,6 +13,7 @@ import shopRoute from './api/v1/shop.route';
 import orderRoute from './api/v1/order.route';
 import shipmentRoute from './api/v1/shipment.route';
 import deviceTokenRoute from './api/v1/deviceToken.route';
+import notificationRoute from './api/v1/notification.route';
 
 const router: Router = Router();
 
@@ -77,6 +78,7 @@ router.get('/test/redis', async (req: Request, res: Response) => {
 router.use('/auth', authRoute);
 router.use('/users', userRoute);
 router.use('/seller-applications', sellerApplicationRoute);
+router.use('/notifications', notificationRoute);
 router.use('/', productRoute);
 router.use('/', locationRoute);
 router.use('/cart', cartRoute);

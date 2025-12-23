@@ -1,3 +1,5 @@
+//Thao tác Redis thống nhất (set/get/del/expire/…)
+
 import redisClient from '../config/redis';
 
 export const redisHelper = {
@@ -104,6 +106,38 @@ export const redisHelper = {
             return await redisClient.decr(key);
         } catch (error) {
             console.error('Redis DECR error:', error);
+            throw error;
+        }
+    },
+
+    // setJSON: Ghi giá trị vào Redis dưới dạng JSON một cách CHẮC CHẮN.
+    async setJSON(key: string, value: unknown, expirationInSeconds?: number): Promise<void> {
+        try {
+            const s = JSON.stringify(value);
+            if (expirationInSeconds) {
+                await redisClient.setEx(key, expirationInSeconds, s);
+            } else {
+                await redisClient.set(key, s);
+            }
+        } catch (error) {
+            console.error('Redis setJSON error:', error);
+            throw error;
+        }
+    },
+
+    // getJSON: Đọc giá trị từ Redis và JSON.parse an toàn.
+    async getJSON<T = any>(key: string): Promise<T | null> {
+        try {
+            const raw = await redisClient.get(key);
+            if (raw == null) return null;
+            try {
+                return JSON.parse(raw) as T;
+            } catch {
+                // Dữ liệu không phải JSON hợp lệ -> coi như không có
+                return null;
+            }
+        } catch (error) {
+            console.error('Redis getJSON error:', error);
             throw error;
         }
     },

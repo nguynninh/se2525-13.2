@@ -5,35 +5,29 @@ export interface SuccessResponse<T = any> {
     message: string;
     data: T;
 }
-
 export interface ErrorResponse<E = any> {
     code: number;
     message: string;
     errors?: E;
 }
 
-function resolveMessage(message: string, req?: Request) {
-    if (req && typeof req.t === 'function' && message.includes(':')) {
-        return req.t(message);
-    }
-    return message;
+function resolveMessage(res: Response, message: string) {
+    const req = (res as any)?.req as Request | undefined;
+    const t = req && typeof (req as any).t === 'function' ? (req as any).t : undefined;
+    // convention: nếu là key dạng "ns:key" thì mới dịch
+    return t && message.includes(':') ? t(message) : message;
 }
 
 const response = {
     /** 200 OK */
-    ok<T = any>(res: Response, data: T, message: string = 'common:ok', req?: Request): Response<SuccessResponse<T>> {
-        const msg = resolveMessage(message, req);
+    ok<T = any>(res: Response, data: T, message = 'common:ok'): Response<SuccessResponse<T>> {
+        const msg = resolveMessage(res, message);
         return res.status(200).json({ code: 200, message: msg, data });
     },
 
     /** 201 Created */
-    created<T = any>(
-        res: Response,
-        data: T,
-        message: string = 'common:created',
-        req?: Request,
-    ): Response<SuccessResponse<T>> {
-        const msg = resolveMessage(message, req);
+    created<T = any>(res: Response, data: T, message = 'common:created'): Response<SuccessResponse<T>> {
+        const msg = resolveMessage(res, message);
         return res.status(201).json({ code: 201, message: msg, data });
     },
 
@@ -42,15 +36,9 @@ const response = {
         return res.status(204).end();
     },
 
-    /** Lỗi: code mặc định 400 */
-    fail<E = any>(
-        res: Response,
-        code: number = 400,
-        message: string = 'common:bad_request',
-        errors?: E,
-        req?: Request,
-    ): Response<ErrorResponse<E>> {
-        const msg = resolveMessage(message, req);
+    /** Lỗi*/
+    fail<E = any>(res: Response, code = 400, message = 'common:bad_request', errors?: E): Response<ErrorResponse<E>> {
+        const msg = resolveMessage(res, message);
         const payload: ErrorResponse<E> = { code, message: msg };
         if (errors !== undefined) payload.errors = errors;
         return res.status(code).json(payload);

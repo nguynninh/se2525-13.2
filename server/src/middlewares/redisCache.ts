@@ -1,4 +1,4 @@
-import redisClient from '../config/redis';
+import redisHelper from '../utils/redisHelper';
 import { Request, Response, NextFunction } from 'express';
 
 export const redisCache = (duration: number = 300) => {
@@ -7,7 +7,7 @@ export const redisCache = (duration: number = 300) => {
 
         // Lấy thử dữ liệu từ Redis
         try {
-            const cachedData = await redisClient.get(key);
+            const cachedData = await redisHelper.get(key);
             if (cachedData) {
                 return res.json(JSON.parse(cachedData));
             }
@@ -19,7 +19,7 @@ export const redisCache = (duration: number = 300) => {
         const originalSend = res.json.bind(res) as Response['json'];
         (res as any).json = (data: any) => {
             try {
-                void redisClient.setEx(key, duration, JSON.stringify(data));
+                void redisHelper.set(key, JSON.stringify(data), duration);
             } catch (error) {
                 console.error('Redis set cache error:', error);
             }

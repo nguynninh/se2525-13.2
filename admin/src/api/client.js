@@ -1,39 +1,54 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1').replace(/\/$/, '');
+import axios from 'axios';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://api.hiki.io.vn/api').replace(/\/$/, '');
 
 const getStoredToken = () => localStorage.getItem('accessToken') || localStorage.getItem('token');
 
-export const apiRequest = async (path, options = {}) => {
-  const url = `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
-  const headers = new Headers(options.headers || {});
-  const hasJsonBody = options.body && !(options.body instanceof FormData) && typeof options.body !== 'string';
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 15000,
+});
+
+api.interceptors.request.use((config) => {
   const token = getStoredToken();
+  if (token) {
+    config.headers = config.headers || {};
+    if (!config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
 
-  if (hasJsonBody && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json');
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const { response } = error;
+    const message = response?.data?.message || error.message || 'Request failed';
+    const wrappedError = new Error(message);
+    wrappedError.status = response?.status;
+    wrappedError.data = response?.data;
+    throw wrappedError;
+  },
+);
+
+export const apiRequest = async (path, options = {}) => {
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  const method = (options.method || 'get').toLowerCase();
+
+  const config = {
+    url: normalizedPath,
+    method,
+    headers: options.headers,
+    params: options.params,
+  };
+
+  if (options.body !== undefined) {
+    config.data = options.body;
   }
 
-  if (token && !headers.has('Authorization')) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-    body: hasJsonBody ? JSON.stringify(options.body) : options.body,
-  });
-
-  const contentType = response.headers.get('content-type') || '';
-  const payload = contentType.includes('application/json') ? await response.json() : await response.text();
-
-  if (!response.ok) {
-    const message = payload?.message || `Request failed with status ${response.status}`;
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = payload;
-    throw error;
-  }
-
-  return payload;
+  const response = await api(config);
+  return response.data;
 };
 
 export const buildQueryString = (params = {}) => {

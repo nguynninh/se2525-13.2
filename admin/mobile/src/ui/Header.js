@@ -6,10 +6,9 @@ export default function Header() {
     <View style={styles.header}>
       <Text style={styles.title}>Dashboard</Text>
       <View style={styles.right}>
-        <Image
-          source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }}
-          style={styles.avatar}
-        />
+        <View style={styles.avatarPlaceholder}>
+          <Text style={styles.avatarInitial}>A</Text>
+        </View>
       </View>
     </View>
   );
@@ -34,12 +33,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  avatar: {
+  avatarPlaceholder: {
     width: 32,
     height: 32,
     borderRadius: 16,
     borderWidth: 2,
     borderColor: '#374151',
+    backgroundColor: '#1f2937',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitial: {
+    color: '#e5e7eb',
+    fontWeight: '700',
+    fontSize: 14,
   },
 });
 

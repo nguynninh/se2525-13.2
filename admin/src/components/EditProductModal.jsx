@@ -1,32 +1,119 @@
-﻿import React, { useMemo, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { uploadProductImage, createVariantAttribute, createVariantOption, createProductStock } from "../api/product";
 
-const guessCategoryType = (value) => {
-  if (!value) return "other";
-  const v = value.toLowerCase();
-  if (["t-shirt", "shirt", "hoodie", "jean", "pant", "dress", "clothing", "fashion"].some((k) => v.includes(k))) {
-    return "clothing";
-  }
-  if (["phone", "case", "iphone", "samsung", "pixel", "accessory"].some((k) => v.includes(k))) {
-    return "phone";
-  }
-  return "other";
-};
-
-const EditProductModal = ({ product, onClose }) => {
+const EditProductModal = ({ product, onClose, onSave, onReload, categories }) => {
   if (!product) return null;
 
-  const [activeTab, setActiveTab] = useState("details");
-  const [category, setCategory] = useState(product.category || "tshirts");
-  const categoryType = useMemo(() => guessCategoryType(category), [category]);
+  const [form, setForm] = useState({
+    name: product.name || "",
+    price: product.price || product.sellingPrice || "",
+    category_id: product.category?.id || product.category_id || "",
+    description: product.description || "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [variantName, setVariantName] = useState("");
+  const [optionForm, setOptionForm] = useState({ variant_id: "", value: "" });
+  const [stockForm, setStockForm] = useState({ sku: "", quantity: "", price: "", attributes: "" });
 
-  const [customAttrs, setCustomAttrs] = useState([{ key: "", value: "" }]);
-  const [trackingNumber, setTrackingNumber] = useState(""); // placeholder if needed later
+  useEffect(() => {
+    setForm({
+      name: product.name || "",
+      price: product.price || product.sellingPrice || "",
+      category_id: product.category?.id || product.category_id || "",
+      description: product.description || "",
+    });
+  }, [product]);
 
-  const updateAttr = (idx, field, value) => {
-    setCustomAttrs((prev) => prev.map((row, i) => (i === idx ? { ...row, [field]: value } : row)));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      await onSave?.({
+        name: form.name,
+        price: Number(form.price),
+        category_id: form.category_id || undefined,
+        description: form.description,
+      });
+      setMessage("Product updated.");
+      await onReload?.();
+    } catch (err) {
+      setError(err?.message || "Failed to update product.");
+    } finally {
+      setSaving(false);
+    }
   };
-  const addAttr = () => setCustomAttrs((prev) => [...prev, { key: "", value: "" }]);
-  const removeAttr = (idx) => setCustomAttrs((prev) => prev.filter((_, i) => i !== idx));
+
+  const handleUploadImage = async (e) => {
+    e.preventDefault();
+    if (!imageFile) return;
+    setError("");
+    setMessage("");
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("product_id", product.id || product._id);
+    try {
+      await uploadProductImage(formData);
+      setMessage("Image uploaded.");
+      await onReload?.();
+    } catch (err) {
+      setError(err?.message || "Upload failed.");
+    }
+  };
+
+  const handleCreateVariant = async (e) => {
+    e.preventDefault();
+    if (!variantName) return;
+    setError("");
+    setMessage("");
+    try {
+      await createVariantAttribute({ product_id: product.id || product._id, name: variantName });
+      setMessage("Variant attribute created.");
+      setVariantName("");
+      await onReload?.();
+    } catch (err) {
+      setError(err?.message || "Create variant failed.");
+    }
+  };
+
+  const handleCreateOption = async (e) => {
+    e.preventDefault();
+    if (!optionForm.variant_id || !optionForm.value) return;
+    setError("");
+    setMessage("");
+    try {
+      await createVariantOption({ variant_id: optionForm.variant_id, value: optionForm.value });
+      setMessage("Variant option created.");
+      setOptionForm({ variant_id: "", value: "" });
+      await onReload?.();
+    } catch (err) {
+      setError(err?.message || "Create option failed.");
+    }
+  };
+
+  const handleCreateStock = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    try {
+      await createProductStock({
+        product_id: product.id || product._id,
+        sku: stockForm.sku,
+        quantity: Number(stockForm.quantity),
+        price: Number(stockForm.price),
+        attributes: stockForm.attributes,
+      });
+      setMessage("Stock created.");
+      setStockForm({ sku: "", quantity: "", price: "", attributes: "" });
+      await onReload?.();
+    } catch (err) {
+      setError(err?.message || "Create stock failed.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/60 px-4 py-8 backdrop-blur-sm">
@@ -43,136 +130,176 @@ const EditProductModal = ({ product, onClose }) => {
 
         <h2 className="mb-4 text-xl font-semibold text-gray-900">Edit Product</h2>
 
-        <div className="mb-4 flex gap-2">
-          <button
-            onClick={() => setActiveTab("details")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold border ${
-              activeTab === "details" ? "bg-gray-800 text-white border-gray-800" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Details
-          </button>
-          <button
-            onClick={() => setActiveTab("images")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold border ${
-              activeTab === "images" ? "bg-gray-800 text-white border-gray-800" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Images
-          </button>
-        </div>
+        {error && <div className="text-sm text-rose-700 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mb-2">{error}</div>}
+        {message && <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 mb-2">{message}</div>}
 
-        {activeTab === "images" && (
-          <div className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-800">Add product images</label>
+              <label className="block text-sm font-medium text-gray-800">Product name</label>
               <input
-                type="file"
-                multiple
-                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
               />
-              <p className="mt-1 text-xs text-gray-500">JPEG/PNG, &lt; 5MB. You can set a cover image after upload.</p>
             </div>
-            <div className="flex justify-end gap-2">
-              <button className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
-                Upload
-              </button>
-              <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50" onClick={onClose}>
-                Cancel
-              </button>
+            <div>
+              <label className="block text-sm font-medium text-gray-800">Price</label>
+              <input
+                type="number"
+                value={form.price}
+                onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
+                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-800">Category</label>
+              <select
+                value={form.category_id}
+                onChange={(e) => setForm((prev) => ({ ...prev, category_id: e.target.value }))}
+                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              >
+                <option value="">Select category</option>
+                {(categories || []).map((c) => (
+                  <option key={c.id || c._id || c.slug || c.name} value={c.id || c._id || c.slug}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-800">Description</label>
+              <textarea
+                rows="3"
+                value={form.description}
+                onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              ></textarea>
             </div>
           </div>
-        )}
 
-        {activeTab === "details" && (
-          <form className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-800">Category</label>
-                <select
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="">Select category</option>
-                  <option value="tshirts">T-Shirts</option>
-                  <option value="jeans">Jeans</option>
-                  <option value="hoodies">Hoodies</option>
-                  <option value="vests">Vests</option>
-                  <option value="phone-case">Phone Case</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-800">Product name</label>
-                <input
-                  type="text"
-                  value={product.name}
-                  readOnly
-                  className="mt-2 w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-800">Selling price</label>
-                <input
-                  type="number"
-                  defaultValue={product.sellingPrice || ""}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-800">Purchase price</label>
-                <input
-                  type="number"
-                  defaultValue={product.purchasePrice || ""}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-gray-800">Additional attributes (optional)</p>
-                <button type="button" className="text-sm font-semibold text-blue-600 hover:underline" onClick={addAttr}>
-                  + Add attribute
-                </button>
-              </div>
-              <div className="space-y-2">
-                {customAttrs.map((attr, idx) => (
-                  <div key={idx} className="grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
-                    <input
-                      type="text"
-                      placeholder="Attribute name"
-                      value={attr.key}
-                      onChange={(e) => updateAttr(idx, "key", e.target.value)}
-                      className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Attribute value"
-                      value={attr.value}
-                      onChange={(e) => updateAttr(idx, "value", e.target.value)}
-                      className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeAttr(idx)}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              className="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+              disabled={saving}
             >
-              Update
+              {saving ? "Saving..." : "Update"}
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-6 space-y-4 rounded-lg border border-gray-200 p-4">
+          <p className="text-sm font-semibold text-gray-900">Images</p>
+          <form className="space-y-3" onSubmit={handleUploadImage}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+              disabled={saving}
+            >
+              Upload image
             </button>
           </form>
-        )}
+        </div>
+
+        <div className="mt-4 space-y-4 rounded-lg border border-gray-200 p-4">
+          <p className="text-sm font-semibold text-gray-900">Variants</p>
+          <form className="flex flex-col md:flex-row gap-2" onSubmit={handleCreateVariant}>
+            <input
+              type="text"
+              placeholder="Variant name (e.g. Color)"
+              value={variantName}
+              onChange={(e) => setVariantName(e.target.value)}
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+              disabled={saving}
+            >
+              Create variant
+            </button>
+          </form>
+
+          <form className="flex flex-col md:flex-row gap-2" onSubmit={handleCreateOption}>
+            <input
+              type="text"
+              placeholder="Variant ID"
+              value={optionForm.variant_id}
+              onChange={(e) => setOptionForm((prev) => ({ ...prev, variant_id: e.target.value }))}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <input
+              type="text"
+              placeholder="Option value (e.g. Red)"
+              value={optionForm.value}
+              onChange={(e) => setOptionForm((prev) => ({ ...prev, value: e.target.value }))}
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+              disabled={saving}
+            >
+              Create option
+            </button>
+          </form>
+        </div>
+
+        <div className="mt-4 space-y-4 rounded-lg border border-gray-200 p-4">
+          <p className="text-sm font-semibold text-gray-900">Stock (SKU)</p>
+          <form className="grid grid-cols-1 md:grid-cols-4 gap-2" onSubmit={handleCreateStock}>
+            <input
+              type="text"
+              placeholder="SKU"
+              value={stockForm.sku}
+              onChange={(e) => setStockForm((prev) => ({ ...prev, sku: e.target.value }))}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <input
+              type="number"
+              placeholder="Quantity"
+              value={stockForm.quantity}
+              onChange={(e) => setStockForm((prev) => ({ ...prev, quantity: e.target.value }))}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <input
+              type="number"
+              placeholder="Price"
+              value={stockForm.price}
+              onChange={(e) => setStockForm((prev) => ({ ...prev, price: e.target.value }))}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <input
+              type="text"
+              placeholder='Attributes (e.g. "Color: Red, Size: M")'
+              value={stockForm.attributes}
+              onChange={(e) => setStockForm((prev) => ({ ...prev, attributes: e.target.value }))}
+              className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <button
+              type="submit"
+              className="md:col-span-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+              disabled={saving}
+            >
+              Create stock
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

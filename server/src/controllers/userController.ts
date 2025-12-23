@@ -83,7 +83,26 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
+const retrievedUser = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const user = await UserModel.findByPk(id);
+    if (!user)
+        throw new NotFoundError(req.t('user:user_not_found'));
+
+    return successResponse(res, {
+        message: req.t('user:user_retrieved_successfully'),
+        data: {
+            user: {
+                ...user.toJSON(),
+                password: undefined,
+            }
+        }
+    });
+});
+
 export { 
     createUser,
     verifyUser,
+    retrievedUser,
 };

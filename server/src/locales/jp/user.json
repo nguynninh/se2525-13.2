@@ -12,12 +12,12 @@
   "verification_code_expired_or_not_found": "確認コードの有効期限が切れているか、存在しません",
   "verification_attempts_exceeded": "確認試行回数の上限を超えました。新しいコードをリクエストしてください",
   "verification_code_invalid": "確認コードが正しくありません。残り{{attempts_left}}回の試行が可能です",
+  "user_id_required": "ユーザーIDは必須です",
+  "user_id_invalid": "ユーザーIDが無効です。有効なUUIDである必要があります",
   "user_created_successfully": "ユーザーが正常に作成されました",
   "user_created": "ユーザーが正常に作成されました",
-  "user_updated": "ユーザーが正常に更新されました",
-  "user_deleted": "ユーザーが正常に削除されました",
+  "user_retrieved_successfully": "ユーザー情報が正常に取得されました",
   "user_not_found": "ユーザーが見つかりません",
-  "user_already_exists": "ユーザーは既に存在します",
   "email_already_in_use": "このメールアドレスは既に使用されています",
   "verification_code_sent": "確認コードが{{email}}に送信されました"
 }

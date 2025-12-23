@@ -1,0 +1,15 @@
+{
+  "email_required": "Email is required",
+  "email_invalid": "Email is invalid",
+  "password_required": "Password is required",
+  "password_min_length": "Password must be at least {{min}} characters",
+  "first_name_required": "First name is required",
+  "first_name_max_length": "First name must not exceed {{max}} characters",
+  "last_name_required": "Last name is required",
+  "last_name_max_length": "Last name must not exceed {{max}} characters",
+  "user_created": "User created successfully",
+  "user_updated": "User updated successfully",
+  "user_deleted": "User deleted successfully",
+  "user_not_found": "User not found",
+  "user_already_exists": "User already exists"
+}

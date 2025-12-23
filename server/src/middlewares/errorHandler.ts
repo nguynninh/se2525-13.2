@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../exception/AppError';
+import { AppError, ValidationError } from '../exception/AppError';
 
 export const errorHandler = (
     err: Error | AppError,
@@ -7,6 +7,15 @@ export const errorHandler = (
     res: Response,
     next: NextFunction
 ) => {
+    if (err instanceof ValidationError) {
+        return res.status(err.statusCode).json({
+            code: err.statusCode,
+            message: err.message,
+            errors: err.details,
+            ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+        });
+    }
+
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             code: err.statusCode,

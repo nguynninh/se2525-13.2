@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "dev": "nodemon --watch src --ext ts --exec \"node -r ts-node/register ./src/server.ts\"",
+    "dev": "nodemon --watch src --ext ts --exec \"node -r ts-node/register ./src/server.ts\"",
     "build": "tsc -p .",
     "start": "node ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.0",
+    "@types/pg": "^8.15.5",
     "dotenv": "^17.2.3",
     "eslint": "^9.37.0",
     "express": "^5.1.0",
@@ -37,6 +38,7 @@
   "dependencies": {
     "i18next": "^25.5.3",
     "i18next-fs-backend": "^2.6.0",
-    "i18next-http-middleware": "^3.8.1"
+    "i18next-http-middleware": "^3.8.1",
+    "pg": "^8.16.3"
   }
 }

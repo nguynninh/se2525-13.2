@@ -25,6 +25,10 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H 34.27.61.12 >> ~/.ssh/known_hosts
 
+      - name: Deploy to server
+        env:
+          SERVER_IP: 34.27.61.12
+          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           ssh ${SERVER_USER}@${SERVER_IP} "
             set -e

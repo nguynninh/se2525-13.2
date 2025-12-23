@@ -30,7 +30,7 @@ const AppContent = () => {
     <div className="flex h-screen bg-content-bg overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {location.pathname !== '/delivery' && <Header title={title} showDatePicker={showDatePicker} />}
+        <Header title={title} showDatePicker={showDatePicker} />
         <main className="flex-1 overflow-y-auto p-3 lg:p-5 min-w-0 bg-content-bg">
           <Routes>
             <Route path="/" element={<Dashboard />} />

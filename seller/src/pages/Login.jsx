@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Lock, Shield, Mail, Loader2 } from 'lucide-react';
-import { loginAdmin } from '../api/auth';
+import { loginSeller } from '../api/auth';
 
-const Login = ({ onSuccess }) => {
+const Login = ({ onSuccess, externalError = '', onClearError }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -11,9 +11,10 @@ const Login = ({ onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    onClearError?.();
     setLoading(true);
     try {
-      const res = await loginAdmin({ email, password });
+      const res = await loginSeller({ email, password });
       const payload = res?.data ?? res;
       const user = payload?.user;
       const accessToken = payload?.accessToken;
@@ -24,8 +25,8 @@ const Login = ({ onSuccess }) => {
       }
 
       const role = String(user.role || '').trim().toLowerCase();
-      if (role !== 'admin') {
-        throw new Error('Account is not admin');
+      if (role !== 'seller') {
+        throw new Error('Not a seller account');
       }
 
       onSuccess?.({ user, accessToken, refreshToken });
@@ -37,14 +38,17 @@ const Login = ({ onSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-4xl grid md:grid-cols-2 bg-white/90 backdrop-blur-xl border border-white/40 shadow-2xl rounded-2xl overflow-hidden">
-        <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-slate-900 text-white p-8 flex flex-col justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-amber-500 via-orange-500 to-slate-900 flex items-center justify-center px-4">
+      <div className="w-full max-w-4xl grid md:grid-cols-2 bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl rounded-2xl overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-900 via-amber-600 to-orange-600 text-white p-8 flex flex-col justify-between">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-semibold">
-              <Shield className="w-4 h-4" /> Admin only
+              <Shield className="w-4 h-4" /> Seller only
             </div>
-            <h2 className="text-3xl font-bold">Commerce Admin</h2>
+            <h2 className="text-3xl font-bold">Seller Console</h2>
+            <p className="text-sm text-white/80 leading-relaxed">
+              Manage your shop, products, orders and shipping. Sign in with your seller account to continue.
+            </p>
           </div>
         </div>
 
@@ -52,9 +56,8 @@ const Login = ({ onSuccess }) => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Lock className="w-4 h-4" /> Admin login
+                <Lock className="w-4 h-4" /> Seller login
               </div>
-              <p className="text-xs text-slate-500">Enter the email and password of the single admin account.</p>
             </div>
 
             <div className="space-y-2">
@@ -66,8 +69,8 @@ const Login = ({ onSuccess }) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="seller@example.com"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
             </div>
@@ -82,23 +85,27 @@ const Login = ({ onSuccess }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
             </div>
 
-            {error ? (
-              <div className="px-3 py-2 rounded-lg bg-rose-50 border border-rose-100 text-sm text-rose-700">{error}</div>
+            {error || externalError ? (
+              <div className="px-3 py-2 rounded-lg bg-rose-50 border border-rose-100 text-sm text-rose-700">
+                {error || externalError}
+              </div>
             ) : null}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 bg-slate-900 text-white font-semibold py-2.5 rounded-lg shadow-lg shadow-slate-900/10 hover:bg-slate-800 disabled:opacity-70"
+              className="w-full inline-flex items-center justify-center gap-2 bg-slate-900 text-white font-semibold py-2.5 rounded-lg shadow-lg shadow-slate-900/15 hover:bg-slate-800 disabled:opacity-70"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Login
             </button>
+
+            <p className="text-xs text-slate-500 text-center" />
           </form>
         </div>
       </div>

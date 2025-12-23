@@ -1,10 +1,8 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Home, Truck, MessageSquare, PackageSearch, Settings, LogOut } from 'lucide-react';
-import { logout } from '../api/auth';
 
-const Sidebar = () => {
-  const navigate = useNavigate();
+const Sidebar = ({ onLogout }) => {
 
   const menuItems = [
     { icon: Home, label: 'Dashboard', path: '/' },
@@ -18,15 +16,7 @@ const Sidebar = () => {
   const handleSignOut = async () => {
     const ok = window.confirm('Are you sure you want to sign out?');
     if (!ok) return;
-    try {
-      await logout();
-    } catch (err) {
-      // continue to clear local state even if API fails
-      console.error('Logout failed:', err);
-    }
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('token');
-    navigate('/');
+    await onLogout?.();
   };
 
   return (

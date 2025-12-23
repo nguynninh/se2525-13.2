@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -12,8 +12,22 @@ import ShippingRates from './pages/ShippingRates';
 import CreateShipment from './pages/CreateShipment';
 import UpdateStock from './pages/UpdateStock';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import { logoutSeller } from './api/auth';
 
-const AppContent = () => {
+const readSession = () => {
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!accessToken || !user) return null;
+    return { accessToken, refreshToken, user };
+  } catch {
+    return null;
+  }
+};
+
+const AppContent = ({ user, onLogout }) => {
   const location = useLocation();
   let title = 'Dashboard';
   if (location.pathname === '/products' || location.pathname === '/product') {
@@ -38,9 +52,9 @@ const AppContent = () => {
 
   return (
     <div className="flex h-screen bg-content-bg overflow-hidden">
-      <Sidebar />
+      <Sidebar onLogout={onLogout} />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <Header title={title} />
+        <Header title={title} user={user} onLogout={onLogout} />
         <main className="flex-1 overflow-y-auto p-3 lg:p-5 min-w-0 bg-content-bg">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -62,9 +76,41 @@ const AppContent = () => {
 };
 
 const App = () => {
+  const [session, setSession] = useState(() => readSession());
+  const [loginError, setLoginError] = useState('');
+
+  const handleLogin = (payload) => {
+    const { accessToken, refreshToken, user } = payload || {};
+    if (!accessToken || !user) return;
+    if (user.role !== 'seller') {
+      setLoginError('Account is not seller');
+      return;
+    }
+    setLoginError('');
+    localStorage.setItem('accessToken', accessToken);
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
+    setSession({ accessToken, refreshToken, user });
+  };
+
+  const handleLogout = () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (refreshToken) {
+      logoutSeller(refreshToken);
+    }
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    setSession(null);
+  };
+
+  if (!session) {
+    return <Login onSuccess={handleLogin} externalError={loginError} onClearError={() => setLoginError('')} />;
+  }
+
   return (
     <Router>
-      <AppContent />
+      <AppContent user={session.user} onLogout={handleLogout} />
     </Router>
   );
 };

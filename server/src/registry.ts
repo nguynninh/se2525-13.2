@@ -22,6 +22,12 @@ registerAuthOpenApi(registry);
 registerUserOpenApi(registry);
 registerSellerApplicationOpenApi(registry);
 registerLocationOpenApi(registry);
+registerProductOpenApi(registry);
+registerOrderOpenApi(registry);
+registerShopOpenApi(registry);
+registerShipmentOpenApi(registry);
+registerCartOpenApi(registry);
+registerDeviceTokenOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 

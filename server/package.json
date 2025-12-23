@@ -74,6 +74,7 @@
         "sequelize": "^6.37.7",
         "sequelize-cli": "^6.6.3",
         "swagger-ui-express": "^5.0.1",
+        "uuid": "^13.0.0",
         "zod": "^4.1.12"
     }
 }

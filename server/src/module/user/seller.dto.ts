@@ -1,4 +1,4 @@
-import { UserResponseDto } from '../user/user.dto';
+import { UserResponseDto } from './user.dto';
 import { SellerStatus } from '../../models/Seller.model';
 
 /*

@@ -5,7 +5,7 @@ import { appColors } from '../../constants/appColors';
 import { appInfo } from '../../constants/appInfos';
 import { globalStyles } from '../../styles/globalStyles';
 import { TextComponent } from '../../components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { fontFamilies } from '../../constants/fontFamilies';
 
 const OnboardingScreen = ({ navigation }: any) => {

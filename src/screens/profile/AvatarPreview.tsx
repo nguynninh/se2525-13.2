@@ -10,7 +10,7 @@ import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { ContainerComponent, InputComponent, RowComponent, SharingScopeComponent, SpaceComponent, TextComponent } from '../../components';
 import { Clock, Scissor, Screenmirroring } from 'iconsax-react-native';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import handleApi from '../../apis/handleApi';
 import { addUser } from '../../redux/reducers/userReducer';
 import { useDispatch } from 'react-redux';

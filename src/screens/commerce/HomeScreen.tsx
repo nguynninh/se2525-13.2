@@ -4,7 +4,7 @@ import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, InputComponent, RowComponent, SpaceComponent, TextComponent, GlassView } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { Add, HambergerMenu, Notification, ScanBarcode, SearchNormal1, ShoppingCart, Sort } from 'iconsax-react-native';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { useDrawerStatus } from '@react-navigation/drawer';
 import handleApi from '../../apis/handleApi';
 import { Banner } from '../../models/Banner';

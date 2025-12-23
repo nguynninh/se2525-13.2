@@ -12,7 +12,7 @@ import {
 } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { Validate } from '../../utils/validate';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { Login } from '../../models/Login';
 import SocialLogin from './components/SocialLogin';
 import { useDispatch } from 'react-redux';
@@ -50,7 +50,7 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   const handleLogin = async () => {
-    if (validationErrorHandler()) {return;}
+    if (validationErrorHandler()) { return; }
 
     try {
       setIsLoading(true);

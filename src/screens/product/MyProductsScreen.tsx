@@ -4,7 +4,7 @@ import { ContainerComponent, TextComponent, SectionComponent, ButtonComponent } 
 import { appColors } from '../../constants/appColors';
 import { Add } from 'iconsax-react-native';
 import productApi from '../../apis/productApi';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { useNavigation } from '@react-navigation/native';
 
 const MyProductsScreen = () => {

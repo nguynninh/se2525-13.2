@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import { ReactNode } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../node_modules/react-i18next';
 import ProfileNavigator from './ProfileNavigator';
 import { appColors } from '../constants/appColors';
 import {

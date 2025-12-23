@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { ContainerComponent, RowComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { ArrowRight2 } from 'iconsax-react-native';

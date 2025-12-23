@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Alert, Image, Modal, FlatList } from 'react-native';
 import { ContainerComponent, TextComponent, InputComponent, ButtonComponent, SectionComponent, RowComponent, SpaceComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { ArrowLeft, Gallery, ArrowDown2 } from 'iconsax-react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import storeApi from '../../apis/storeApi';

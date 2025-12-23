@@ -7,7 +7,7 @@ import { LoginManager } from 'react-native-fbsdk-next';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeAuth } from '../../redux/reducers/authReducer';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { appColors } from '../../constants/appColors';
 import { getProfile, removeUser, userSelector } from '../../redux/reducers/userReducer';
 import { ArrowRight, Camera, PictureFrame, UserSquare, Verify, Shop } from 'iconsax-react-native';

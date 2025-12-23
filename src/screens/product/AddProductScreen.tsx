@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { ButtonComponent, ContainerComponent, InputComponent, SectionComponent, SpaceComponent, TextComponent, RowComponent } from '../../components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { appColors } from '../../constants/appColors';
 import { ArrowLeft, Camera } from 'iconsax-react-native';
 import { launchImageLibrary } from 'react-native-image-picker';

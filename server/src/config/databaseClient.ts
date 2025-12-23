@@ -1,20 +1,25 @@
-import { Pool } from 'pg';
+import { Sequelize } from 'sequelize';
 import { dbConfig } from './database';
 
-export const pool = new Pool({
-  host: dbConfig.host,
-  port: dbConfig.port,
-  user: dbConfig.username,
-  password: dbConfig.password,
-  database: dbConfig.name,
-  ssl: dbConfig.ssl ? { rejectUnauthorized: false } : false,
+const sequelize = new Sequelize(
+  dbConfig.name, 
+  dbConfig.username, 
+  dbConfig.password, {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    dialect: 'postgres',
+    dialectOptions: dbConfig.ssl ? { ssl: { rejectUnauthorized: false } } : {},
+    logging: false,
 });
 
 export const connectDatabase = async () => {
   try {
-    const res = await pool.query('SELECT NOW()');
-    console.log('✅ Connected to database at:', res.rows[0].now);
+    await sequelize.authenticate();
+    await sequelize.sync({ force: false });
+    console.log('✅ Connected to database');
   } catch (err) {
     console.error('❌ Database connection failed:', err);
   }
 };
+
+export default sequelize;

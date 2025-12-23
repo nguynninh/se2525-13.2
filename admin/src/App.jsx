@@ -42,6 +42,8 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    const ok = window.confirm('Bạn có chắc chắn muốn đăng xuất?');
+    if (!ok) return;
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken) {
       logoutAdmin(refreshToken);

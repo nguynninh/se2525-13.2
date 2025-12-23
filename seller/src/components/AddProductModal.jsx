@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { createProduct } from "../api/product";
+import { createProduct, uploadProductImage } from "../api/product";
 
 const AddProductModal = ({ onClose, onCreated, categories }) => {
   const [form, setForm] = useState({
     name: "",
-    price: "",
     category_id: "",
     description: "",
+    image_url: "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -16,12 +16,22 @@ const AddProductModal = ({ onClose, onCreated, categories }) => {
     setSaving(true);
     setError("");
     try {
-      await createProduct({
+      const created = await createProduct({
         name: form.name,
-        price: Number(form.price),
+        // Backend requires price & quantity; use defaults since UI hides them.
+        price: 1000,
+        quantity: 0,
         category_id: form.category_id || undefined,
         description: form.description,
       });
+      const productId = created?.id || created?._id || created?.product_id || created?.product?.id;
+      if (productId && form.image_url.trim()) {
+        await uploadProductImage({
+          product_id: productId,
+          image_url: form.image_url.trim(),
+          is_main: true,
+        });
+      }
       onCreated?.();
       onClose?.();
     } catch (err) {
@@ -62,18 +72,6 @@ const AddProductModal = ({ onClose, onCreated, categories }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-800">Selling price</label>
-            <input
-              type="number"
-              value={form.price}
-              onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
-              placeholder="Selling price"
-              className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-              required
-            />
-          </div>
-
-          <div>
             <label className="block text-sm font-medium text-gray-800">Product category</label>
             <select
               className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
@@ -98,6 +96,18 @@ const AddProductModal = ({ onClose, onCreated, categories }) => {
               placeholder="Description"
               className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
             ></textarea>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-800">Image URL</label>
+            <input
+              type="url"
+              value={form.image_url}
+              onChange={(e) => setForm((prev) => ({ ...prev, image_url: e.target.value }))}
+              placeholder="https://..."
+              className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            />
+            <p className="mt-1 text-xs text-gray-500">Paste image URL; will be set as main image.</p>
           </div>
 
           <button

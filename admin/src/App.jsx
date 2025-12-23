@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import AdminPanel from './pages/AdminPanel';
 import Login from './pages/Login';
 import { logoutAdmin } from './api/auth';
+import Overview from './pages/admin/Overview';
+import Users from './pages/admin/Users';
+import SellerApps from './pages/admin/SellerApps';
+import Shops from './pages/admin/Shops';
+import Orders from './pages/admin/Orders';
+import Shipments from './pages/admin/Shipments';
+import Rates from './pages/admin/Rates';
 
 const readSession = () => {
   try {
@@ -18,7 +24,7 @@ const readSession = () => {
 };
 
 const App = () => {
-  const [activePage, setActivePage] = useState('admin');
+  const [activePage, setActivePage] = useState('overview');
   const [session, setSession] = useState(() => readSession());
 
   const handleLogin = (payload) => {
@@ -51,15 +57,23 @@ const App = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100 text-gray-800">
-      <Sidebar active={activePage} onSelect={setActivePage} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header user={session.user} onLogout={handleLogout} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto px-6 py-8 lg:px-12 bg-gray-100">
-          <div className="w-full mx-auto space-y-8">
-            {activePage === 'admin' ? <AdminPanel /> : null}
-          </div>
-        </main>
+    <div className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="flex min-h-screen">
+        <Sidebar active={activePage} onSelect={setActivePage} onLogout={handleLogout} user={session.user} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header user={session.user} onLogout={handleLogout} onNavigate={setActivePage} />
+          <main className="flex-1 overflow-x-hidden overflow-y-auto px-6 py-8 lg:px-10 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+            <div className="w-full mx-auto space-y-8">
+              {activePage === 'overview' && <Overview onNavigate={setActivePage} />}
+              {activePage === 'users' && <Users />}
+              {activePage === 'sellerApps' && <SellerApps />}
+              {activePage === 'shops' && <Shops />}
+              {activePage === 'orders' && <Orders />}
+              {activePage === 'shipments' && <Shipments />}
+              {activePage === 'rates' && <Rates />}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

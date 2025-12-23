@@ -1,97 +1,97 @@
 import { apiRequest, buildQueryString } from './client';
 
-// Categories
-export const fetchCategories = () => apiRequest('/product/categories');
+// Categories (server mounts productRoute at '/'; endpoint is /api/categories)
+export const fetchCategories = () => apiRequest('/categories');
 export const createCategory = (payload) =>
-  apiRequest('/product/categories', {
+  apiRequest('/categories', {
     method: 'post',
     body: payload,
   });
 export const updateCategory = (id, payload) =>
-  apiRequest(`/product/categories/${id}`, {
+  apiRequest(`/categories/${id}`, {
     method: 'patch',
     body: payload,
   });
 export const deleteCategory = (id) =>
-  apiRequest(`/product/categories/${id}`, {
+  apiRequest(`/categories/${id}`, {
     method: 'delete',
   });
 
 // Products
 export const fetchProducts = (filters = {}) => {
   const query = buildQueryString(filters);
-  return apiRequest(`/product/products${query}`);
+  return apiRequest(`/products${query}`);
 };
 
-export const fetchProductDetail = (id) => apiRequest(`/product/products/${id}`);
+export const fetchProductDetail = (id) => apiRequest(`/products/${id}`);
 
 export const createProduct = (payload) =>
-  apiRequest('/product/products', {
+  apiRequest('/products', {
     method: 'post',
     body: payload,
   });
 
 export const updateProduct = (id, payload) =>
-  apiRequest(`/product/products/${id}`, {
+  apiRequest(`/products/${id}`, {
     method: 'patch',
     body: payload,
   });
 
 export const deleteProduct = (id) =>
-  apiRequest(`/product/products/${id}`, {
+  apiRequest(`/products/${id}`, {
     method: 'delete',
   });
 
 // Product assets / variants / stock
 export const uploadProductImage = (payload) =>
-  apiRequest('/product/products/images', {
+  apiRequest('/products/images', {
     method: 'post',
     body: payload,
   });
 
 export const createVariantAttribute = (payload) =>
-  apiRequest('/product/products/variants', {
+  apiRequest('/products/variants', {
     method: 'post',
     body: payload,
   });
 
 export const createVariantOption = (payload) =>
-  apiRequest('/product/products/variants/options', {
+  apiRequest('/products/variants/options', {
     method: 'post',
     body: payload,
   });
 
 export const createProductStock = (payload) =>
-  apiRequest('/product/products/stocks', {
+  apiRequest('/products/stocks', {
     method: 'post',
     body: payload,
   });
 
 export const updateProductStock = (id, payload) =>
-  apiRequest(`/product/products/stocks/${id}`, {
+  apiRequest(`/products/stocks/${id}`, {
     method: 'patch',
     body: payload,
   });
 
 // Questions & reviews
-export const fetchProductQuestions = (productId) => apiRequest(`/product/products/${productId}/questions`);
+export const fetchProductQuestions = (productId) => apiRequest(`/products/${productId}/questions`);
 
-export const fetchProductReviews = (productId) => apiRequest(`/product/products/${productId}/reviews`);
+export const fetchProductReviews = (productId) => apiRequest(`/products/${productId}/reviews`);
 
 export const answerProductQuestion = (questionId, payload) =>
-  apiRequest(`/product/products/questions/${questionId}/answer`, {
+  apiRequest(`/products/questions/${questionId}/answer`, {
     method: 'patch',
     body: payload,
   });
 
 export const createProductQuestion = (payload) =>
-  apiRequest('/product/products/questions', {
+  apiRequest('/products/questions', {
     method: 'post',
     body: payload,
   });
 
 export const createProductReview = (payload) =>
-  apiRequest('/product/products/reviews', {
+  apiRequest('/products/reviews', {
     method: 'post',
     body: payload,
   });

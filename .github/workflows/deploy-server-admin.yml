@@ -13,7 +13,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0

@@ -6,6 +6,7 @@ import config from './config/config';
 import authRouter from './routers/authRouter';
 import userRouter from './routers/userRouter';
 import { errorHandler } from './middlewares/errorHandler';
+import './models/associations';
 
 const app = express();
 

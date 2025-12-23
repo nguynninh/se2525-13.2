@@ -1,4 +1,4 @@
-import UserModel from "../models/UserModel";
+import { UserModel, RoleModel, PermissionModel } from "../models";
 import { Request, Response } from "express";
 import dotenv from 'dotenv';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -13,7 +13,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
     const verifyKey = `verify_user:${email}`;
     const verifyData = await redisClient.get(verifyKey);
-    
+
     if (!verifyData)
         throw new ValidationError(req.t('user:verification_code_expired_or_not_found'));
 
@@ -26,7 +26,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
     if (code !== storedCode) {
         const newAttemptsLeft = attempts_left - 1;
-        
+
         if (newAttemptsLeft <= 0) {
             await redisClient.del(verifyKey);
             throw new ValidationError(req.t('user:verification_attempts_exceeded'));
@@ -42,6 +42,26 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const newUser = await UserModel.create({ email, password, firstname, lastname });
+
+    const userRole = await RoleModel.findOne({ where: { name: 'user' } });
+    if (userRole) {
+        await (newUser as any).addRole(userRole);
+    }
+
+    await newUser.reload({
+        include: [{
+            model: RoleModel,
+            as: 'roles',
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+            include: [{
+                model: PermissionModel,
+                as: 'permissions',
+                attributes: ['id', 'name'],
+                through: { attributes: [] }
+            }]
+        }]
+    });
 
     await redisClient.del(verifyKey);
 
@@ -101,7 +121,7 @@ const retrievedUser = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
-export { 
+export {
     createUser,
     verifyUser,
     retrievedUser,

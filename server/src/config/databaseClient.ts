@@ -15,6 +15,7 @@ const sequelize = new Sequelize(
 export const connectDatabase = async () => {
   try {
     await sequelize.authenticate();
+    await import('../models/associations');
     await sequelize.sync({ force: false });
     console.log('✅ Connected to database');
   } catch (err) {

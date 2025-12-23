@@ -1,6 +1,7 @@
 ﻿import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import AddProductModal from "../components/AddProductModal";
+import EditProductModal from "../components/EditProductModal";
 
 const categories = [
   {
@@ -27,6 +28,13 @@ const categories = [
 
 const AddProduct = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const handleDelete = (name) => {
+    const ok = window.confirm("Are you sure you want to delete this product?");
+    if (!ok) return;
+    // TODO: remove item from state when wired to real data
+  };
 
   return (
     <div className="p-4">
@@ -51,33 +59,15 @@ const AddProduct = () => {
           </button>
         </div>
 
-        <h2 className="text-xl font-bold mb-4">Add New Product</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Product name</label>
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Search product</label>
+          <div className="relative">
             <input
               type="text"
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Search product..."
+              className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
             />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Category</label>
-            <input
-              type="text"
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Stock</label>
-            <input
-              type="text"
-              className="mt-1 block w-24 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-          <div className="md:col-span-2 flex items-end gap-2">
-            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Edit</button>
-            <button className="bg-gray-800 text-white px-4 py-2 rounded-lg">Send</button>
           </div>
         </div>
       </div>
@@ -105,7 +95,28 @@ const AddProduct = () => {
                 <td className="px-4 py-3 text-sm text-gray-700">-</td>
                 <td className="px-4 py-3 text-sm text-gray-700">{category.description}</td>
                 <td className="px-4 py-3 text-sm">
-                  <button className="rounded-lg border px-3 py-1 text-gray-700 shadow-sm transition hover:bg-gray-100">...</button>
+                  <div className="flex gap-2">
+                    <button
+                      className="rounded-lg bg-blue-600 px-3 py-1 text-white shadow-sm transition hover:bg-blue-700"
+                      onClick={() =>
+                        setEditingProduct({
+                          name: category.name,
+                          sellingPrice: "",
+                          purchasePrice: "",
+                          category: category.name.toLowerCase(),
+                          description: category.description,
+                        })
+                      }
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="rounded-lg border px-3 py-1 text-red-600 shadow-sm transition hover:bg-gray-100"
+                      onClick={() => handleDelete(category.name)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -114,6 +125,7 @@ const AddProduct = () => {
       </div>
 
       {isAddProductOpen && <AddProductModal onClose={() => setIsAddProductOpen(false)} />}
+      {editingProduct && <EditProductModal product={editingProduct} onClose={() => setEditingProduct(null)} />}
     </div>
   );
 };

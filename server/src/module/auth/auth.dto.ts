@@ -1,4 +1,4 @@
-// File này định nghĩa các DTO cho module Auth
+//  định nghĩa các DTO cho module Auth
 // Bao gồm cấu trúc dữ liệu đầu vào/đầu ra cho các hành động xác thực như đăng nhập, đăng nhập xã hội, làm mới token
 
 import { UserResponseDto } from '../user/user.dto';

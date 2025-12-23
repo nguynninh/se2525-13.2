@@ -1,4 +1,3 @@
-// Bao gồm đăng ký, đăng nhập, đăng xuất, làm mới token, đăng nhập xã hội
 import { Request, Response, NextFunction } from 'express';
 import response from '../../utils/response';
 import { authRegister, authForgotPassword, authLogin, authLogout, authRefreshToken } from './auth.service';

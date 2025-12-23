@@ -113,22 +113,16 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4 xl:col-span-2">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <p className="text-sm text-gray-500">Orders</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                className="px-3 py-2 text-sm font-semibold text-gray-700 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
-                onClick={() => navigate('/shipping/create')}
-              >
-                Create shipment
-              </button>
-              <button
-                className="px-3 py-2 text-sm font-semibold text-gray-700 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
-                onClick={loadOrders}
-                disabled={loading}
-              >
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Orders</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  className="px-3 py-2 text-sm font-semibold text-gray-700 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                  onClick={loadOrders}
+                  disabled={loading}
+                >
                 <RefreshCcw className="w-4 h-4" />
                 {loading ? 'Refreshing...' : 'Refresh'}
               </button>

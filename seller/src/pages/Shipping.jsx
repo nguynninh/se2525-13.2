@@ -4,6 +4,7 @@ import {
   getSellerOrders,
   confirmSellerOrder,
   rejectSellerOrder,
+  updateSellerOrderDeliveryStatus,
 } from '../api/seller';
 import {
   fetchMyAddresses,
@@ -26,6 +27,10 @@ const Shipping = () => {
   const [selectedProvince, setSelectedProvince] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [rejectingOrderId, setRejectingOrderId] = useState('');
+  const [rejectReason, setRejectReason] = useState('');
+  const [updatingStatusOrderId, setUpdatingStatusOrderId] = useState('');
+  const [newStatus, setNewStatus] = useState('completed');
   const [editAddrId, setEditAddrId] = useState('');
   const [editAddrForm, setEditAddrForm] = useState({
     receiver: '',
@@ -149,6 +154,68 @@ const Shipping = () => {
       await loadData();
     } catch (err) {
       setError(err.message || 'Failed to update address.');
+    }
+  };
+
+  const handleCreateShipment = async (orderId, currentStatus) => {
+    if (currentStatus && currentStatus !== 'confirmed') {
+      setError('Only confirmed orders can create a shipment.');
+      return;
+    }
+    setError('');
+    try {
+      await updateSellerOrderDeliveryStatus(orderId, { status: 'shipping' });
+      await loadData();
+    } catch (err) {
+      setError(err.message || 'Failed to create shipment.');
+    }
+  };
+
+  const openRejectModal = (orderId) => {
+    setRejectingOrderId(orderId);
+    setRejectReason('');
+  };
+
+  const closeRejectModal = () => {
+    setRejectingOrderId('');
+    setRejectReason('');
+  };
+
+  const submitReject = async () => {
+    if (!rejectingOrderId) return;
+    setError('');
+    try {
+      await rejectSellerOrder(rejectingOrderId, rejectReason ? { reason: rejectReason } : {});
+      closeRejectModal();
+      await loadData();
+    } catch (err) {
+      setError(err.message || 'Failed to reject');
+    }
+  };
+
+  const openUpdateStatusModal = (orderId, currentStatus) => {
+    if (currentStatus !== 'shipping') {
+      setError('Chỉ cập nhật khi đơn đang shipping.');
+      return;
+    }
+    setUpdatingStatusOrderId(orderId);
+    setNewStatus('completed');
+  };
+
+  const closeUpdateStatusModal = () => {
+    setUpdatingStatusOrderId('');
+    setNewStatus('completed');
+  };
+
+  const submitUpdateStatus = async () => {
+    if (!updatingStatusOrderId) return;
+    setError('');
+    try {
+      await updateSellerOrderDeliveryStatus(updatingStatusOrderId, { status: newStatus });
+      closeUpdateStatusModal();
+      await loadData();
+    } catch (err) {
+      setError(err.message || 'Failed to update status.');
     }
   };
 
@@ -432,6 +499,26 @@ const Shipping = () => {
                       <td className="px-3 py-2 text-sm text-gray-700">
                         <div className="flex items-center gap-2">
                           <button
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-semibold ${
+                              order.status === 'confirmed'
+                                ? 'text-gray-700 border-gray-200 hover:bg-gray-50'
+                                : 'text-gray-400 border-gray-200 bg-gray-50'
+                            }`}
+                            onClick={() => handleCreateShipment(order.id || order._id, order.status)}
+                            disabled={loading}
+                            title={order.status === 'confirmed' ? 'Create shipment' : 'Order must be confirmed first'}
+                          >
+                            Create shipment
+                          </button>
+                          <button
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-semibold text-blue-700 border-blue-200 hover:bg-blue-50"
+                            onClick={() => openUpdateStatusModal(order.id || order._id, order.status)}
+                            disabled={loading}
+                            title="Cập nhật trạng thái giao hàng"
+                          >
+                            Update status
+                          </button>
+                          <button
                             className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-semibold text-emerald-700 border-emerald-200 hover:bg-emerald-50"
                             onClick={() => confirmSellerOrder(order.id || order._id).then(loadData).catch((err) => setError(err.message || 'Failed to confirm'))}
                             disabled={loading}
@@ -440,12 +527,7 @@ const Shipping = () => {
                           </button>
                           <button
                             className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs font-semibold text-rose-700 border-rose-200 hover:bg-rose-50"
-                            onClick={() => {
-                              const reason = window.prompt('Reject reason (optional):', '');
-                              rejectSellerOrder(order.id || order._id, reason ? { reason } : {})
-                                .then(loadData)
-                                .catch((err) => setError(err.message || 'Failed to reject'));
-                            }}
+                            onClick={() => openRejectModal(order.id || order._id)}
                             disabled={loading}
                           >
                             <X className="w-3.5 h-3.5" /> Reject
@@ -460,6 +542,80 @@ const Shipping = () => {
           </div>
         </div>
       </div>
+
+      {rejectingOrderId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-xl bg-white border border-gray-200 shadow-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-gray-900">Reject order</h3>
+              <button className="text-gray-500 hover:text-gray-700" onClick={closeRejectModal}>
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-600">Optional reason for rejection:</p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={4}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              placeholder="Enter reason (optional)"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                onClick={closeRejectModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-2 text-sm font-semibold text-white rounded-lg bg-gray-900 hover:bg-gray-800"
+                onClick={submitReject}
+                disabled={loading}
+              >
+                Confirm reject
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {updatingStatusOrderId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-xl bg-white border border-gray-200 shadow-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-gray-900">Cập nhật trạng thái</h3>
+              <button className="text-gray-500 hover:text-gray-700" onClick={closeUpdateStatusModal}>
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-600">Chỉ áp dụng cho đơn đang shipping.</p>
+            <label className="text-sm text-gray-800 font-medium">Chọn trạng thái</label>
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            >
+              <option value="completed">completed</option>
+              <option value="shipping">shipping</option>
+            </select>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                onClick={closeUpdateStatusModal}
+              >
+                Hủy
+              </button>
+              <button
+                className="px-3 py-2 text-sm font-semibold text-white rounded-lg bg-gray-900 hover:bg-gray-800"
+                onClick={submitUpdateStatus}
+                disabled={loading}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

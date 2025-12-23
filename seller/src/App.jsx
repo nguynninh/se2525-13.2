@@ -9,7 +9,6 @@ import AddCategory from './pages/AddCategory';
 import QA from './pages/QA';
 import Shipping from './pages/Shipping';
 import ShippingRates from './pages/ShippingRates';
-import CreateShipment from './pages/CreateShipment';
 import UpdateStock from './pages/UpdateStock';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
@@ -42,8 +41,6 @@ const AppContent = ({ user, onLogout }) => {
     title = 'Shipping';
   } else if (location.pathname === '/shipping/rates') {
     title = 'Shipping Rates';
-  } else if (location.pathname === '/shipping/create') {
-    title = 'Create Shipment';
   } else if (location.pathname === '/stock/update') {
     title = 'Update Stock';
   } else if (location.pathname === '/settings') {
@@ -65,7 +62,6 @@ const AppContent = ({ user, onLogout }) => {
             <Route path="/qa" element={<QA />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/shipping/rates" element={<ShippingRates />} />
-            <Route path="/shipping/create" element={<CreateShipment />} />
             <Route path="/stock/update" element={<UpdateStock />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

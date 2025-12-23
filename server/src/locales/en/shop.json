@@ -1,5 +1,5 @@
 {
-    "slug_required": "Shop slug is required",
+    "slug_required": "Shop slug is required!",
     "address_line_required": "Address line is required",
     "ward_id_invalid": "Ward ID is invalid",
     "name_required": "Shop name is required",

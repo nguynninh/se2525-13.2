@@ -21,9 +21,7 @@ const Header = ({ title }) => {
             alt="Profile"
             className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border-2 border-gray-300"
           />
-          <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+
         </div>
       </div>
     </div>

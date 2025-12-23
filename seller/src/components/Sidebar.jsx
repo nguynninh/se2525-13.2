@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Truck, MessageSquare, PackageSearch, Settings, LogOut } from 'lucide-react';
+import { Home, Truck, MessageSquare, PackageSearch, Settings, LogOut, Bell } from 'lucide-react';
 
 const Sidebar = ({ onLogout }) => {
 
@@ -8,6 +8,7 @@ const Sidebar = ({ onLogout }) => {
     { icon: Home, label: 'Dashboard', path: '/' },
     { icon: PackageSearch, label: 'Products', path: '/products' },
     { icon: MessageSquare, label: 'Q&A', path: '/qa' },
+    { icon: Bell, label: 'Notifications', path: '/notifications' },
     { icon: Truck, label: 'Shipping', path: '/shipping' },
     { icon: Settings, label: 'Settings', path: '/settings' },
     { icon: LogOut, label: 'Sign out', path: null },

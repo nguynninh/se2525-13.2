@@ -10,6 +10,7 @@ import Shops from './pages/admin/Shops';
 import Orders from './pages/admin/Orders';
 import Shipments from './pages/admin/Shipments';
 import Rates from './pages/admin/Rates';
+import Notifications from './pages/admin/Notifications';
 
 const readSession = () => {
   try {
@@ -73,6 +74,7 @@ const App = () => {
               {activePage === 'orders' && <Orders />}
               {activePage === 'shipments' && <Shipments />}
               {activePage === 'rates' && <Rates />}
+              {activePage === 'notifications' && <Notifications />}
             </div>
           </main>
         </div>

@@ -8,6 +8,8 @@ import {
     ForeignKey,
 } from 'sequelize';
 
+import { User } from './User.model';
+
 export type SellerApplicationStatus = 'pending' | 'approved' | 'rejected';
 
 export class SellerApplication extends Model<
@@ -20,6 +22,7 @@ export class SellerApplication extends Model<
     declare reviewed_by: CreationOptional<ForeignKey<string> | null>;
     declare accepted_terms: CreationOptional<boolean>;
     declare rejection_reason: CreationOptional<string | null>;
+    declare user?: User;
 
     static initModel(sequelize: Sequelize) {
         SellerApplication.init(

@@ -1,0 +1,39 @@
+# Ignore node_modules
+node_modules
+
+# Ignore build output (React, Vite, Next, v.v.)
+build
+dist
+.next
+out
+
+# Ignore server-side build (nếu có)
+server/dist
+
+# Ignore lockfiles (tuỳ chọn)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Ignore coverage reports
+coverage
+
+# Ignore environment and config files (tuỳ chọn)
+.env
+.env.*  
+
+# Ignore git folder
+.git
+
+# Ignore logs
+*.log
+
+# Ignore frontend dependencies
+client/node_modules
+client/build
+client/dist
+
+# Ignore backend dependencies (nếu backend tách riêng)
+server/node_modules
+server/build
+server/dist

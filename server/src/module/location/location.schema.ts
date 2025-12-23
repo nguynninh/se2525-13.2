@@ -5,8 +5,8 @@ extendZodWithOpenApi(z);
 
 const NAME_REGEX = /^[\p{L}\s'-]+$/u;
 
-export const ProvinceIdParamSchema = z.object({
-    id: z.string().uuid('shipping:province_id_invalid'),
+export const ProvinceCodeParamSchema = z.object({
+    code: z.string().trim().min(1, 'shipping:province_code_required'),
 });
 
 export const WardIdParamSchema = z.object({

@@ -54,14 +54,15 @@ export const listProvinces = async (): Promise<ProvinceResponseDto[]> => {
 };
 
 // Lấy danh sách quận/huyện theo tỉnh/thành phố
-export const listWardsByProvince = async (provinceId: string): Promise<WardResponseDto[]> => {
-    const province = await Province.findByPk(provinceId);
+export const listWardsByProvince = async (provinceCode: string): Promise<WardResponseDto[]> => {
+    const province = await Province.findOne({ where: { code: provinceCode } });
+
     if (!province) {
         throw new NotFoundError('shipping:province_not_found');
     }
 
     const wards = await Ward.findAll({
-        where: { province_id: provinceId },
+        where: { province_id: province.id },
         order: [['name', 'ASC']],
     });
 
@@ -194,19 +195,6 @@ export const updateMyShippingAddress = async (
     return sequelize.transaction(async (tx: Transaction) => {
         const shippingAddress = await ShippingAddress.findOne({
             where: { id, user_id: userId },
-            include: [
-                {
-                    model: Address,
-                    as: 'address',
-                    include: [
-                        {
-                            model: Ward,
-                            as: 'ward',
-                            include: [{ model: Province, as: 'province' }],
-                        },
-                    ],
-                },
-            ],
             transaction: tx,
             lock: tx.LOCK.UPDATE,
         });
@@ -215,28 +203,32 @@ export const updateMyShippingAddress = async (
             throw new NotFoundError('shipping:address_not_found');
         }
 
-        if (!shippingAddress.address) {
-            throw new InternalServerError('shipping:address_not_loaded');
-        }
+        let address: Address | null = null;
 
         if (dto.address) {
             const { ward_id, address_line } = dto.address;
 
+            address = await Address.findByPk(shippingAddress.address_id, {
+                transaction: tx,
+            });
+
+            if (!address) {
+                throw new InternalServerError('shipping:address_not_loaded');
+            }
+
             if (ward_id) {
-                const ward = await Ward.findByPk(ward_id, {
-                    transaction: tx,
-                });
+                const ward = await Ward.findByPk(ward_id, { transaction: tx });
                 if (!ward) {
                     throw new NotFoundError('shipping:ward_not_found');
                 }
-                shippingAddress.address.ward_id = ward_id;
+                address.ward_id = ward_id;
             }
 
             if (address_line) {
-                shippingAddress.address.address_line = address_line;
+                address.address_line = address_line;
             }
 
-            await shippingAddress.address.save({ transaction: tx });
+            await address.save({ transaction: tx });
         }
 
         if (dto.receiver_name !== undefined) {
@@ -251,7 +243,10 @@ export const updateMyShippingAddress = async (
             shippingAddress.is_default = true;
         } else if (dto.is_default === false && shippingAddress.is_default) {
             const otherCount = await ShippingAddress.count({
-                where: { user_id: userId, id: { $ne: id } as any },
+                where: {
+                    user_id: userId,
+                    id: { $ne: id } as any,
+                },
                 transaction: tx,
             });
             if (otherCount === 0) {
@@ -288,7 +283,6 @@ export const deleteMyShippingAddress = async (userId: string, id: string): Promi
     await sequelize.transaction(async (tx: Transaction) => {
         const shippingAddress = await ShippingAddress.findOne({
             where: { id, user_id: userId },
-            include: [{ model: Address, as: 'address' }],
             transaction: tx,
             lock: tx.LOCK.UPDATE,
         });
@@ -298,22 +292,25 @@ export const deleteMyShippingAddress = async (userId: string, id: string): Promi
         }
 
         const wasDefault = shippingAddress.is_default;
+        const addressId = shippingAddress.address_id;
 
-        // Xoá shipping address
+        // 2. Xoá shipping addrss
         await shippingAddress.destroy({ transaction: tx });
 
-        // Xoá luôn address đi kèm
-        if (shippingAddress.address) {
-            await shippingAddress.address.destroy({ transaction: tx });
+        if (addressId) {
+            await Address.destroy({
+                where: { id: addressId },
+                transaction: tx,
+            });
         }
 
         if (wasDefault) {
-            // Gán default cho 1 địa chỉ khác nếu có
             const another = await ShippingAddress.findOne({
                 where: { user_id: userId },
                 order: [['created_at', 'DESC']],
                 transaction: tx,
             });
+
             if (another) {
                 another.is_default = true;
                 await another.save({ transaction: tx });
@@ -327,6 +324,20 @@ export const setDefaultMyShippingAddress = async (userId: string, id: string): P
     return sequelize.transaction(async (tx: Transaction) => {
         const shippingAddress = await ShippingAddress.findOne({
             where: { id, user_id: userId },
+            transaction: tx,
+            lock: tx.LOCK.UPDATE,
+        });
+
+        if (!shippingAddress) {
+            throw new NotFoundError('shipping:address_not_found');
+        }
+
+        await ShippingAddress.update({ is_default: false }, { where: { user_id: userId }, transaction: tx });
+
+        shippingAddress.is_default = true;
+        await shippingAddress.save({ transaction: tx });
+
+        await shippingAddress.reload({
             include: [
                 {
                     model: Address,
@@ -341,17 +352,7 @@ export const setDefaultMyShippingAddress = async (userId: string, id: string): P
                 },
             ],
             transaction: tx,
-            lock: tx.LOCK.UPDATE,
         });
-
-        if (!shippingAddress) {
-            throw new NotFoundError('shipping:address_not_found');
-        }
-
-        await ShippingAddress.update({ is_default: false }, { where: { user_id: userId }, transaction: tx });
-
-        shippingAddress.is_default = true;
-        await shippingAddress.save({ transaction: tx });
 
         return mapToShippingAddressDto(shippingAddress);
     });

@@ -12,23 +12,15 @@ import {
     setDefaultMyShippingAddressController,
 } from '../../../module/location/location.controller';
 
-import {
-    CreateShippingAddressSchema,
-    UpdateShippingAddressSchema,
-    ProvinceIdParamSchema,
-} from '../../../module/location/location.schema';
+import { CreateShippingAddressSchema, UpdateShippingAddressSchema } from '../../../module/location/location.schema';
 
 const router = Router();
 
 // GET /api/location/provinces
 router.get('/location/provinces', listProvincesController);
 
-// GET /api/location/provinces/:provinceId/wards
-router.get(
-    '/location/provinces/:provinceId/wards',
-    v(ProvinceIdParamSchema, 'shipping'),
-    listWardsByProvinceController,
-);
+// GET /api/location/provinces/:code/wards
+router.get('/location/provinces/:code/wards', listWardsByProvinceController);
 
 // GET /api/user/me/shipping-addresses
 router.get('/user/me/shipping-addresses', authenticate, listMyShippingAddressesController);

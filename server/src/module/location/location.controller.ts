@@ -14,8 +14,11 @@ export const listProvincesController = async (_req: Request, res: Response, next
 
 export const listWardsByProvinceController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { provinceId } = req.params;
-        const data = await locationService.listWardsByProvince(provinceId);
+        const provinceCode = String(req.params.code ?? '').trim();
+        console.log('params =', req.params);
+
+        console.log('provinceCode =', provinceCode);
+        const data = await locationService.listWardsByProvince(provinceCode);
         res.json({ data });
     } catch (err) {
         next(err);

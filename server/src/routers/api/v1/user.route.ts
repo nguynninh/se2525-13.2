@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../../../middlewares/auth.middleware';
+import { authenticate, restrictTo } from '../../../middlewares/auth.middleware';
 import { v } from '../../../utils/zod.format';
 
 import {
@@ -8,9 +8,15 @@ import {
     changePasswordController,
     updateAvatarController,
     deleteMeController,
+    adminListUsersController,
+    adminGetUserFullDetailController,
+    adminUpdateSellerStatusController,
+    adminDeleteSellerController,
+    adminDeleteUserController,
+    getSellerMeController,
 } from '../../../module/user/user.controller';
 
-import { UpdateMeSchema, ChangePasswordSchema } from '../../../module/user/user.schema';
+import { UpdateMeSchema, ChangePasswordSchema, AdminUpdateSellerStatusSchema } from '../../../module/user/user.schema';
 import { createImageUploadMiddleware } from '../../../utils/upload';
 
 const router = Router();
@@ -31,4 +37,30 @@ router.patch('/me/avatar', authenticate, uploadAvatar.single('avatar'), updateAv
 // DELETE /api/user/me
 router.delete('/me', authenticate, deleteMeController);
 
+// GET /api/user/seller/me
+router.get('/seller/me', authenticate, getSellerMeController);
+
+// GET /api/user/admin/sellers
+// router.get('/admin/sellers', authenticate, restrictTo('admin'), adminListSellersController);
+
+// GET /api/user/admin/users?role=customer|seller|admin&search=...
+router.get('/admin/users', authenticate, restrictTo('admin'), adminListUsersController);
+
+// GET /api/user/admin/users/:id
+router.get('/admin/users/:id', authenticate, restrictTo('admin'), adminGetUserFullDetailController);
+
+// PATCH /api/user/admin/sellers/:id/status
+router.patch(
+    '/admin/sellers/:id/status',
+    authenticate,
+    v(AdminUpdateSellerStatusSchema, 'user'),
+    restrictTo('admin'),
+    adminUpdateSellerStatusController,
+);
+
+// DELETE /api/user/admin/sellers/:id
+router.delete('/admin/sellers/:id', authenticate, restrictTo('admin'), adminDeleteSellerController);
+
+// DELETE /api/user/admin/users/:id
+router.delete('/admin/users/:id', authenticate, restrictTo('admin'), adminDeleteUserController);
 export default router;

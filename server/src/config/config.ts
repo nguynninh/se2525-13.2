@@ -1,21 +1,39 @@
 import dotenv from 'dotenv';
-
 dotenv.config();
 
-interface Config {
-  port: number;
-  nodeEnv: string;
-  apiBasePath: string;
-}
-
-const nodeEnv = process.env.NODE_ENV || 'development';
-const rawApiBase = process.env.API_BASE_PATH;
-const apiBasePath = rawApiBase === undefined ? (nodeEnv === 'development' ? '/api/v1' : '/v1') : rawApiBase;
-
-const config: Config = {
-  port: Number(process.env.PORT) || 3001,
-  nodeEnv,
-  apiBasePath,
+type DbEnv = {
+    username: string;
+    password: string;
+    database: string;
+    host: string;
+    port: number;
+    dialect: 'postgres';
+    logging: false | ((sql: string) => void);
+    dialectOptions?: Record<string, any>;
 };
 
-export default config;
+const isSSL = String(process.env.DB_SSL || '').toLowerCase() === 'true';
+
+const base: DbEnv = {
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'app',
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT) || 5432,
+    dialect: 'postgres',
+    logging: process.env.NODE_ENV === 'production' ? false : console.log,
+    ...(isSSL ? { dialectOptions: { ssl: { require: true, rejectUnauthorized: false } } } : {}),
+};
+
+module.exports = {
+    development: { ...base },
+    test: {
+        ...base,
+        database: `${base.database}_test`,
+        logging: false,
+    },
+    production: {
+        ...base,
+        logging: false,
+    },
+};

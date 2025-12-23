@@ -1,10 +1,10 @@
-import redisClient from '../config/redisClient';
+import redisClient from '../config/redis';
 
 export const redisHelper = {
     async set(key: string, value: any, expirationInSeconds?: number): Promise<void> {
         try {
             const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
-            
+
             if (expirationInSeconds) {
                 await redisClient.setEx(key, expirationInSeconds, stringValue);
             } else {
@@ -19,7 +19,7 @@ export const redisHelper = {
     async get<T = any>(key: string, parseJson: boolean = true): Promise<T | null> {
         try {
             const value = await redisClient.get(key);
-            
+
             if (!value) {
                 return null;
             }

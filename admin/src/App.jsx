@@ -24,8 +24,10 @@ const App = () => {
   const handleLogin = (payload) => {
     const { accessToken, refreshToken, user } = payload || {};
     if (!accessToken || !user) return;
-    if (user.role !== 'admin') {
-      throw new Error('Account is not admin');
+    const role = String(user.role || '').trim().toLowerCase();
+    if (role !== 'admin') {
+      console.warn('Login blocked: role is not admin', role);
+      return;
     }
     localStorage.setItem('accessToken', accessToken);
     if (refreshToken) localStorage.setItem('refreshToken', refreshToken);

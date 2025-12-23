@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://api.hiki.io.vn/api').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://api.hiki.io.vn').replace(/\/$/, '');
 
 const getStoredToken = () => localStorage.getItem('accessToken') || localStorage.getItem('token');
 
@@ -62,3 +62,5 @@ export const buildQueryString = (params = {}) => {
   const qs = query.toString();
   return qs ? `?${qs}` : '';
 };
+
+export default api;

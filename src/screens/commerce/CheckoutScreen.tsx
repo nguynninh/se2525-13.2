@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Platform, FlatList, Alert, TextInput } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { cartSelector, cartTotalSelector, clearCart, updateCartItem } from '../../redux/reducers/cartReducer';

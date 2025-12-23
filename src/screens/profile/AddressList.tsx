@@ -2,7 +2,7 @@ import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpaci
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addAddress, addressSelector } from '../../redux/reducers/addressReducer';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { ContainerComponent, GlassView, RowComponent, SectionComponent, SpaceComponent, TextComponent } from '../../components';
 import { Add, ArrowLeft, Edit2, Location, TickCircle, Trash } from 'iconsax-react-native';
 import { Swipeable } from 'react-native-gesture-handler';

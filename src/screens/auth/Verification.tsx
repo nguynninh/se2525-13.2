@@ -13,7 +13,7 @@ import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { globalStyles } from '../../styles/globalStyles';
 import { LoadingModal } from '../../modals';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import handleAuthentication from '../../apis/authApi';
 
 const Verification = ({ navigation, route }: any) => {

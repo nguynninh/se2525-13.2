@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ButtonComponent, ContainerComponent, GlassView, InputComponent, RowComponent, SectionComponent, SpaceComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { ArrowLeft, Sms, User, ArrowDown2 } from 'iconsax-react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import addressApi from '../../apis/addressApi';

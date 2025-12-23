@@ -4,7 +4,7 @@ import { appColors } from '../constants/appColors';
 import { fontFamilies } from '../constants/fontFamilies';
 import { RowComponent, TextComponent } from '.';
 import { ArrowDown2, TickCircle, Global, Profile2User, Lock1 } from 'iconsax-react-native';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../node_modules/react-i18next';
 
 interface Props {
     value: string;

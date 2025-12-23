@@ -8,14 +8,14 @@ import {
   SpaceComponent,
   TextComponent,
 } from '../../components';
-import {ArrowRight, Sms} from 'iconsax-react-native';
-import {appColors} from '../../constants/appColors';
-import {Validate} from '../../utils/validate';
-import {useTranslation} from 'react-i18next';
+import { ArrowRight, Sms } from 'iconsax-react-native';
+import { appColors } from '../../constants/appColors';
+import { Validate } from '../../utils/validate';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import handleAuthentication from '../../apis/authApi';
 
 const ForgotPassword = ({ navigation }: any) => {
-  const {t} = useTranslation(['auth', 'common']);
+  const { t } = useTranslation(['auth', 'common']);
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);

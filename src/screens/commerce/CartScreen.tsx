@@ -2,7 +2,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Platform, FlatList, Alert, ScrollView } from 'react-native';
 import { ContainerComponent, TextComponent, RowComponent, SectionComponent, SpaceComponent, ButtonComponent, GlassView } from '../../components';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartSelector, getCart, updateCartItem, removeCartItem } from '../../redux/reducers/cartReducer';
 import { addressSelector } from '../../redux/reducers/addressReducer';

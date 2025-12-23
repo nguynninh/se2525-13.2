@@ -27,7 +27,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userSelector } from '../redux/reducers/userReducer';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../node_modules/react-i18next';
 import { fontFamilies } from '../constants/fontFamilies';
 
 const DrawerCustom = ({ navigation }: any) => {

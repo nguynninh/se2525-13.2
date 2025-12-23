@@ -1,5 +1,5 @@
 import i18n, { t } from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import { initReactI18next } from '../../node_modules/react-i18next';
 import * as RNLocalize from 'react-native-localize';
 
 import en_common from './locales/en/common.json';
@@ -56,8 +56,8 @@ const languageDetector = {
     const locales = RNLocalize.getLocales();
     cb(locales[0]?.languageCode || 'en');
   },
-  init: () => {},
-  cacheUserLanguage: () => {},
+  init: () => { },
+  cacheUserLanguage: () => { },
 };
 
 i18n
@@ -68,10 +68,10 @@ i18n
     resources,
     fallbackLng: 'en',
     ns: [
-        'common',
-        'auth',
-        'home',
-        'profile',
+      'common',
+      'auth',
+      'home',
+      'profile',
     ],
     defaultNS: 'common',
     interpolation: { escapeValue: false },

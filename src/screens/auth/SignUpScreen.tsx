@@ -1,6 +1,6 @@
 import { Image, Alert } from 'react-native';
 import { useState } from 'react';
-import {Lock, Sms, User} from 'iconsax-react-native';
+import { Lock, Sms, User } from 'iconsax-react-native';
 import {
   ButtonComponent,
   ContainerComponent,
@@ -10,14 +10,14 @@ import {
   SpaceComponent,
   TextComponent,
 } from '../../components';
-import {appColors} from '../../constants/appColors';
-import {LoadingModal} from '../../modals';
-import {Validate} from '../../utils/validate';
-import { useTranslation } from 'react-i18next';
+import { appColors } from '../../constants/appColors';
+import { LoadingModal } from '../../modals';
+import { Validate } from '../../utils/validate';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import { SignUp } from '../../models/SignUp';
 import handleAuthentication from '../../apis/authApi';
 
-const SignUpScreen = ({navigation}: any) => {
+const SignUpScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['auth', 'common']);
 
   const [data, setData] = useState<SignUp>({

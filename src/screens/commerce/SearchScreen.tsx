@@ -4,7 +4,7 @@ import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
 import { ArrowLeft, ScanBarcode, SearchNormal1, Sort } from 'iconsax-react-native';
 import { appColors } from '../../constants/appColors';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 
 const SearchScreen = ({ navigation }: any) => {
   const { t } = useTranslation();

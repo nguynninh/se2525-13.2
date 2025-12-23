@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, cartCountSelector, getCart } from '../../redux/reducers/cartReducer';
 import { addressSelector } from '../../redux/reducers/addressReducer';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../node_modules/react-i18next';
 import {
     View,
     StyleSheet,

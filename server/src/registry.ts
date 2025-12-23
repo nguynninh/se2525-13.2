@@ -9,6 +9,7 @@ import { registerShopOpenApi } from './module/shop/shop.openapi';
 import { registerShipmentOpenApi } from './module/shipment/shipment.openapi';
 import { registerCartOpenApi } from './module/cart/cart.openapi';
 import { registerDeviceTokenOpenApi } from './module/deviceToken/deviceToken.openapi';
+import { registerNotificationOpenApi } from './module/notification/notification.openapi';
 
 const registry = new OpenAPIRegistry();
 
@@ -28,6 +29,7 @@ registerShopOpenApi(registry);
 registerShipmentOpenApi(registry);
 registerCartOpenApi(registry);
 registerDeviceTokenOpenApi(registry);
+registerNotificationOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 

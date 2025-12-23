@@ -1,8 +1,11 @@
 # Hiki Shop - Báo cáo dự án
 
-## Giới thiệu
-- Hệ sinh thái thương mại điện tử Hiki Shop gồm 3 thành phần: backend dịch vụ API, trang quản trị web cho người bán, và ứng dụng mobile cho khách hàng.
-- Mục tiêu: cung cấp luồng mua sắm end-to-end (đăng ký, tìm kiếm sản phẩm, giỏ hàng, đặt hàng, thanh toán, vận chuyển) và công cụ vận hành cho người bán (quản lý sản phẩm, đơn hàng, tồn kho, vận chuyển, phản hồi khách hàng).
+## Goals and Objectives
+- Goal: Xây dựng nền tảng marketplace 2 phía, cho phép khách hàng mua sắm end-to-end và người bán tự vận hành shop của họ.
+- Objectives:
+  - Cung cấp đầy đủ luồng mua sắm: đăng ký/đăng nhập, tìm kiếm & duyệt sản phẩm, giỏ hàng, đặt hàng, thanh toán, vận chuyển, đánh giá/Q&A.
+  - Cung cấp portal cho seller: đăng ký/xét duyệt seller, tạo shop, đăng sản phẩm, quản lý tồn kho, xử lý đơn, cấu hình phí ship, theo dõi doanh thu.
+  - Đảm bảo vận hành: hạ tầng docker-compose, lưu trữ tệp với MinIO, gửi mail OTP qua Mailhog, quản trị DB/Redis qua pgAdmin & Redis Commander, bảo mật bằng JWT/Redis.
 
 ## Kiến trúc tổng quan
 - Monorepo: `server` (Node.js + Express + TypeScript + Sequelize/PostgreSQL, Redis, MinIO, Mailhog), `seller` (web portal cho người bán, React + Vite + Tailwind), `admin` (dashboard vận hành, React + Vite + Tailwind), `mobile` (React Native, Redux Toolkit, React Navigation).

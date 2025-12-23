@@ -1,0 +1,241 @@
+.delivery-container {
+    font-family: -apple-system, BlinkMacMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    padding: 2rem;
+    background-color: #f5f7fa; /* Light grey background for the main content area */
+    border-radius: 12px; /* Rounded corners for the main content area */
+}
+
+.delivery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    background-color: transparent;
+    padding: 0;
+    border-bottom: none;
+}
+
+.delivery-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.my-delivery-btn {
+    background-color: #333;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.date-selector {
+    background-color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.second-tabs {
+    border-bottom: none;
+}
+
+.tab-item {
+    background: none;
+    border: none;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    color: #666;
+    font-weight: 500;
+    position: relative;
+    margin-right: 1rem;
+}
+
+.tab-item.active {
+    color: #333; /* Darker text for active tab */
+    font-weight: 600;
+    background-color: #e2e8f0; /* Light grey background for active tab */
+    border-radius: 8px;
+}
+
+.tab-item.active::after {
+    content: none; /* Remove the red underline */
+}
+
+.tab-item.active-secondary {
+    color: #333;
+    font-weight: 600;
+    background-color: #e2e8f0;
+    border-radius: 8px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    flex-grow: 1;
+    position: relative; /* For positioning the label */
+}
+
+.search-input-wrapper .search-label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-weight: 500;
+    pointer-events: none; /* Allow clicks to pass through to the input */
+}
+
+.search-input {
+    border: none;
+    padding: 0.75rem 1rem 0.75rem 7rem; /* Adjust padding for label */
+    flex-grow: 1;
+    outline: none;
+    border-radius: 8px; /* Ensure input has rounded corners */
+}
+
+.search-input-wrapper .search-icon {
+    padding: 0 1rem;
+    color: #999;
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+.search-btn {
+    background-color: #333; /* Dark background for search button */
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.reset-btn {
+    background-color: #f0f2f5; /* Lighter background for reset button */
+    color: #333;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.orders-table thead {
+    color: #666;
+    font-weight: 500;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.customer-row td {
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0; /* Only bottom border for customer row */
+    border-left: none;
+    border-right: none;
+}
+
+.customer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    padding: 0 1rem;
+}
+
+.customer-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-icon {
+    font-size: 1.2rem;
+}
+
+.order-no {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.product-row {
+    border-bottom: 1px solid #e2e8f0; /* Only bottom border for product row */
+    border-left: none;
+    border-right: none;
+}
+.product-row:last-child {
+    border-bottom: none; /* No border for the last product in an order */
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.status-detail {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.action-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}

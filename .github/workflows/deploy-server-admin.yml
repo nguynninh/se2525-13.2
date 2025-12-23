@@ -25,17 +25,48 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H 34.27.61.12 >> ~/.ssh/known_hosts
 
-      - name: Deploy to server
-        env:
-          SERVER_IP: 34.27.61.12
-          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          # The command assumes:
-          # 1. The project root is at ~/server (or user has configured it this way)
-          # 2. docker compose is run from server/ directory to pick up server/docker-compose.yaml
-          # 3. It rebuilds backend and admin services
-          
-          ssh ${SERVER_USER}@${SERVER_IP} "cd ~/server && \
-            git checkout development && \
-            git pull && \
-            docker compose up -d --build backend admin nginx"
+          ssh ${SERVER_USER}@${SERVER_IP} "
+            set -e
+            
+            # Function to re-clone if needed
+            reclone_repo() {
+                echo 'Repository corrupted or missing using self-healing...'
+                cd ~
+                
+                # Backup .env
+                if [ -f server/server/.env ]; then cp server/server/.env .env.backup; 
+                elif [ -f server/.env ]; then cp server/.env .env.backup; fi
+                
+                rm -rf server
+                git clone https://github.com/nguynninh/se2525-13.2.git server
+                
+                # Restore .env
+                if [ -f .env.backup ]; then
+                    mkdir -p server/server
+                    cp .env.backup server/server/.env
+                    # existing docker-compose update pointed to ./server/.env, ensure it is there
+                    cp .env.backup server/.env
+                fi
+            }
+
+            # Check if directory exists and is a git repo
+            if [ ! -d ~/server/.git ]; then
+                reclone_repo
+            fi
+
+            cd ~/server
+            
+            # Try to checkout/pull, if simple git commands fail, re-clone
+            if ! git checkout development || ! git pull; then
+                reclone_repo
+                cd ~/server
+                git checkout development
+                git pull
+            fi
+            
+            # Ensure proper .env placement for docker-compose if needed
+            # (My previous edit set env_file to ./server/.env so this should be fine if restored there)
+            
+            docker compose up -d --build backend admin nginx
+          "

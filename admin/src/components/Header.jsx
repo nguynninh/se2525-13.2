@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Header = () => {
+const Header = ({ title }) => {
   return (
     <div className="bg-white px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between">
-      <h1 className="text-lg lg:text-xl font-bold text-gray-800">Product</h1>
+      <h1 className="text-lg lg:text-xl font-bold text-gray-800">{title}</h1>
       <div className="flex items-center gap-2 lg:gap-4">
         <div className="relative">
           <select className="bg-gray-100 text-gray-800 px-3 lg:px-4 py-2 pr-7 lg:pr-8 rounded-lg text-xs lg:text-sm focus:outline-none appearance-none cursor-pointer">

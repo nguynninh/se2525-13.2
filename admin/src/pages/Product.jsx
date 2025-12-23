@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Product = () => {
   const products = [
@@ -44,8 +45,8 @@ const Product = () => {
     <div className="p-4">
       <div className="bg-white rounded-lg shadow p-4 mb-4">
         <div className="flex space-x-4 mb-4">
-          <button className="bg-gray-800 text-white px-4 py-2 rounded-lg">Product</button>
-          <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Add products</button>
+          <Link to="/product" className="bg-gray-800 text-white px-4 py-2 rounded-lg">Product</Link>
+          <Link to="/add-product" className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">Add products</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>

@@ -93,17 +93,6 @@ export const logoutController = {
             next(err);
         }
     },
-    async logoutAll(req: AuthRequest, res: Response, next: NextFunction) {
-        try {
-            if (!req.user?.id) {
-                return response.fail(res, 401, 'auth:no_token');
-            }
-            await authLogout.logoutAll(req.user.id);
-            return response.ok(res, { ok: true }, 'auth:logout_success');
-        } catch (err) {
-            next(err);
-        }
-    },
 };
 
 // Controller Refresh Token

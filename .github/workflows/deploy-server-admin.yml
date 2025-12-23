@@ -1,9 +1,13 @@
-name: Deploy to Production
+name: Deploy Server & Admin
 
 on:
   push:
     branches:
       - development
+    paths:
+      - 'server/**'
+      - 'admin/**'
+      - 'nginx/**'
   workflow_dispatch:
 
 jobs:
@@ -26,7 +30,12 @@ jobs:
           SERVER_IP: 34.27.61.12
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
+          # The command assumes:
+          # 1. The project root is at ~/server (or user has configured it this way)
+          # 2. docker compose is run from server/ directory to pick up server/docker-compose.yaml
+          # 3. It rebuilds backend and admin services
+          
           ssh ${SERVER_USER}@${SERVER_IP} "cd ~/server && \
             git checkout development && \
             git pull && \
-            docker compose up -d --build backend"
+            docker compose up -d --build backend admin nginx"

@@ -51,24 +51,6 @@ export const SellerApplicationResponseSchema = z
 
 export const GetMySellerApplicationResponseSchema = z
     .object({
-        id: z.string().uuid(),
-        accepted_terms: z.boolean(),
-        created_at: z.string(),
-        updated_at: z.string(),
-        user: UserPublicSchema,
-        status: SellerApplicationStatus,
-        rejection_reason: z.string().nullable().optional(),
+        status: z.enum(['approved', 'rejected']).optional(),
     })
-    .openapi('GetMySellerApplicationResponse');
-
-export const SellerApplicationWithUserResponseSchema = z
-    .object({
-        id: z.string().uuid(),
-        user_id: z.string().uuid(),
-        status: SellerApplicationStatus,
-        accepted_terms: z.boolean(),
-        rejection_reason: z.string().nullable(),
-        reviewed_by: z.string().uuid().nullable(),
-        user: UserPublicSchema,
-    })
-    .openapi('SellerApplicationWithUserResponse');
+    .strict();

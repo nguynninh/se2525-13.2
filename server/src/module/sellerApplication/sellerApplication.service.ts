@@ -247,6 +247,18 @@ export const reviewSellerApplication = async (dto: ReviewSellerApplication): Pro
     }
 
     await application.save();
+
+    // Đổi role user sang seller
+    const user = await User.findByPk(application.user_id);
+    if (!user) {
+        throw new InternalServerError('user:user_not_found');
+    }
+
+    if (user.role !== 'seller') {
+        user.role = 'seller';
+        await user.save();
+    }
+
     return {
         id: application.id,
         user_id: application.user_id,

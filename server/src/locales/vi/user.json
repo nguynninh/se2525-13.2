@@ -51,5 +51,12 @@
     "change_password_successfully": "Đổi mật khẩu thành công",
     "file_required": "Thiếu tệp yêu cầu",
     "update_avatar_successfully": "Cập nhật ảnh đại diện thành công",
-    "delete_me_successfully": "Xóa tài khoản thành công"
+    "delete_me_successfully": "Xóa tài khoản thành công",
+    "user_not_found_for_seller": "Không tìm thấy người dùng",
+    "seller_not_found": "Người dùng có thể chưa đăng ký trở thành người bán",
+    "invalid_seller_status": "Bộ lọc trạng thái không hợp lệ. Các giá trị cho phép là 'active', 'suspended', 'closed'",
+    "get_sellers_successfully": "Gửi thông tin người bán thành công",
+    "seller_id_required": "Cần có id của người bán",
+    "update_seller_status_successfully": "Cập nhật trạng thái người bán thành công",
+    "delete_seller_successfully": "Xóa người bán thành công"
 }

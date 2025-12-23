@@ -18,6 +18,7 @@ import {
     ResetRequestSchema,
     ResetVerifySchema,
     ResetFinalizeSchema,
+    ResetResendSchema,
 } from '../../../module/auth/auth.schema';
 
 const router = Router();
@@ -45,7 +46,7 @@ router.post('/refresh', v(RefreshTokenSchema), refreshTokenController.refresh);
 
 // POST api/auth/reset
 router.post('/reset/request', v(ResetRequestSchema, 'auth'), forgotPasswordController.request);
-router.post('/reset/resend', v(ResetRequestSchema, 'auth'), forgotPasswordController.resend);
+router.post('/reset/resend', v(ResetResendSchema, 'auth'), forgotPasswordController.resend);
 router.post('/reset/verify', v(ResetVerifySchema, 'auth'), forgotPasswordController.verify);
 router.post('/reset/finalize', v(ResetFinalizeSchema, 'auth'), forgotPasswordController.finalize);
 

@@ -47,105 +47,55 @@ const StatCard = ({ icon, label, value, iconBg, iconColor }) => {
 };
 
 const Dashboard = () => {
-  const recentOrders = [
+  const statCards = [
     {
-      code: '#876364',
-      name: 'T-Shirt Groot Black',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&h=100&fit=crop',
-      price: '100.000₫',
-      totalOrder: 100,
+      icon: '/icons/Heart.png',
+      label: 'Total number of visitors',
+      value: 0,
+      iconBg: 'bg-red-50',
+      iconColor: 'text-red-500',
     },
     {
-      code: '#876368',
-      name: 'Sepatu Nike',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&h=100&fit=crop',
-      price: '800.000₫',
-      totalOrder: 20,
+      icon: '/icons/Order.png',
+      label: 'Order',
+      value: 0,
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-blue-500',
     },
     {
-      code: '#876412',
-      name: 'T-Shirt Love Kills',
-      image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=100&h=100&fit=crop',
-      price: '100.000₫',
-      totalOrder: 52,
+      icon: '/icons/Revenue.png',
+      label: 'Revenue',
+      value: 0,
+      iconBg: 'bg-pink-50',
+      iconColor: 'text-pink-500',
     },
     {
-      code: '#876621',
-      name: 'Tas Selempang Pria',
-      image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=100&h=100&fit=crop',
-      price: '80.000₫',
-      totalOrder: 48,
-    },
-  ];
-
-  const bestSellers = [
-    {
-      name: 'T-Shirt Groot Black',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&h=100&fit=crop',
-      rating: 5,
-      price: '100.000₫',
-    },
-    {
-      name: 'Sepatu Nike',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&h=100&fit=crop',
-      rating: 5,
-      price: '800.000₫',
-    },
-    {
-      name: 'T-Shirt Love Kills',
-      image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=100&h=100&fit=crop',
-      rating: 5,
-      price: '100.000₫',
-    },
-    {
-      name: 'Tas Selempang Pria',
-      image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=100&h=100&fit=crop',
-      rating: 5,
-      price: '80.000₫',
+      icon: '/icons/Canceled.png',
+      label: 'Canceled',
+      value: 0,
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-400',
     },
   ];
+  const recentOrders = [];
+  const bestSellers = [];
 
   return (
     <div className="space-y-4 bg-content-bg min-h-screen p-3 lg:p-5">
-      {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-        <StatCard
-          icon="/icons/Heart.png"
-          label="Total number of visitors"
-          value="2.761"
-          iconBg="bg-red-50"
-          iconColor="text-red-500"
-        />
-
-        <StatCard
-          icon="/icons/Order.png"
-          label="Order"
-          value="580"
-          iconBg="bg-blue-100"
-          iconColor="text-blue-500"
-        />
-
-        <StatCard
-          icon="/icons/Revenue.png"
-          label="Revenue"
-          value="22.000.000₫"
-          iconBg="bg-pink-50"
-          iconColor="text-pink-500"
-        />
-
-        <StatCard
-          icon="/icons/Canceled.png"
-          label="Canceled"
-          value="90"
-          iconBg="bg-blue-50"
-          iconColor="text-blue-400"
-        />
-
+        {statCards.map((card) => (
+          <StatCard
+            key={card.label}
+            icon={card.icon}
+            label={card.label}
+            value={card.value || 'N/A'}
+            iconBg={card.iconBg}
+            iconColor={card.iconColor}
+          />
+        ))}
       </div>
 
-      {/* Recent Orders and Best Seller */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-5">
-        {/* Recent Orders */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-3 overflow-hidden">
           <h3 className="text-base font-semibold text-gray-800 mb-4">Recent Orders</h3>
           <div className="overflow-x-auto -mx-3 px-3">
@@ -179,57 +129,69 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((order, index) => (
-                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={order.image}
-                          alt={order.name}
-                          className="w-10 h-10 rounded object-cover flex-shrink-0"
-                        />
-                        <span className="text-gray-800 font-medium text-sm truncate">{order.name}</span>
-                      </div>
+                {recentOrders.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="py-6 px-3 text-center text-sm text-gray-600">
+                      No recent orders to display.
                     </td>
-                    <td className="py-3 px-3 text-gray-800 font-medium text-sm whitespace-nowrap">{order.code}</td>
-                    <td className="py-3 px-3 text-gray-600 text-sm whitespace-nowrap">{order.price}</td>
-                    <td className="py-3 px-3 text-gray-600 text-sm whitespace-nowrap">{order.totalOrder}</td>
                   </tr>
-                ))}
+                ) : (
+                  recentOrders.map((order, index) => (
+                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={order.image}
+                            alt={order.name}
+                            className="w-10 h-10 rounded object-cover flex-shrink-0"
+                          />
+                          <span className="text-gray-800 font-medium text-sm truncate">{order.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 text-gray-800 font-medium text-sm whitespace-nowrap">{order.code}</td>
+                      <td className="py-3 px-3 text-gray-600 text-sm whitespace-nowrap">{order.price}</td>
+                      <td className="py-3 px-3 text-gray-600 text-sm whitespace-nowrap">{order.totalOrder}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Best Seller */}
         <div className="bg-white border border-gray-200 rounded-xl p-3">
           <h3 className="text-base font-semibold text-gray-800 mb-4">Best seller</h3>
-          <div className="space-y-3">
-            {bestSellers.map((product, index) => (
-              <div key={index} className="flex items-center gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-14 h-14 rounded object-cover flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-gray-800 mb-1 text-sm truncate">{product.name}</h4>
-                  <div className="flex items-center gap-0.5 mb-1">
-                    {[...Array(product.rating)].map((_, idx) => (
-                      <svg key={idx} className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
+          {bestSellers.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 text-center">
+              No best sellers available.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {bestSellers.map((product, index) => (
+                <div key={index} className="flex items-center gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-14 h-14 rounded object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-gray-800 mb-1 text-sm truncate">{product.name}</h4>
+                    <div className="flex items-center gap-0.5 mb-1">
+                      {[...Array(product.rating)].map((_, idx) => (
+                        <svg key={idx} className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className="text-gray-800 font-semibold text-sm">{product.price}</p>
                   </div>
-                  <p className="text-gray-800 font-semibold text-sm">{product.price}</p>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Total Product Sales Chart */}
       <AreaChart />
     </div>
   );

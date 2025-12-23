@@ -1,14 +1,6 @@
 ﻿import React, { useMemo, useState } from "react";
 
-const initialOrders = [
-  { code: "ORD111", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "300,000d", createdAt: "01/12/2025 07:26", status: "Delivered" },
-  { code: "ORD110", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "180,000d", createdAt: "01/12/2025 07:24", status: "Delivered" },
-  { code: "ORD109", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "180,000d", createdAt: "01/12/2025 07:24", status: "Pending" },
-  { code: "ORD108", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "300,000d", createdAt: "23/11/2025 19:58", status: "Delivered" },
-  { code: "ORD107", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "450,000d", createdAt: "22/11/2025 18:29", status: "Canceled" },
-  { code: "ORD096", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "300,000d", createdAt: "19/11/2025 10:00", status: "Canceled" },
-  { code: "ORD095", customer: "Gojo Sulaiman", phone: "0335 244 686", total: "300,000d", createdAt: "17/11/2025 18:08", status: "Delivered" },
-];
+const initialOrders = [];
 
 const statusOptions = [
   { label: "All", value: "all" },
@@ -70,7 +62,6 @@ const Delivery = () => {
   return (
     <div className="p-4 lg:p-5 space-y-4 bg-content-bg min-h-screen">
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
         <p className="text-sm text-gray-600">Total orders in store: {orders.length}</p>
       </div>
 
@@ -127,43 +118,51 @@ const Delivery = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map((order) => (
-                <tr key={order.code} className="border-b last:border-0">
-                  <td className="px-4 py-3 font-semibold text-gray-900">#{order.code}</td>
-                  <td className="px-4 py-3 text-gray-800">{order.customer}</td>
-                  <td className="px-4 py-3 text-gray-800">{order.phone}</td>
-                  <td className="px-4 py-3 text-gray-800">{order.total}</td>
-                  <td className="px-4 py-3 text-gray-800">{order.createdAt}</td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[order.status] || "bg-gray-100 text-gray-700"}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    <div className="flex gap-2">
-                      <button
-                        className="rounded-lg bg-blue-600 px-3 py-1 text-white shadow-sm transition hover:bg-blue-700"
-                        onClick={() => approveOrder(order.code)}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="rounded-lg bg-emerald-600 px-3 py-1 text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed"
-                        disabled={order.status !== "Approved"}
-                        onClick={() => openShipModal(order)}
-                      >
-                        Ship
-                      </button>
-                      <button
-                        className="rounded-lg border px-3 py-1 text-red-600 shadow-sm transition hover:bg-gray-100"
-                        onClick={() => cancelOrder(order.code)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="px-4 py-6 text-center text-sm text-gray-600">
+                    No orders found.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredOrders.map((order) => (
+                  <tr key={order.code} className="border-b last:border-0">
+                    <td className="px-4 py-3 font-semibold text-gray-900">#{order.code}</td>
+                    <td className="px-4 py-3 text-gray-800">{order.customer}</td>
+                    <td className="px-4 py-3 text-gray-800">{order.phone}</td>
+                    <td className="px-4 py-3 text-gray-800">{order.total}</td>
+                    <td className="px-4 py-3 text-gray-800">{order.createdAt}</td>
+                    <td className="px-4 py-3">
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[order.status] || "bg-gray-100 text-gray-700"}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <div className="flex gap-2">
+                        <button
+                          className="rounded-lg bg-blue-600 px-3 py-1 text-white shadow-sm transition hover:bg-blue-700"
+                          onClick={() => approveOrder(order.code)}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="rounded-lg bg-emerald-600 px-3 py-1 text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                          disabled={order.status !== "Approved"}
+                          onClick={() => openShipModal(order)}
+                        >
+                          Ship
+                        </button>
+                        <button
+                          className="rounded-lg border px-3 py-1 text-red-600 shadow-sm transition hover:bg-gray-100"
+                          onClick={() => cancelOrder(order.code)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

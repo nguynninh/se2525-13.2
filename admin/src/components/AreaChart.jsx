@@ -22,14 +22,15 @@ ChartJS.register(
 );
 
 const AreaChart = () => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  const zeroes = new Array(months.length).fill(0);
 
   const chartData = {
     labels: months,
     datasets: [
       {
         label: 'Balance',
-        data: [45000, 52000, 48000, 61000, 67000, 73000, 68000, 75000, 82000, 78000, 85000, 92000, 88000, 95000],
+        data: zeroes,
         borderColor: 'rgba(147, 51, 234, 1)',
         backgroundColor: 'rgba(147, 51, 234, 0.2)',
         fill: true,
@@ -37,7 +38,7 @@ const AreaChart = () => {
       },
       {
         label: 'Income',
-        data: [30000, 35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000],
+        data: zeroes,
         borderColor: 'rgba(59, 130, 246, 0.8)',
         backgroundColor: 'rgba(59, 130, 246, 0.15)',
         fill: true,
@@ -45,7 +46,7 @@ const AreaChart = () => {
       },
       {
         label: 'Expenses',
-        data: [25000, 28000, 32000, 35000, 38000, 42000, 45000, 48000, 52000, 55000, 58000, 62000, 65000, 68000],
+        data: zeroes,
         borderColor: 'rgba(37, 99, 235, 0.8)',
         backgroundColor: 'rgba(37, 99, 235, 0.15)',
         fill: true,
@@ -127,5 +128,3 @@ const AreaChart = () => {
 };
 
 export default AreaChart;
-
-

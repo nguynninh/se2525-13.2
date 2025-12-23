@@ -3,28 +3,7 @@ import { Link } from "react-router-dom";
 import AddProductModal from "../components/AddProductModal";
 import EditProductModal from "../components/EditProductModal";
 
-const categories = [
-  {
-    name: "T-Shirts",
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=120&h=120&fit=crop",
-    description: "Easy-to-pair tees that match a wide range of looks.",
-  },
-  {
-    name: "Jeans",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=120&h=120&fit=crop",
-    description: "Youthful, energetic denim in slim, straight, or baggy fits.",
-  },
-  {
-    name: "Hoodies",
-    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=120&h=120&fit=crop&sat=-40",
-    description: "Relaxed hoodies with drawstrings—perfect for cool weather.",
-  },
-  {
-    name: "Vests",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&h=120&fit=crop&sat=-70",
-    description: "Lightweight vests designed to layer over shirts or long sleeves.",
-  },
-];
+const categories = [];
 
 const AddProduct = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -84,41 +63,49 @@ const AddProduct = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {categories.map((category, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm font-semibold text-gray-900">{category.name}</td>
-                <td className="px-4 py-3 text-sm text-gray-700">{category.name}</td>
-                <td className="px-4 py-3">
-                  <img src={category.image} alt={category.name} className="h-16 w-16 rounded-md object-cover" />
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-700">-</td>
-                <td className="px-4 py-3 text-sm text-gray-700">{category.description}</td>
-                <td className="px-4 py-3 text-sm">
-                  <div className="flex gap-2">
-                    <button
-                      className="rounded-lg bg-blue-600 px-3 py-1 text-white shadow-sm transition hover:bg-blue-700"
-                      onClick={() =>
-                        setEditingProduct({
-                          name: category.name,
-                          sellingPrice: "",
-                          purchasePrice: "",
-                          category: category.name.toLowerCase(),
-                          description: category.description,
-                        })
-                      }
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="rounded-lg border px-3 py-1 text-red-600 shadow-sm transition hover:bg-gray-100"
-                      onClick={() => handleDelete(category.name)}
-                    >
-                      Delete
-                    </button>
-                  </div>
+            {categories.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="px-4 py-6 text-center text-sm text-gray-600">
+                  No categories available.
                 </td>
               </tr>
-            ))}
+            ) : (
+              categories.map((category, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-semibold text-gray-900">{category.name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700">{category.name}</td>
+                  <td className="px-4 py-3">
+                    <img src={category.image} alt={category.name} className="h-16 w-16 rounded-md object-cover" />
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700">-</td>
+                  <td className="px-4 py-3 text-sm text-gray-700">{category.description}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <div className="flex gap-2">
+                      <button
+                        className="rounded-lg bg-blue-600 px-3 py-1 text-white shadow-sm transition hover:bg-blue-700"
+                        onClick={() =>
+                          setEditingProduct({
+                            name: category.name,
+                            sellingPrice: "",
+                            purchasePrice: "",
+                            category: category.name.toLowerCase(),
+                            description: category.description,
+                          })
+                        }
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="rounded-lg border px-3 py-1 text-red-600 shadow-sm transition hover:bg-gray-100"
+                        onClick={() => handleDelete(category.name)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

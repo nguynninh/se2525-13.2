@@ -6,14 +6,12 @@ const filters = [
   { label: "All", value: "all" },
   { label: "Unread", value: "unread" },
   { label: "Orders", value: "Orders" },
-  { label: "Support", value: "Support" },
   { label: "Marketing", value: "Marketing" },
   { label: "System", value: "System" },
 ];
 
 const typeColors = {
   Orders: "bg-blue-100 text-blue-700",
-  Support: "bg-purple-100 text-purple-700",
   Marketing: "bg-amber-100 text-amber-700",
   System: "bg-gray-200 text-gray-700",
 };

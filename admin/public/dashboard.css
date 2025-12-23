@@ -54,6 +54,7 @@ body {
 .select { appearance: none; background: #374151; color: white; border: 0; border-radius: 8px; padding: 8px 12px; }
 .select.small { background: #ffffff; color: var(--text); border: 1px solid var(--border); }
 .avatar { width: 32px; height: 32px; border-radius: 999px; border: 2px solid #4b5563; }
+.avatar-placeholder { display: grid; place-items: center; background: #1f2937; color: #e5e7eb; font-weight: 700; }
 
 .content { padding: 16px; display: grid; gap: 16px; }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }

@@ -1,6 +1,36 @@
-﻿import React from "react";
+import React, { useState } from "react";
+import { createProduct } from "../api/product";
 
-const AddProductModal = ({ onClose }) => {
+const AddProductModal = ({ onClose, onCreated, categories }) => {
+  const [form, setForm] = useState({
+    name: "",
+    price: "",
+    category_id: "",
+    description: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      await createProduct({
+        name: form.name,
+        price: Number(form.price),
+        category_id: form.category_id || undefined,
+        description: form.description,
+      });
+      onCreated?.();
+      onClose?.();
+    } catch (err) {
+      setError(err.message || "Failed to create product.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/60 px-4 py-8 backdrop-blur-sm">
       <div className="relative w-full max-w-md rounded-xl bg-white px-6 py-6 shadow-2xl sm:px-8">
@@ -16,13 +46,18 @@ const AddProductModal = ({ onClose }) => {
 
         <h2 className="mb-4 text-xl font-semibold text-gray-900">Add Product</h2>
 
-        <form className="space-y-4">
+        {error && <div className="text-sm text-rose-700 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mb-2">{error}</div>}
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-800">Product name</label>
             <input
               type="text"
+              value={form.name}
+              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="Enter product name"
               className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              required
             />
           </div>
 
@@ -30,28 +65,27 @@ const AddProductModal = ({ onClose }) => {
             <label className="block text-sm font-medium text-gray-800">Selling price</label>
             <input
               type="number"
+              value={form.price}
+              onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
               placeholder="Selling price"
               className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Purchase price</label>
-            <input
-              type="number"
-              placeholder="Purchase price"
-              className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              required
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-800">Product category</label>
-            <select className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400">
+            <select
+              className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              value={form.category_id}
+              onChange={(e) => setForm((prev) => ({ ...prev, category_id: e.target.value }))}
+            >
               <option value="">Select category</option>
-              <option value="tshirts">T-Shirts</option>
-              <option value="jeans">Jeans</option>
-              <option value="hoodies">Hoodies</option>
-              <option value="vests">Vests</option>
+              {(categories || []).map((c) => (
+                <option key={c.id || c._id || c.slug || c.name} value={c.id || c._id || c.slug}>
+                  {c.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -59,6 +93,8 @@ const AddProductModal = ({ onClose }) => {
             <label className="block text-sm font-medium text-gray-800">Description</label>
             <textarea
               rows="3"
+              value={form.description}
+              onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               placeholder="Description"
               className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
             ></textarea>
@@ -67,8 +103,9 @@ const AddProductModal = ({ onClose }) => {
           <button
             type="submit"
             className="mt-2 w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
+            disabled={saving}
           >
-            Create
+            {saving ? "Saving..." : "Create"}
           </button>
         </form>
       </div>

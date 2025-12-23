@@ -1,85 +1,46 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Truck, MessageSquare, PackageSearch, Settings, LogOut } from 'lucide-react';
-import { logout } from '../api/auth';
+import { ShieldCheck, LogOut } from 'lucide-react';
 
-const Sidebar = () => {
-  const navigate = useNavigate();
-
-  const menuItems = [
-    { icon: Home, label: 'Dashboard', path: '/' },
-    { icon: PackageSearch, label: 'Products', path: '/products' },
-    { icon: MessageSquare, label: 'Q&A', path: '/qa' },
-    { icon: Truck, label: 'Shipping', path: '/shipping' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
-    { icon: LogOut, label: 'Sign out', path: null },
+const Sidebar = ({ active = 'admin', onSelect }) => {
+  const items = [
+    { icon: ShieldCheck, label: 'Admin APIs', key: 'admin' },
+    { icon: LogOut, label: 'Sign out', key: 'signout' },
   ];
 
-  const handleSignOut = async () => {
-    const ok = window.confirm('Are you sure you want to sign out?');
-    if (!ok) return;
-    try {
-      await logout();
-    } catch (err) {
-      // continue to clear local state even if API fails
-      console.error('Logout failed:', err);
-    }
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('token');
-    navigate('/');
-  };
-
   return (
-    <div className="w-52 bg-gray-50 h-screen flex flex-col border-r border-gray-200">
-      <div className="p-6">
-        <nav className="space-y-2">
-          {menuItems.map((item, index) =>
-            item.label === 'Sign out' ? (
-              <button
-                key={index}
-                onClick={handleSignOut}
-                className="w-full flex items-center justify-between gap-4 px-4 py-3.5 rounded-xl transition-colors text-gray-500 hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-100">
-                    {item.icon ? <item.icon className="w-5 h-5 text-gray-500" /> : null}
-                  </div>
-                  <span className="text-[15px] whitespace-nowrap font-medium">
-                    {item.label}
-                  </span>
-                </div>
-              </button>
-            ) : (
-              <NavLink
-                key={index}
-                to={item.path}
-                className={({ isActive }) =>
-                  `w-full flex items-center justify-between gap-4 px-4 py-3.5 rounded-xl transition-colors ${
-                    isActive
-                      ? 'bg-gray-100 text-gray-800'
-                      : 'text-gray-500 hover:bg-gray-100'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isActive ? 'bg-gray-200' : 'bg-gray-100'
-                      }`}>
-                        {item.icon ? <item.icon className="w-5 h-5 text-gray-500" /> : null}
-                      </div>
-                      <span className={`text-[15px] whitespace-nowrap ${isActive ? 'font-semibold' : 'font-medium'}`}>
-                        {item.label}
-                      </span>
-                    </div>
-                  </>
-                )}
-              </NavLink>
-            )
-          )}
-        </nav>
+    <div className="w-64 bg-white border-r border-gray-200 min-h-screen p-6 flex flex-col">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-11 h-11 bg-gradient-to-br from-gray-200 to-gray-400 rounded-2xl flex items-center justify-center text-gray-900 font-bold shadow-sm shadow-gray-300/60">
+          AD
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">Admin console</p>
+          <p className="text-lg font-semibold text-gray-800">Server Admin</p>
+        </div>
       </div>
+
+      <nav className="space-y-2">
+        {items.map((item) => (
+          <button
+            key={item.key}
+            onClick={() => {
+              if (item.key === 'signout') {
+                window.alert('Signed out.');
+                return;
+              }
+              onSelect?.(item.key);
+            }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all border ${
+              active === item.key
+                ? 'bg-gray-100 border-gray-300 text-gray-900 shadow-sm'
+                : 'bg-white border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            <item.icon className="w-5 h-5" />
+            <span className="text-sm font-medium flex-1 text-left">{item.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 };

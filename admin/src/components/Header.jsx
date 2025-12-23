@@ -1,14 +1,22 @@
 import React from 'react';
+import { Search, Bell, ShieldCheck, Globe2 } from 'lucide-react';
 
-const Header = ({ title }) => {
+const Header = () => {
   return (
-    <div className="bg-white px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between">
-      <h1 className="text-lg lg:text-xl font-bold text-gray-800">{title}</h1>
-      <div className="flex items-center gap-2 lg:gap-4">
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border-2 border-gray-300 bg-gray-800 text-white grid place-items-center text-xs font-semibold">
-            A
-          </div>
+    <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">Commerce Admin Console</h1>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search admin, shop, server..."
+            className="pl-10 pr-3 py-2 rounded-lg bg-white border border-gray-200 text-sm text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500/60"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
         </div>
       </div>
     </div>

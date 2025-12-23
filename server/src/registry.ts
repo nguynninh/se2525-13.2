@@ -39,7 +39,7 @@ export const openApiDocument = generator.generateDocument({
     },
     servers: [
         {
-            url: 'http://localhost:3001',
+            url: process.env.SWAGGER_ENDPOINT || 'http://localhost:3001',
             description: 'API SWAGGER',
         },
     ],

@@ -1,6 +1,6 @@
 import { apiRequest } from './client';
 
-export const getSellerProfile = () => apiRequest('/user/seller/me');
+export const getSellerProfile = () => apiRequest('/users/seller/me');
 
 export const getMyShop = () => apiRequest('/shop/me');
 
@@ -45,3 +45,14 @@ export const updateSellerOrderDeliveryStatus = (id, payload) =>
     method: 'patch',
     body: payload,
   });
+
+export const updateMyAvatar = (file) => {
+  const formData = new FormData();
+  formData.append('avatar', file);
+
+  return apiRequest('/user/me/avatar', {
+    method: 'patch',
+    body: formData,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};

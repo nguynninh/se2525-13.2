@@ -1,36 +1,34 @@
-import {
-    Model,
-    DataTypes,
-    Sequelize,
-    InferAttributes,
-    InferCreationAttributes,
-    CreationOptional,
-    ForeignKey,
-} from 'sequelize';
+import { Model, DataTypes, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-export class FavoriteShop extends Model<InferAttributes<FavoriteShop>, InferCreationAttributes<FavoriteShop>> {
-    declare id: CreationOptional<string>;
-    declare user_id: ForeignKey<string>;
-    declare shop_id: ForeignKey<string>;
+export class PaymentMethod extends Model<InferAttributes<PaymentMethod>, InferCreationAttributes<PaymentMethod>> {
+    declare id: number;
+    declare code: string;
+    declare name: string;
+    declare is_active: CreationOptional<boolean>;
     declare created_at: CreationOptional<Date>;
     declare updated_at: CreationOptional<Date>;
 
     static initModel(sequelize: Sequelize) {
-        FavoriteShop.init(
+        PaymentMethod.init(
             {
                 id: {
-                    type: DataTypes.UUID,
+                    type: DataTypes.SMALLINT,
                     allowNull: false,
                     primaryKey: true,
-                    defaultValue: DataTypes.UUIDV4,
                 },
-                user_id: {
-                    type: DataTypes.UUID,
+                code: {
+                    type: DataTypes.STRING(20),
+                    allowNull: false,
+                    unique: true,
+                },
+                name: {
+                    type: DataTypes.STRING(255),
                     allowNull: false,
                 },
-                shop_id: {
-                    type: DataTypes.UUID,
+                is_active: {
+                    type: DataTypes.BOOLEAN,
                     allowNull: false,
+                    defaultValue: true,
                 },
                 created_at: {
                     type: DataTypes.DATE,
@@ -45,8 +43,8 @@ export class FavoriteShop extends Model<InferAttributes<FavoriteShop>, InferCrea
             },
             {
                 sequelize,
-                tableName: 'favorite_shops',
-                modelName: 'FavoriteShop',
+                tableName: 'payment_methods',
+                modelName: 'PaymentMethod',
                 timestamps: true,
                 createdAt: 'created_at',
                 updatedAt: 'updated_at',
@@ -54,8 +52,8 @@ export class FavoriteShop extends Model<InferAttributes<FavoriteShop>, InferCrea
             },
         );
 
-        return FavoriteShop;
+        return PaymentMethod;
     }
 }
 
-export default FavoriteShop;
+export default PaymentMethod;

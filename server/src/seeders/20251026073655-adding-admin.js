@@ -12,9 +12,19 @@ module.exports = {
 
         const idByEmail = Object.fromEntries(rows.map((r) => [r.email, r.id]));
 
-        const admins = [{ user_id: idByEmail['admin@example.com'], created_at: now, updated_at: now }];
+        const existing = await queryInterface.sequelize.query(
+            `SELECT user_id FROM admins WHERE user_id IN (:ids)`,
+            { replacements: { ids: Object.values(idByEmail) }, type: Sequelize.QueryTypes.SELECT },
+        );
+        const existingIds = new Set(existing.map((r) => r.user_id));
 
-        await queryInterface.bulkInsert('admins', admins, {});
+        const admins = [{ user_id: idByEmail['admin@example.com'], created_at: now, updated_at: now }].filter(
+            (a) => a.user_id && !existingIds.has(a.user_id),
+        );
+
+        if (admins.length > 0) {
+            await queryInterface.bulkInsert('admins', admins, { ignoreDuplicates: true });
+        }
     },
 
     async down(queryInterface, Sequelize) {

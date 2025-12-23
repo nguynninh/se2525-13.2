@@ -9,7 +9,6 @@ import type Province from './Provinces.model';
 import type Ward from './Wards.model';
 import type Address from './Address.model';
 import type ShippingAddress from './ShippingAddress.model';
-import type OrderAddress from './OrderAddress.model';
 import type Category from './Category.model';
 import type Product from './Product.model';
 import type ProductImage from './ProductImage.model';
@@ -20,6 +19,15 @@ import type ProductReview from './ProductReview.model';
 import type ProductQuestion from './ProductQuestion.model';
 import type FavoriteShop from './FavoriteShop.model';
 import type FavoriteItem from './FavoriteItem.model';
+import type PaymentMethod from './PaymentMethod.model';
+import type Order from './Order.model';
+import type OrderItem from './OrderItem.model';
+import type OrderAddress from './OrderAddress.model';
+import type OrderStatusHistory from './OrderStatusHistory.model';
+import type Payment from './Payment.model';
+import type Shipment from './Shipment.model';
+import type ShipmentStatusHistory from './ShipmentStatusHistory.model';
+import type ShippingRate from './ShippingRate.model';
 
 type Models = {
     User: ModelStatic<User>;
@@ -32,7 +40,6 @@ type Models = {
     Ward?: ModelStatic<Ward>;
     Address?: ModelStatic<Address>;
     ShippingAddress?: ModelStatic<ShippingAddress>;
-    OrderAddress?: ModelStatic<OrderAddress>;
     Category?: ModelStatic<Category>;
     Product?: ModelStatic<Product>;
     ProductImage?: ModelStatic<ProductImage>;
@@ -43,6 +50,15 @@ type Models = {
     ProductQuestion?: ModelStatic<ProductQuestion>;
     FavoriteShop?: ModelStatic<FavoriteShop>;
     FavoriteItem?: ModelStatic<FavoriteItem>;
+    PaymentMethod?: ModelStatic<PaymentMethod>;
+    Order?: ModelStatic<Order>;
+    OrderItem?: ModelStatic<OrderItem>;
+    OrderAddress?: ModelStatic<OrderAddress>;
+    OrderStatusHistory?: ModelStatic<OrderStatusHistory>;
+    Payment?: ModelStatic<Payment>;
+    Shipment?: ModelStatic<Shipment>;
+    ShipmentStatusHistory?: ModelStatic<ShipmentStatusHistory>;
+    ShippingRate?: ModelStatic<ShippingRate>;
 };
 
 export function associations(models: Models) {
@@ -57,7 +73,6 @@ export function associations(models: Models) {
         Ward,
         Address,
         ShippingAddress,
-        OrderAddress,
         Category,
         Product,
         ProductImage,
@@ -67,7 +82,16 @@ export function associations(models: Models) {
         ProductReview,
         ProductQuestion,
         FavoriteShop,
-        FavoriteItem
+        FavoriteItem,
+        PaymentMethod,
+        Order,
+        OrderItem,
+        OrderAddress,
+        OrderStatusHistory,
+        Payment,
+        Shipment,
+        ShipmentStatusHistory,
+        ShippingRate,
     } = models;
 
     if (User && Customer) {
@@ -146,12 +170,12 @@ export function associations(models: Models) {
     if (Ward && OrderAddress) {
         Ward.hasMany(OrderAddress, {
             foreignKey: 'ward_id',
-            as: 'order_addresses',
+            as: 'ward_order_addresses',
         });
 
         OrderAddress.belongsTo(Ward, {
             foreignKey: 'ward_id',
-            as: 'ward',
+            as: 'order_address_ward',
         });
     }
 
@@ -194,7 +218,7 @@ export function associations(models: Models) {
         Product.hasMany(ProductReview, { foreignKey: 'product_id', as: 'reviews' });
         ProductReview.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
     }
-    
+
     if (User && ProductReview) {
         User.hasMany(ProductReview, { foreignKey: 'user_id', as: 'product_reviews' });
         ProductReview.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
@@ -208,7 +232,7 @@ export function associations(models: Models) {
     if (User && ProductQuestion) {
         User.hasMany(ProductQuestion, { foreignKey: 'user_id', as: 'questions' });
         ProductQuestion.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
-        
+
         User.hasMany(ProductQuestion, { foreignKey: 'answered_by', as: 'questions_answered' });
         ProductQuestion.belongsTo(User, { foreignKey: 'answered_by', as: 'answerer' });
     }
@@ -227,5 +251,51 @@ export function associations(models: Models) {
 
         Product.hasMany(FavoriteItem, { foreignKey: 'product_id', as: 'favorites' });
         FavoriteItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+    }
+
+    if (User && Order) {
+        User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
+        Order.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+    }
+
+    if (Shop && Order) {
+        Shop.hasMany(Order, { foreignKey: 'shop_id', as: 'orders' });
+        Order.belongsTo(Shop, { foreignKey: 'shop_id', as: 'shop' });
+    }
+
+    if (Order && OrderItem) {
+        Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
+        OrderItem.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+    }
+
+    if (Order && OrderAddress && Ward) {
+        Order.hasMany(OrderAddress, { foreignKey: 'order_id', as: 'order_addresses' });
+        OrderAddress.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+    }
+
+    if (Order && OrderStatusHistory && User) {
+        Order.hasMany(OrderStatusHistory, { foreignKey: 'order_id', as: 'status_history' });
+        OrderStatusHistory.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+
+        User.hasMany(OrderStatusHistory, { foreignKey: 'changed_by_user_id', as: 'order_status_changes' });
+        OrderStatusHistory.belongsTo(User, { foreignKey: 'changed_by_user_id', as: 'changer' });
+    }
+
+    if (Order && Payment && PaymentMethod) {
+        Order.hasOne(Payment, { foreignKey: 'order_id', as: 'payment' });
+        Payment.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+
+        PaymentMethod.hasMany(Payment, { foreignKey: 'payment_method_id', as: 'payments' });
+        Payment.belongsTo(PaymentMethod, { foreignKey: 'payment_method_id', as: 'payment_method' });
+    }
+
+    if (Order && Shipment) {
+        Order.hasMany(Shipment, { foreignKey: 'order_id', as: 'shipments' });
+        Shipment.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+    }
+
+    if (Shipment && ShipmentStatusHistory) {
+        Shipment.hasMany(ShipmentStatusHistory, { foreignKey: 'shipment_id', as: 'status_history' });
+        ShipmentStatusHistory.belongsTo(Shipment, { foreignKey: 'shipment_id', as: 'shipment' });
     }
 }

@@ -7,6 +7,7 @@ import {
     CreationOptional,
     ForeignKey,
 } from 'sequelize';
+import type Address from './Address.model';
 
 export type ShopStatus = 'active' | 'suspended' | 'closed';
 
@@ -21,6 +22,7 @@ export class Shop extends Model<InferAttributes<Shop>, InferCreationAttributes<S
     declare hotline: CreationOptional<string | null>;
     declare status: CreationOptional<ShopStatus>;
     declare address_id: string;
+    declare address?: Address;
     declare rating_avg: CreationOptional<number>;
     declare rating_count: CreationOptional<number>;
     declare is_featured: CreationOptional<boolean>;

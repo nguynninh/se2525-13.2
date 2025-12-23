@@ -7,6 +7,7 @@ import User from './User.model';
 const env = process.env.NODE_ENV || 'development';
 const config = require(path.resolve(__dirname, '../../src/config/config.js'))[env];
 
+// Khởi tạo sequelize instance
 let sequelize: Sequelize;
 if (config.use_env_variable) {
     const key = String(config.use_env_variable);
@@ -19,6 +20,7 @@ if (config.use_env_variable) {
     sequelize = new Sequelize(String(config.database), String(config.username), config.password ?? undefined, config);
 }
 
+// Init model
 User.initModel(sequelize);
 
 const models = { User };

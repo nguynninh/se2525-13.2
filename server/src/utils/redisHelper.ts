@@ -110,7 +110,7 @@ export const redisHelper = {
         }
     },
 
-    // setJSON: Ghi giá trị vào Redis dưới dạng JSON một cách CHẮC CHẮN.
+    // setJSON: Ghi giá trị vào Redis dưới dạng JSON
     async setJSON(key: string, value: unknown, expirationInSeconds?: number): Promise<void> {
         try {
             const s = JSON.stringify(value);
@@ -125,7 +125,7 @@ export const redisHelper = {
         }
     },
 
-    // getJSON: Đọc giá trị từ Redis và JSON.parse an toàn.
+    // getJSON: Đọc giá trị từ Redis và JSON.parse
     async getJSON<T = any>(key: string): Promise<T | null> {
         try {
             const raw = await redisClient.get(key);
@@ -133,7 +133,6 @@ export const redisHelper = {
             try {
                 return JSON.parse(raw) as T;
             } catch {
-                // Dữ liệu không phải JSON hợp lệ -> coi như không có
                 return null;
             }
         } catch (error) {

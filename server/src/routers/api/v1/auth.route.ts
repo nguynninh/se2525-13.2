@@ -1,9 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import { Router } from 'express';
 import { authenticate, restrictTo } from '../../../middlewares/auth.middleware';
-import { registerController } from '../../../module/auth/auth.controller';
+import {
+    registerController,
+    loginController,
+    logoutController,
+    refreshTokenController,
+    forgotPasswordController,
+} from '../../../module/auth/auth.controller';
 import { v } from '../../../utils/zod.format';
-import { RegisterStartSchema, RegisterResendSchema, RegisterFinalizeSchema } from '../../../module/auth/auth.schemas';
+import {
+    RegisterStartSchema,
+    RegisterResendSchema,
+    RegisterFinalizeSchema,
+    LoginSchema,
+    SocialLoginSchema,
+    RefreshTokenSchema,
+    ResetRequestSchema,
+    ResetVerifySchema,
+    ResetFinalizeSchema,
+} from '../../../module/auth/auth.schemas';
 
 const router = Router();
 
@@ -22,24 +38,20 @@ router.post('/register/resend', v(RegisterResendSchema, 'auth'), registerControl
 router.post('/register/finalize', v(RegisterFinalizeSchema, 'auth'), registerController.finalize);
 
 // POST api/auth/login
-// router.post('/login', authController.login);
+router.post('/login', v(LoginSchema, 'auth'), loginController.login);
+router.post('/login/social/:provider', checkProvider, v(SocialLoginSchema), loginController.socialLogin);
 
-// // POST api/auth/social/:provider
-// router.post('/social/:provider', checkProvider, authController.loginSocial);
+// POST api/auth/refresh
+router.post('/refresh', v(RefreshTokenSchema), refreshTokenController.refresh);
 
-// // POST api/auth/refresh
-// router.post('/refresh', authController.refreshToken);
+// POST api/auth/reset
+router.post('/reset/request', v(ResetRequestSchema, 'auth'), forgotPasswordController.request);
+router.post('/reset/resend', v(ResetRequestSchema, 'auth'), forgotPasswordController.resend);
+router.post('/reset/verify', v(ResetVerifySchema, 'auth'), forgotPasswordController.verify);
+router.post('/reset/finalize', v(ResetFinalizeSchema, 'auth'), forgotPasswordController.finalize);
 
-// // POST api/auth/logout
-// router.post('/logout', authenticate, authController.logout);
-
-// // GET api/auth/profile
-// router.get('/profile', authenticate, authController.getProfile);
-
-// // GET api/auth/admin
-// router.get('/admin', authenticate, restrictTo('admin'), authController.adminDashboard);
-
-// // GET api/auth/seller
-// router.get('/seller', authenticate, restrictTo('seller'), authController.sellerDashboard);
+// POST api/auth/logout
+router.post('/logout', v(RefreshTokenSchema), logoutController.logoutOne);
+router.post('/logout/all', authenticate, logoutController.logoutAll);
 
 export default router;

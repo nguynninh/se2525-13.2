@@ -1,58 +1,54 @@
 // Xử lý xác thực và phân quyền trong ứng dụng
 
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import { UserRole } from '../models/User.model';
 import { UnauthorizedError, AppError, InternalServerError } from '../exception/AppError';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+type AccessClaims = JwtPayload & { sub: string; role: UserRole };
 
-type Claims = JwtPayload & { id: string; role: UserRole };
+function getAccessSecret(): string {
+    const s = process.env.JWT_ACCESS_SECRET;
+    if (!s) throw new InternalServerError('auth:server_misconfigured');
+    return s;
+}
 
 // Middleware xác thực JWT
-// Kiểm tra token trong header Authorization, giải mã và gán thông tin người dùng vào req.user
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, _res: Response, next: NextFunction) => {
     try {
-        // Lấy header Authorization
         const authHeader = req.headers.authorization;
-
-        // Kiểm tra xem header có tồn tại và bắt đầu bằng 'Bearer ' hay không
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        if (!authHeader?.startsWith('Bearer ')) {
             throw new UnauthorizedError('auth:no_token_provided');
         }
 
-        // Tách token từ header
-        const token = authHeader.split(' ')[1];
-        const secret = JWT_SECRET;
-        if (!secret) return next(new InternalServerError('auth:server_misconfigured'));
+        const token = authHeader.slice('Bearer '.length).trim();
 
-        // Giải mã token bằng JWT_SECRET
-        const decoded = jwt.verify(token, secret) as Claims;
+        let decoded: AccessClaims;
+        try {
+            decoded = jwt.verify(token, getAccessSecret()) as AccessClaims;
+        } catch (err) {
+            if (err instanceof TokenExpiredError) {
+                return next(new UnauthorizedError('auth:token_expired'));
+            }
+            return next(new UnauthorizedError('auth:invalid_token'));
+        }
 
-        // Gán thông tin người dùng (ID và vai trò) vào req.user để sử dụng ở các middleware/route sau
-        req.user = { id: decoded.id, role: decoded.role };
-
-        next();
-    } catch (error) {
-        // Ném lỗi nếu token không hợp lệ hoặc hết hạn
-        next(new UnauthorizedError('auth:invalid_token'));
+        req.user = { id: decoded.sub, role: decoded.role };
+        return next();
+    } catch (err) {
+        return next(err);
     }
 };
 
 // Middleware phân quyền dựa trên vai trò
-// Chỉ cho phép người dùng có vai trò cụ thể truy cập
 export const restrictTo = (...roles: UserRole[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        // Kiểm tra xem req.user có tồn tại
+    return (req: Request, _res: Response, next: NextFunction) => {
         if (!req.user) {
-            return next(new UnauthorizedError('auth:unauthenticated')); // Ném lỗi nếu chưa xác thực
+            return next(new UnauthorizedError('auth:unauthenticated'));
         }
-
-        // Kiểm tra xem vai trò của người dùng có nằm trong danh sách vai trò được phép hay không
         if (!roles.includes(req.user.role)) {
             return next(new AppError('auth:access_denied', 403));
         }
-
-        next();
+        return next();
     };
 };

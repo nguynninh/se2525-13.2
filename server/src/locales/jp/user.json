@@ -7,9 +7,17 @@
   "first_name_max_length": "名は{{max}}文字を超えてはなりません",
   "last_name_required": "姓は必須です",
   "last_name_max_length": "姓は{{max}}文字を超えてはなりません",
+  "verification_code_required": "確認コードは必須です",
+  "verification_code_length": "確認コードは{{length}}桁である必要があります",
+  "verification_code_expired_or_not_found": "確認コードの有効期限が切れているか、存在しません",
+  "verification_attempts_exceeded": "確認試行回数の上限を超えました。新しいコードをリクエストしてください",
+  "verification_code_invalid": "確認コードが正しくありません。残り{{attempts_left}}回の試行が可能です",
+  "user_created_successfully": "ユーザーが正常に作成されました",
   "user_created": "ユーザーが正常に作成されました",
   "user_updated": "ユーザーが正常に更新されました",
   "user_deleted": "ユーザーが正常に削除されました",
   "user_not_found": "ユーザーが見つかりません",
-  "user_already_exists": "ユーザーは既に存在します"
+  "user_already_exists": "ユーザーは既に存在します",
+  "email_already_in_use": "このメールアドレスは既に使用されています",
+  "verification_code_sent": "確認コードが{{email}}に送信されました"
 }

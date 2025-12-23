@@ -7,9 +7,17 @@
   "first_name_max_length": "Tên không được vượt quá {{max}} ký tự",
   "last_name_required": "Họ không được để trống",
   "last_name_max_length": "Họ không được vượt quá {{max}} ký tự",
+  "verification_code_required": "Mã xác minh là bắt buộc",
+  "verification_code_length": "Mã xác minh phải có {{length}} chữ số",
+  "verification_code_expired_or_not_found": "Mã xác minh đã hết hạn hoặc không tồn tại",
+  "verification_attempts_exceeded": "Đã vượt quá số lần thử. Vui lòng yêu cầu mã xác minh mới",
+  "verification_code_invalid": "Mã xác minh không đúng. Còn {{attempts_left}} lần thử",
+  "user_created_successfully": "Tạo người dùng thành công",
   "user_created": "Tạo người dùng thành công",
   "user_updated": "Cập nhật người dùng thành công",
   "user_deleted": "Xóa người dùng thành công",
   "user_not_found": "Không tìm thấy người dùng",
-  "user_already_exists": "Người dùng đã tồn tại"
+  "user_already_exists": "Người dùng đã tồn tại",
+  "email_already_in_use": "Email đã được sử dụng",
+  "verification_code_sent": "Mã xác minh đã được gửi đến {{email}}"
 }

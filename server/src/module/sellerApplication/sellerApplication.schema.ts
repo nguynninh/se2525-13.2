@@ -36,44 +36,21 @@ export const ReviewSellerApplicationSchema = z
     ])
     .openapi('ReviewSellerApplication');
 
-export const HistoryQuerySchema = z
-    .object({
-        status: z.enum(['approved', 'rejected']).optional(),
-    })
-    .strict()
-    .openapi('HistorySellerApplication');
-
 export const SellerApplicationStatus = z.enum(['approved', 'rejected']).openapi('SellerApplicationStatus');
 
 export const SellerApplicationResponseSchema = z
     .object({
         id: z.string().uuid(),
-        userId: z.string().uuid(),
+        user_id: z.string().uuid(),
         status: SellerApplicationStatus,
         accepted_terms: z.boolean(),
-        rejection_reason: z.string(),
-        reviewed_by: z.string().uuid(),
+        rejection_reason: z.string().nullable(),
+        reviewed_by: z.string().uuid().nullable(),
     })
     .openapi('SellerApplicationResponse');
 
 export const GetMySellerApplicationResponseSchema = z
     .object({
-        id: z.string().uuid(),
-        accepted_terms: z.boolean(),
-        created_at: z.string(),
-        updated_at: z.string(),
-        user: UserPublicSchema,
+        status: z.enum(['approved', 'rejected']).optional(),
     })
-    .openapi('GetMySellerApplicationResponse');
-
-export const SellerApplicationWithUserResponseSchema = z
-    .object({
-        id: z.string().uuid(),
-        userId: z.string().uuid(),
-        status: SellerApplicationStatus,
-        accepted_terms: z.boolean(),
-        rejection_reason: z.string(),
-        reviewed_by: z.string().uuid(),
-        user: UserPublicSchema,
-    })
-    .openapi('SellerApplicationWithUserResponse');
+    .strict();

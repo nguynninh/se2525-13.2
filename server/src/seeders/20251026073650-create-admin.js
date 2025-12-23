@@ -8,6 +8,17 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const now = new Date();
         const adminHash = await bcrypt.hash('Admin@123', 10);
+        const email = 'admin@example.com';
+
+        const exists = await queryInterface.sequelize.query(
+            `SELECT id FROM users WHERE email = :email LIMIT 1`,
+            { replacements: { email }, type: Sequelize.QueryTypes.SELECT },
+        );
+
+        if (exists && exists.length > 0) {
+            // admin already exists -> skip
+            return;
+        }
 
         await queryInterface.bulkInsert(
             'users',
@@ -15,7 +26,7 @@ module.exports = {
                 {
                     first_name: 'System',
                     last_name: 'Admin',
-                    email: 'admin@example.com',
+                    email,
                     password: adminHash,
                     role: 'admin',
                     profile_url: null,

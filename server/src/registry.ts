@@ -3,6 +3,11 @@ import { registerUserOpenApi } from './module/user/user.openapi';
 import { registerAuthOpenApi } from './module/auth/auth.openapi';
 import { registerSellerApplicationOpenApi } from './module/sellerApplication/sellerApplication.openapi';
 import { registerLocationOpenApi } from './module/location/location.openapi';
+import { registerProductOpenApi } from './module/product/product.openapi';
+import { registerOrderOpenApi } from './module/order/order.openapi';
+import { registerShopOpenApi } from './module/shop/shop.openapi';
+import { registerShipmentOpenApi } from './module/shipment/shipment.openapi';
+import { registerCartOpenApi } from './module/cart/cart.openapi';
 
 const registry = new OpenAPIRegistry();
 
@@ -16,6 +21,11 @@ registerAuthOpenApi(registry);
 registerUserOpenApi(registry);
 registerSellerApplicationOpenApi(registry);
 registerLocationOpenApi(registry);
+registerProductOpenApi(registry);
+registerOrderOpenApi(registry);
+registerShopOpenApi(registry);
+registerShipmentOpenApi(registry);
+registerCartOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 

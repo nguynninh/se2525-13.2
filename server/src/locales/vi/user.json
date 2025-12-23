@@ -25,5 +25,19 @@
     "photo_url_invalid": "URL ảnh không hợp lệ",
     "provider_id_invalid": "ID nhà cung cấp không hợp lệ",
     "firstname_min_length": "Tên phải có ít nhất {{min}} ký tự",
-    "lastname_min_length": "Họ phải có ít nhất {{min}} ký tự"
+    "lastname_min_length": "Họ phải có ít nhất {{min}} ký tự",
+    "accepted_terms_required": "Bạn phải chấp nhận các điều khoản và điều kiện để tiếp tục",
+    "status_invalid": "Trạng thái không hợp lệ",
+    "rejection_reason_required": "Lý do từ chối là bắt buộc khi trạng thái là 'bị từ chối'",
+    "already_seller": "Người dùng đã là người bán",
+    "pending_application_exists": "Đã tồn tại đơn đăng ký người bán đang chờ xử lý cho người dùng này",
+    "seller_application_not_found": "Không tìm thấy đơn đăng ký người bán",
+    "seller_application_already_reviewed": "Đơn đăng ký người bán đã được xem xét",
+    "must_accept_terms": "Bạn phải chấp nhận các điều khoản và điều kiện để tiếp tục",
+    "application_created_successfully": "Tạo đơn đăng ký người bán thành công",
+    "get_seller_application_successfully": "Lấy đơn đăng ký người bán thành công",
+    "get_pending_seller_applications_successfully": "Lấy các đơn đăng ký người bán đang chờ xử lý thành công",
+    "get_seller_applications_history_successfully": "Lấy lịch sử đơn đăng ký người bán thành công",
+    "invalid_status_filter": "Bộ lọc trạng thái không hợp lệ. Các giá trị cho phép là 'pending', 'approved', 'rejected'",
+    "review_seller_application_successfully": "Phê duyệt đơn đăng ký bán hàng thành công"
 }

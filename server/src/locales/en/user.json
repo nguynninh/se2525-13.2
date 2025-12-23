@@ -25,5 +25,19 @@
     "photo_url_invalid": "Photo URL is invalid",
     "provider_id_invalid": "Provider ID is invalid",
     "firstname_min_length": "First name must be at least {{min}} characters",
-    "lastname_min_length": "Last name must be at least {{min}} characters"
+    "lastname_min_length": "Last name must be at least {{min}} characters",
+    "accepted_terms_required": "You must accept the terms and conditions to proceed",
+    "status_invalid": "Status is invalid",
+    "rejection_reason_required": "Rejection reason is required when status is 'rejected'",
+    "already_seller": "User is already a seller",
+    "pending_application_exists": "A pending seller application already exists for this user",
+    "seller_application_not_found": "Seller application not found",
+    "seller_application_already_reviewed": "Seller application has already been reviewed",
+    "must_accept_terms": "You must accept the terms and conditions to proceed",
+    "application_created_successfully": "Seller application created successfully",
+    "get_seller_application_successfully": "Seller application retrieved successfully",
+    "get_pending_seller_applications_successfully": "Pending seller applications retrieved successfully",
+    "get_seller_applications_history_successfully": "Seller applications history retrieved successfully",
+    "invalid_status_filter": "Invalid status filter. Allowed values are 'pending', 'approved', 'rejected'",
+    "review_seller_application_successfully": "Review seller application successfully"
 }

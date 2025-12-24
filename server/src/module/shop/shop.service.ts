@@ -363,7 +363,7 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
             throw new ValidationError('shop:name_exists');
         }
 
-        const baseSlug = generateSlug(dto.name);
+        const baseSlug = generateSlug(dto.slug || dto.name);
         let candidateSlug = baseSlug;
         let slugSuffix = 1;
         while (
@@ -375,7 +375,15 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
             candidateSlug = `${baseSlug}-${slugSuffix++}`;
         }
 
-        const wardRecord = await Ward.findByPk(dto.address.ward_id, { transaction: tx });
+        // Accept ward_id as UUID or ward code
+        let wardRecord: Ward | null = null;
+        const wardId = dto.address.ward_id;
+        const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
+        if (uuidRegex.test(wardId)) {
+            wardRecord = await Ward.findByPk(wardId, { transaction: tx });
+        } else {
+            wardRecord = await Ward.findOne({ where: { code: wardId }, transaction: tx });
+        }
         if (!wardRecord) {
             throw new NotFoundError('shop:ward_not_found');
         }

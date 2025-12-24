@@ -20,6 +20,7 @@ const Settings = () => {
   const [shopId, setShopId] = useState(null);
   // Status is managed by admin, keep local for display only
   const [shopStatus, setShopStatus] = useState('pending');
+  const [shopLoadError, setShopLoadError] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -34,6 +35,29 @@ const Settings = () => {
   const [loadingProvince, setLoadingProvince] = useState(false);
   const [loadingWard, setLoadingWard] = useState(false);
 
+  const applyShopData = (s) => {
+    if (!s) return;
+    const addressLine =
+      typeof s.address === 'string' ? s.address : s.address?.address_line || s.location || s.address_line || '';
+    setShop({
+      name: s.name || '',
+      slug: s.slug || '',
+      email: s.email || s.contact_email || '',
+      address: addressLine,
+      description: s.description || '',
+      hotline: s.hotline || '',
+      logo_url: s.logo_url || '',
+      banner_url: s.banner_url || '',
+    });
+    const wardCode = s.address?.ward?.id || s.address?.ward?.code || s.address?.ward_code || s.ward_id || '';
+    const provinceCode = s.address?.ward?.province?.code || s.address?.province_code || '';
+    setSelectedWard(wardCode);
+    setSelectedProvince(provinceCode);
+    setShopId(s.id || s._id || null);
+    setShopStatus(s.status || 'pending');
+    setShopLoadError('');
+  };
+
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -41,7 +65,11 @@ const Settings = () => {
       const [p, s] = await Promise.all([
         getSellerProfile(),
         getMyShop().catch((err) => {
-          if (err?.status === 404) return null; // no shop yet -> treat as null
+          if (err?.status === 404) {
+            setShopLoadError('No shop found yet.');
+            return null; // no shop yet -> treat as null
+          }
+          setShopLoadError(err?.message || 'Failed to load shop.');
           throw err;
         }),
       ]);
@@ -63,24 +91,7 @@ const Settings = () => {
         setSellerStatus('');
       }
       if (s) {
-        const addressLine =
-          typeof s.address === 'string' ? s.address : s.address?.address_line || s.location || s.address_line || '';
-        setShop({
-          name: s.name || '',
-          slug: s.slug || '',
-          email: s.email || s.contact_email || '',
-          address: addressLine,
-          description: s.description || '',
-          hotline: s.hotline || '',
-          logo_url: s.logo_url || '',
-          banner_url: s.banner_url || '',
-        });
-        const wardCode = s.address?.ward?.id || s.address?.ward?.code || s.address?.ward_code || s.ward_id || '';
-        const provinceCode = s.address?.ward?.province?.code || s.address?.province_code || '';
-        setSelectedWard(wardCode);
-        setSelectedProvince(provinceCode);
-        setShopId(s.id || s._id || null);
-        setShopStatus(s.status || 'pending');
+        applyShopData(s);
       } else {
         setShop({
           name: '',
@@ -96,6 +107,7 @@ const Settings = () => {
         setShopStatus('pending');
         setSelectedWard('');
         setSelectedProvince('');
+        setShopLoadError(shopLoadError || 'No shop found yet.');
       }
     } catch (err) {
       setError(err.message || 'Failed to load settings.');
@@ -190,6 +202,7 @@ const Settings = () => {
       }
       await load();
     } catch (err) {
+      const msg = err?.message || '';
       const errorsObj = err?.data?.errors;
       const details =
         errorsObj && typeof errorsObj === 'object'
@@ -197,7 +210,22 @@ const Settings = () => {
           : err?.data
             ? JSON.stringify(err.data)
             : '';
-      setError(details ? `${err.message || 'Failed to save shop info.'} (${details})` : err.message || 'Failed to save shop info.');
+      // If backend says shop already exists, reload existing shop instead of blocking
+      if (msg.toLowerCase().includes('already_exists') || msg.toLowerCase().includes('already exists')) {
+        setMessage('Shop already exists. Loading current shop info.');
+        try {
+          const existing = await getMyShop();
+          if (existing) {
+            applyShopData(existing);
+          } else {
+            setShopLoadError('Shop exists but could not load details.');
+          }
+        } catch (e2) {
+          setError(e2?.message || 'Failed to load existing shop.');
+        }
+        return;
+      }
+      setError(details ? `${msg || 'Failed to save shop info.'} (${details})` : msg || 'Failed to save shop info.');
     } finally {
       setSaving(false);
     }
@@ -280,6 +308,11 @@ const Settings = () => {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
           <h2 className="text-base font-semibold text-gray-900">Store information</h2>
+          {shopLoadError ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+              {shopLoadError}
+            </div>
+          ) : null}
           <div className="grid gap-3 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-800">Store name</label>

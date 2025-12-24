@@ -23,7 +23,7 @@ const updateAddress = async (id: string, data: any) => {
 };
 
 const deleteAddress = async (id: string) => {
-    return await handleAPI(`${url}/delete?id=${id}`, undefined, 'delete');
+    return await handleAPI(`https://api.hiki.io.vn/api/user/me/shipping-addresses/${id}`, undefined, 'delete');
 };
 
 const addressApi = {

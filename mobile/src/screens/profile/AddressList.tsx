@@ -1,10 +1,10 @@
-import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from '../../../node_modules/react-i18next';
 import { ContainerComponent, GlassView, RowComponent, SectionComponent, SpaceComponent, TextComponent, ButtonComponent } from '../../components';
 import { Add, ArrowLeft, Edit2, Location, TickCircle, Trash } from 'iconsax-react-native';
-import { Swipeable } from 'react-native-gesture-handler';
+import { Swipeable, TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -59,14 +59,34 @@ const AddressList = () => {
     };
 
     const handleDelete = async (id: string) => {
-        setIsLoading(true);
-        try {
-            await addressApi.deleteAddress(id);
-            fetchData();
-        } catch (error) {
-            console.log('Error deleting address:', error);
-            setIsLoading(false);
-        }
+        Alert.alert(
+            t('profile:confirm'),
+            t('profile:delete_confirm_message') || 'Are you sure you want to delete this address?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                    onPress: () => console.log('Delete cancelled')
+                },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        setIsLoading(true);
+                        try {
+                            console.log('Deleting address with ID:', id);
+                            await addressApi.deleteAddress(id);
+                            console.log('Delete success');
+                            fetchData();
+                        } catch (error: any) {
+                            console.log('Error deleting address:', error);
+                            Alert.alert(t('profile:error'), error.message || 'Could not delete address');
+                            setIsLoading(false);
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const renderAddressLabel = (item: any) => {
@@ -115,7 +135,7 @@ const AddressList = () => {
                                     key={item.id}
                                     renderRightActions={() => (
                                         <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
-                                            <TouchableOpacity
+                                            <GHTouchableOpacity
                                                 onPress={() => (navigation as any).navigate('AddNewAddress', { addressData: item })}
                                                 style={{
                                                     backgroundColor: appColors.primary,
@@ -127,8 +147,8 @@ const AddressList = () => {
                                                     marginRight: 10
                                                 }}>
                                                 <Edit2 size={22} color={appColors.white} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
+                                            </GHTouchableOpacity>
+                                            <GHTouchableOpacity
                                                 onPress={() => handleDelete(item.id)}
                                                 style={{
                                                     backgroundColor: appColors.danger,
@@ -139,7 +159,7 @@ const AddressList = () => {
                                                     alignItems: 'center'
                                                 }}>
                                                 <Trash size={22} color={appColors.white} />
-                                            </TouchableOpacity>
+                                            </GHTouchableOpacity>
                                         </View>
                                     )}
                                 >

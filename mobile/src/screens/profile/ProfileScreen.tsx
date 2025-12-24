@@ -25,6 +25,11 @@ const ProfileScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const user = useSelector(userSelector);
 
+  console.log('User from selector:', user);
+  if (user) {
+    console.log('User role:', user.role);
+  }
+
   const onRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -114,7 +119,7 @@ const ProfileScreen = ({ navigation }: any) => {
           <SpaceComponent width={16} />
           <View style={{ flex: 1 }}>
             <TextComponent
-              text={user?.store?.store_name || `${user?.lastname || ''} ${user?.firstname || ''}`}
+              text={`${user?.last_name || ''} ${user?.first_name || ''}`}
               title
               size={20}
               font={fontFamilies.bold}
@@ -160,20 +165,28 @@ const ProfileScreen = ({ navigation }: any) => {
             renderMenuRow(<Shop size={22} color={appColors.primary} />, t('profile:register_seller', { defaultValue: 'Đăng ký bán hàng' }), () => navigation.navigate('SellerRegistrationScreen'))
           )}
 
-          {renderMenuRow(<Shop size={22} color={appColors.link} />, 'Chuyển thành nhà bán hàng', async () => {
-            Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn đăng ký trở thành nhà bán hàng?', [
-              { text: 'Hủy', style: 'cancel' },
-              {
-                text: 'Đồng ý', onPress: async () => {
-                  try {
-                    await userApi.registerSellerApplication();
-                    Alert.alert('Thành công', 'Gửi yêu cầu thành công!');
-                  } catch (error: any) {
-                    Alert.alert('Lỗi', error.message || 'Gửi yêu cầu thất bại');
+          {renderMenuRow(<Shop size={22} color={appColors.link} />, user?.role === 'seller' ? 'Chuyển về tài khoản cá nhân' : 'Chuyển thành nhà bán hàng', async () => {
+            if (user?.role === 'seller') {
+              Alert.alert('Thông báo', 'Hiện tại bạn không được cấp quyền chuc nang nay');
+            } else {
+              Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn đăng ký trở thành nhà bán hàng?', [
+                { text: 'Hủy', style: 'cancel' },
+                {
+                  text: 'Đồng ý', onPress: async () => {
+                    try {
+                      const res = await userApi.registerSellerApplication();
+                      if (res) {
+                        Alert.alert('Thành công', 'Đăng ký thành công!');
+                        dispatch(getProfile() as any);
+                      }
+                    } catch (error: any) {
+                      console.log(error);
+                      Alert.alert('Lỗi', error.message || 'Gửi yêu cầu thất bại');
+                    }
                   }
                 }
-              }
-            ]);
+              ]);
+            }
           })}
 
           {renderMenuRow(<ArchiveBook size={22} color={'#FF9F43'} variant='Bold' />, t('profile:favorites', { defaultValue: 'Yêu thích' }), () => { })}

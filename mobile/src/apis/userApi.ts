@@ -1,6 +1,6 @@
 import handleAPI from './handleApi';
 
-const url = '/users';
+const url = '/user';
 
 const requestSeller = async () => {
     return await handleAPI(`${url}/request-seller`, {}, 'post');

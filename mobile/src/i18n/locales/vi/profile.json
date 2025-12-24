@@ -60,5 +60,8 @@
     "cancel": "Hủy",
     "delete": "Xoá",
     "error": "Lỗi",
-    "success": "Thành công"
+    "success": "Thành công",
+    "convert_to_personal": "Chuyển về tài khoản cá nhân",
+    "convert_to_seller": "Chuyển thành nhà bán hàng",
+    "not_authorized_feature": "Hiện tại bạn không được cấp quyền chức năng này"
 }

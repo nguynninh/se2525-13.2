@@ -59,7 +59,7 @@ const Verification = ({ navigation, route }: any) => {
     setIsLoading(true);
     try {
       const res = await handleAuthentication(
-        '/verification',
+        '/register/resend',
         { email },
         'post',
       );
@@ -79,17 +79,10 @@ const Verification = ({ navigation, route }: any) => {
 
       try {
         setIsLoading(true);
-        const nameParts = name.split(' ');
-        const firstname = nameParts[nameParts.length - 1];
-        const lastname = nameParts.slice(0, -1).join(' ');
         await handleAuthentication(
-          '/registration',
+          '/register/finalize',
           {
             code: codeValues.join(''),
-            email,
-            password,
-            firstname,
-            lastname,
           },
           'post',
         );
@@ -118,107 +111,31 @@ const Verification = ({ navigation, route }: any) => {
         />
         <SpaceComponent height={26} />
         <RowComponent justify="space-around">
-          <TextInput
-            keyboardType="number-pad"
-            ref={ref1}
-            value={codeValues[0]}
-            style={[styles.input]}
-            maxLength={1}
-            onChangeText={val => {
-              val.length > 0 && ref2.current.focus();
-              handleChangeCode(val, 0);
-            }}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !codeValues[0]) {
-                // Ở ô đầu tiên, không làm gì
-              }
-            }}
-            placeholder="-"
-          />
-          <TextInput
-            ref={ref2}
-            value={codeValues[1]}
-            keyboardType="number-pad"
-            onChangeText={val => {
-              handleChangeCode(val, 1);
-              val.length > 0 && ref3.current.focus();
-            }}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !codeValues[1]) {
-                ref1.current.focus();
-              }
-            }}
-            style={[styles.input]}
-            maxLength={1}
-            placeholder="-"
-          />
-          <TextInput
-            keyboardType="number-pad"
-            value={codeValues[2]}
-            ref={ref3}
-            onChangeText={val => {
-              handleChangeCode(val, 2);
-              val.length > 0 && ref4.current.focus();
-            }}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !codeValues[2]) {
-                ref2.current.focus();
-              }
-            }}
-            style={[styles.input]}
-            maxLength={1}
-            placeholder="-"
-          />
-          <TextInput
-            keyboardType="number-pad"
-            ref={ref4}
-            value={codeValues[3]}
-            onChangeText={val => {
-              handleChangeCode(val, 3);
-              val.length > 0 && ref5.current.focus();
-            }}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !codeValues[3]) {
-                ref3.current.focus();
-              }
-            }}
-            style={[styles.input]}
-            maxLength={1}
-            placeholder="-"
-          />
-          <TextInput
-            keyboardType="number-pad"
-            ref={ref5}
-            value={codeValues[4]}
-            onChangeText={val => {
-              handleChangeCode(val, 4);
-              val.length > 0 && ref6.current.focus();
-            }}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !codeValues[4]) {
-                ref4.current.focus();
-              }
-            }}
-            style={[styles.input]}
-            maxLength={1}
-            placeholder="-"
-          />
-          <TextInput
-            keyboardType="number-pad"
-            ref={ref6}
-            value={codeValues[5]}
-            onChangeText={val => {
-              handleChangeCode(val, 5);
-            }}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !codeValues[5]) {
-                ref5.current.focus();
-              }
-            }}
-            style={[styles.input]}
-            maxLength={1}
-            placeholder="-"
-          />
+          {[0, 1, 2, 3, 4, 5].map(index => (
+            <TextInput
+              key={`code-${index}`}
+              ref={[ref1, ref2, ref3, ref4, ref5, ref6][index]}
+              keyboardType="number-pad"
+              value={codeValues[index]}
+              style={[styles.input, {
+                borderColor: codeValues[index] ? appColors.primary : appColors.gray2
+              }]}
+              maxLength={1}
+              onChangeText={val => {
+                handleChangeCode(val, index);
+                if (val.length > 0 && index < 5) {
+                  [ref1, ref2, ref3, ref4, ref5, ref6][index + 1].current.focus();
+                }
+              }}
+              onKeyPress={({ nativeEvent }) => {
+                if (nativeEvent.key === 'Backspace' && !codeValues[index] && index > 0) {
+                  [ref1, ref2, ref3, ref4, ref5, ref6][index - 1].current.focus();
+                }
+              }}
+              placeholder="-"
+              placeholderTextColor={appColors.gray2}
+            />
+          ))}
         </RowComponent>
       </SectionComponent>
       <SectionComponent styles={{ marginTop: 40 }}>

@@ -5,8 +5,6 @@ import { fetchProvinces, fetchWards } from '../api/shipping';
 
 const Settings = () => {
   const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', phone: '', profile_url: '' });
-  const [sellerId, setSellerId] = useState('');
-  const [sellerStatus, setSellerStatus] = useState('');
   const [shop, setShop] = useState({
     name: '',
     slug: '',
@@ -88,13 +86,6 @@ const Settings = () => {
           profile_url: p.user.profile_url || '',
         });
         setAvatarPreview(p.user.profile_url || '');
-      }
-      if (p?.seller) {
-        setSellerId(p.seller.id || '');
-        setSellerStatus(p.seller.status || '');
-      } else {
-        setSellerId('');
-        setSellerStatus('');
       }
       if (s) {
         applyShopData(s);
@@ -299,14 +290,6 @@ const Settings = () => {
                 <div>
                   <p className="text-xs text-gray-500">Phone</p>
                   <p className="text-sm font-semibold text-gray-900">{profile.phone || '--'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Seller ID</p>
-                  <p className="text-sm font-semibold text-gray-900">{sellerId || '--'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Seller status</p>
-                  <p className="text-sm font-semibold text-gray-900 capitalize">{sellerStatus || '--'}</p>
                 </div>
               </div>
             </div>

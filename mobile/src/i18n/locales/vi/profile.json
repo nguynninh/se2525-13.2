@@ -63,5 +63,22 @@
     "success": "Thành công",
     "convert_to_personal": "Chuyển về tài khoản cá nhân",
     "convert_to_seller": "Chuyển thành nhà bán hàng",
-    "not_authorized_feature": "Hiện tại bạn không được cấp quyền chức năng này"
+    "not_authorized_feature": "Hiện tại bạn không được cấp quyền chức năng này",
+    "shop_info": "Thông tin cửa hàng",
+    "shop_name_placeholder": "Tên cửa hàng *",
+    "contact_phone_placeholder": "Số điện thoại liên hệ *",
+    "province_placeholder": "Tỉnh/Thành phố *",
+    "ward_placeholder": "Phường/Xã *",
+    "address_placeholder": "Số nhà, tên đường *",
+    "tax_code_placeholder": "Mã số thuế",
+    "images": "Hình ảnh",
+    "logo": "Logo",
+    "cover_image": "Ảnh bìa",
+    "submit_registration": "Gửi đăng ký",
+    "select_province": "Chọn Tỉnh/Thành phố",
+    "select_ward": "Chọn Phường/Xã",
+    "close": "Đóng",
+    "fill_required_fields": "Vui lòng điền các thông tin bắt buộc (Tên, SĐT, Địa chỉ, Tỉnh, Xã)",
+    "registration_success_message": "Đăng ký thành công! Vui lòng chờ duyệt.",
+    "select_province_first": "Vui lòng chọn Tỉnh/Thành phố trước"
 }

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { extractList } from "../api/client";
 import { fetchCategories, createCategory, updateCategory, deleteCategory } from "../api/product";
 
 const AddCategory = () => {
@@ -15,8 +16,7 @@ const AddCategory = () => {
     setError("");
     try {
       const data = await fetchCategories();
-      const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
-      setCategories(list);
+      setCategories(extractList(data, ["categories"]));
     } catch (err) {
       setError(err.message || "Unable to load categories.");
       setCategories([]);

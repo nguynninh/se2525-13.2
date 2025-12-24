@@ -7,6 +7,7 @@ import {
   updateSellerOrderDeliveryStatus,
   getSellerOrderDetail,
 } from '../api/seller';
+import { extractList } from '../api/client';
 
 const statusStyles = {
   pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
@@ -33,20 +34,13 @@ const Orders = () => {
   const [detail, setDetail] = useState(null);
   const shippingRates = [];
 
-  const normalizeOrders = (payload) => {
-    if (Array.isArray(payload)) return payload;
-    if (Array.isArray(payload?.items)) return payload.items;
-    if (Array.isArray(payload?.data)) return payload.data;
-    return [];
-  };
-
   const loadOrders = useCallback(async () => {
     setLoading(true);
     setError('');
     setActionMessage('');
     try {
       const data = await getSellerOrders();
-      setOrders(normalizeOrders(data));
+      setOrders(extractList(data, ['orders']));
     } catch (err) {
       setError(err.message || 'Unable to load orders.');
       setOrders([]);

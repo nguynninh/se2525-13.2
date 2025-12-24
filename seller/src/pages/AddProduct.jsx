@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AddProductModal from "../components/AddProductModal";
 import EditProductModal from "../components/EditProductModal";
+import { extractList } from "../api/client";
 import { fetchProducts, fetchCategories, deleteProduct, updateProduct, fetchProductDetail } from "../api/product";
 
 const AddProduct = () => {
@@ -18,8 +19,8 @@ const AddProduct = () => {
     setError("");
     try {
       const [productData, categoryData] = await Promise.all([fetchProducts(), fetchCategories()]);
-      const listProducts = Array.isArray(productData?.items) ? productData.items : Array.isArray(productData) ? productData : [];
-      const listCategories = Array.isArray(categoryData?.items) ? categoryData.items : Array.isArray(categoryData) ? categoryData : [];
+      const listProducts = extractList(productData, ["products"]);
+      const listCategories = extractList(categoryData, ["categories"]);
       setProducts(listProducts);
       setCategories(listCategories);
     } catch (err) {
@@ -86,9 +87,6 @@ const AddProduct = () => {
             </Link>
             <Link to="/add-product" className="bg-gray-800 text-white px-4 py-2 rounded-lg">
               Add products
-            </Link>
-            <Link to="/add-category" className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">
-              Add Category
             </Link>
           </div>
           <button

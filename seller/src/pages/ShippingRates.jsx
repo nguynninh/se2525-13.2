@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { extractList } from '../api/client';
 import { fetchShippingRates, updateShippingRate } from '../api/shipping';
 
 const ShippingRates = () => {
@@ -17,7 +18,7 @@ const ShippingRates = () => {
     setMessage('');
     try {
       const data = await fetchShippingRates();
-      const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+      const list = extractList(data, ['rates', 'shipping_rates']);
       setRates(list);
       if (list.length) {
         const first = list[0];

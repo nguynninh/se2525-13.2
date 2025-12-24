@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { Plus, Layers, Package, ClipboardList, Sparkles, Store } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Plus, Layers, Package, Sparkles, ClipboardList } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { extractList } from '../api/client';
 import { fetchCategories, fetchProducts, fetchProductDetail } from '../api/product';
 
 const statusStyles = {
@@ -13,43 +14,67 @@ const statusStyles = {
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [variantMatrix, setVariantMatrix] = useState([]);
+  const [stockRows, setStockRows] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState('');
+  const [stockLoading, setStockLoading] = useState(false);
+  const [categoryPage, setCategoryPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-
+  const categoriesPerPage = 6;
   const loadData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
       const [productData, categoryData] = await Promise.all([fetchProducts(), fetchCategories()]);
-      const listProducts = Array.isArray(productData?.items) ? productData.items : Array.isArray(productData) ? productData : [];
-      const listCategories = Array.isArray(categoryData?.items) ? categoryData.items : Array.isArray(categoryData) ? categoryData : [];
+      const listProducts = extractList(productData, ['products']);
+      const listCategories = extractList(categoryData, ['categories']);
       setProducts(listProducts);
       setCategories(listCategories);
-      // Flatten stock matrix from all products
-      setVariantMatrix(
-        listProducts.flatMap((p) => {
-          if (!Array.isArray(p.stocks)) return [];
-          return p.stocks.map((stock) => ({
+      if (listProducts.length) {
+        setSelectedProductId((prev) => prev || listProducts[0].id || listProducts[0]._id || '');
+      } else {
+        setSelectedProductId('');
+      }
+      setCategoryPage(1);
+    } catch (err) {
+      setError(err.message || 'Failed to load products.');
+      setProducts([]);
+      setCategories([]);
+      setStockRows([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!selectedProductId) {
+      setStockRows([]);
+      return;
+    }
+    const loadStock = async () => {
+      setStockLoading(true);
+      try {
+        const detail = await fetchProductDetail(selectedProductId);
+        const stocks = Array.isArray(detail?.stocks) ? detail.stocks : [];
+        setStockRows(
+          stocks.map((stock) => ({
             sku: stock.sku || stock.id,
             attrs: Array.isArray(stock.attributes)
               ? stock.attributes.map((a) => `${a.name}: ${a.value}`).join(', ')
               : stock.attrs || '',
             stock: stock.quantity ?? stock.stock,
             price: stock.price,
-          }));
-        }),
-      );
-    } catch (err) {
-      setError(err.message || 'Failed to load products.');
-      setProducts([]);
-      setCategories([]);
-      setVariantMatrix([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+          })),
+        );
+      } catch (err) {
+        setError(err.message || 'Failed to load stock.');
+        setStockRows([]);
+      } finally {
+        setStockLoading(false);
+      }
+    };
+    loadStock();
+  }, [selectedProductId]);
 
   useEffect(() => {
     loadData();
@@ -57,6 +82,11 @@ const Product = () => {
 
   const totalProducts = products.length;
   const totalCategories = categories.length;
+  const totalCategoryPages = Math.max(1, Math.ceil(totalCategories / categoriesPerPage));
+  const pagedCategories = categories.slice(
+    (categoryPage - 1) * categoriesPerPage,
+    categoryPage * categoriesPerPage,
+  );
   const featuredCount = useMemo(
     () => products.filter((p) => p.featured || p.is_featured).length,
     [products],
@@ -113,13 +143,6 @@ const Product = () => {
             >
               <Plus className="w-4 h-4" />
               Add product
-            </Link>
-            <Link
-              to="/add-category"
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border rounded-lg hover:bg-gray-50"
-            >
-              <Layers className="w-4 h-4" />
-              Add category
             </Link>
             <button
               onClick={loadData}
@@ -194,13 +217,6 @@ const Product = () => {
               <p className="text-sm text-gray-500">Categories</p>
               <p className="font-semibold text-gray-900">Manage categories</p>
             </div>
-            <Link
-              to="/add-category"
-              className="flex items-center gap-1 px-3 py-2 text-xs font-semibold text-gray-700 border rounded-lg hover:bg-gray-50"
-            >
-              <Plus className="w-4 h-4" />
-              Add
-            </Link>
           </div>
           <div className="space-y-2">
             {loading ? (
@@ -212,14 +228,45 @@ const Product = () => {
                 No categories yet.
               </div>
             ) : (
-              categories.map((category) => (
-                <div key={category.name} className="flex items-center justify-between border border-gray-100 rounded-lg px-3 py-2">
-                  <span className="font-semibold text-gray-900">{category.name}</span>
-                  <span className="text-sm text-gray-600">{category.count} products</span>
+              pagedCategories.map((category) => (
+                <div
+                  key={category.id || category.name}
+                  className="flex items-center justify-between border border-gray-100 rounded-lg px-3 py-2"
+                >
+                  <div>
+                    <p className="font-semibold text-gray-900">{category.name}</p>
+                    {category.description ? (
+                      <p className="text-xs text-gray-500 line-clamp-1">{category.description}</p>
+                    ) : null}
+                  </div>
+                  <span className="text-sm text-gray-600">{category.count || 0} products</span>
                 </div>
               ))
             )}
           </div>
+          {totalCategories > categoriesPerPage && (
+            <div className="flex items-center justify-between mt-3 text-sm text-gray-700">
+              <span>
+                Page {categoryPage} / {totalCategoryPages}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  className="px-2 py-1 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50"
+                  onClick={() => setCategoryPage((p) => Math.max(1, p - 1))}
+                  disabled={categoryPage === 1}
+                >
+                  Prev
+                </button>
+                <button
+                  className="px-2 py-1 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50"
+                  onClick={() => setCategoryPage((p) => Math.min(totalCategoryPages, p + 1))}
+                  disabled={categoryPage === totalCategoryPages}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4 lg:col-span-2">
@@ -236,6 +283,22 @@ const Product = () => {
               Update stock
             </Link>
           </div>
+          <div className="flex flex-col md:flex-row gap-2 mb-3 items-center">
+            <label className="text-sm text-gray-700">Product:</label>
+            <select
+              value={selectedProductId}
+              onChange={(e) => setSelectedProductId(e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm min-w-[220px]"
+              disabled={loading}
+            >
+              <option value="">Select product</option>
+              {products.map((p) => (
+                <option key={p.id || p._id} value={p.id || p._id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50 text-gray-700 text-xs uppercase border-b border-gray-100">
@@ -247,20 +310,20 @@ const Product = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
+                {stockLoading ? (
                   <tr>
                     <td colSpan="4" className="px-3 py-4 text-center text-sm text-gray-600">
                       Loading stock...
                     </td>
                   </tr>
-                ) : variantMatrix.length === 0 ? (
+                ) : stockRows.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="px-3 py-4 text-center text-sm text-gray-600">
                       No SKU/variant yet.
                     </td>
                   </tr>
                 ) : (
-                  variantMatrix.map((item) => (
+                  stockRows.map((item) => (
                     <tr key={item.sku} className="border-b border-gray-100">
                       <td className="px-3 py-2 font-semibold text-gray-900">{item.sku}</td>
                       <td className="px-3 py-2 text-gray-700">{item.attrs}</td>

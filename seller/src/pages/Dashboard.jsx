@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { PackageCheck, Users2, Truck, CreditCard, MessageCircle, ShieldCheck, ShoppingCart, RefreshCcw } from 'lucide-react';
 import AreaChart from '../components/AreaChart';
 import { getSellerOrders } from '../api/seller';
+import { extractList } from '../api/client';
 import { useNavigate } from 'react-router-dom';
 
 const StatCard = ({ icon: Icon, label, value, color }) => (
@@ -27,8 +28,7 @@ const Dashboard = () => {
     setError('');
     try {
       const data = await getSellerOrders();
-      const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
-      setOrders(list);
+      setOrders(extractList(data, ['orders']));
     } catch (err) {
       setError(err.message || 'Failed to load orders.');
       setOrders([]);

@@ -23,6 +23,7 @@ const AddProductModal = ({ onClose, onCreated, categories }) => {
         quantity: 0,
         category_id: form.category_id || undefined,
         description: form.description,
+        status: "active",
       });
       const productId = created?.id || created?._id || created?.product_id || created?.product?.id;
       if (productId && form.image_url.trim()) {

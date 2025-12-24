@@ -155,11 +155,16 @@ export const ProductController = {
     addProductImage: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const file = req.file;
-            if (!file) {
+            let imageUrl: string | undefined;
+
+            if (file) {
+                imageUrl = await uploadFileToMinIO(file.originalname, file.buffer, file.mimetype, 'uploads/products');
+            } else if (req.body?.image_url) {
+                imageUrl = req.body.image_url;
+            } else {
                 throw new ValidationError('upload:file_required');
             }
 
-            const imageUrl = await uploadFileToMinIO(file.originalname, file.buffer, file.mimetype, 'uploads/products');
             const payload = {
                 ...req.body,
                 image_url: imageUrl,

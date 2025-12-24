@@ -8,7 +8,6 @@ const Settings = () => {
   const [shop, setShop] = useState({
     name: '',
     slug: '',
-    email: '',
     address: '',
     description: '',
     hotline: '',
@@ -40,21 +39,21 @@ const Settings = () => {
       typeof data.address === 'string'
         ? data.address
         : data.address?.address_line || data.location || data.address_line || '';
-    setShop({
+    setShop((prev) => ({
+      ...prev,
       name: data.name || '',
       slug: data.slug || '',
-      email: data.email || data.contact_email || '',
       address: addressLine,
       description: data.description || '',
       hotline: data.hotline || '',
       logo_url: data.logo_url || '',
       banner_url: data.banner_url || '',
-    });
+    }));
     const wardCode =
       data.address?.ward?.id || data.address?.ward?.code || data.address?.ward_code || data.ward_id || '';
     const provinceCode = data.address?.ward?.province?.code || data.address?.province_code || '';
-    setSelectedWard(wardCode);
-    setSelectedProvince(provinceCode);
+    if (wardCode) setSelectedWard(wardCode);
+    if (provinceCode) setSelectedProvince(provinceCode);
     setShopId(data.id || data._id || null);
     setShopStatus(data.status || 'pending');
     setShopLoadError('');
@@ -89,11 +88,10 @@ const Settings = () => {
       }
       if (s) {
         applyShopData(s);
-      } else {
+      } else if (!shopId) {
         setShop({
           name: '',
           slug: '',
-          email: '',
           address: '',
           description: '',
           hotline: '',
@@ -190,7 +188,11 @@ const Settings = () => {
       if (shop.logo_url) payload.logo_url = shop.logo_url;
       if (shop.banner_url) payload.banner_url = shop.banner_url;
       if (shopId) {
-        await updateMyShop(payload);
+        const updated = await updateMyShop(payload);
+        const updatedData = updated?.data ?? updated;
+        if (updatedData) {
+          applyShopData(updatedData);
+        }
         setMessage('Shop info saved.');
       } else {
         const created = await createMyShop(payload);
@@ -200,7 +202,12 @@ const Settings = () => {
         }
         setMessage('Shop created.');
       }
-      await load();
+      try {
+        const latest = await getMyShop();
+        if (latest) applyShopData(latest);
+      } catch (e) {
+        // ignore if still not available
+      }
     } catch (err) {
       const msg = err?.message || '';
       const errorsObj = err?.data?.errors;
@@ -313,16 +320,6 @@ const Settings = () => {
                 value={shop.name}
                 onChange={(e) => setShop((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="Store name"
-                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-800">Contact email</label>
-              <input
-                type="email"
-                value={shop.email}
-                onChange={(e) => setShop((prev) => ({ ...prev, email: e.target.value }))}
-                placeholder="you@example.com"
                 className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
               />
             </div>

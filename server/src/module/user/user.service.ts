@@ -3,6 +3,17 @@ import { User } from '../../models/User.model';
 import { Customer } from '../../models/Customer.model';
 import { Seller } from '../../models/Seller.model';
 import { Admin } from '../../models/Admin.model';
+import { Cart } from '../../models/Cart.model';
+import { FavoriteShop } from '../../models/FavoriteShop.model';
+import { FavoriteItem } from '../../models/FavoriteItem.model';
+import { Order } from '../../models/Order.model';
+import { OrderStatusHistory } from '../../models/OrderStatusHistory.model';
+import { Notification } from '../../models/Notification.model';
+import { ProductReview } from '../../models/ProductReview.model';
+import { ProductQuestion } from '../../models/ProductQuestion.model';
+import { SellerApplication } from '../../models/SellerApplication.model';
+import { ShippingAddress } from '../../models/ShippingAddress.model';
+import { sequelize } from '../../models';
 import {
     UserResponseDto,
     UpdateMeDto,
@@ -173,27 +184,44 @@ export const adminDeleteSeller = async (sellerId: string): Promise<void> => {
 
 // xóa user
 export const adminDeleteUser = async (userId: string): Promise<void> => {
-    const user = await User.findByPk(userId);
-    if (!user) {
-        throw new NotFoundError('user:user_not_found');
-    }
-
-    if (user.role === 'seller') {
-        const seller = await Seller.findOne({ where: { user_id: userId } });
-        if (seller) {
-            await adminDeleteSeller(seller.id);
-        } else {
-            user.role = 'customer';
-            await user.save();
+    await sequelize.transaction(async (tx) => {
+        const user = await User.findByPk(userId, { transaction: tx });
+        if (!user) {
+            throw new NotFoundError('user:user_not_found');
         }
-    } else if (user.role === 'customer') {
-        const customer = await Customer.findOne({ where: { user_id: userId } });
-        if (customer) {
-            await customer.destroy();
-        }
-    }
 
-    await user.destroy();
+        if (user.role === 'seller') {
+            const seller = await Seller.findOne({ where: { user_id: userId }, transaction: tx });
+            if (seller) {
+                // reuse seller delete to handle role downgrade
+                await adminDeleteSeller(seller.id);
+            } else {
+                user.role = 'customer';
+                await user.save({ transaction: tx });
+            }
+        } else if (user.role === 'customer') {
+            const customer = await Customer.findOne({ where: { user_id: userId }, transaction: tx });
+            if (customer) {
+                await customer.destroy({ transaction: tx });
+            }
+        }
+
+        // clean up related data to avoid FK errors
+        await Promise.all([
+            ShippingAddress.destroy({ where: { user_id: userId }, transaction: tx }),
+            Cart.destroy({ where: { user_id: userId }, transaction: tx }),
+            FavoriteShop.destroy({ where: { user_id: userId }, transaction: tx }),
+            FavoriteItem.destroy({ where: { user_id: userId }, transaction: tx }),
+            SellerApplication.destroy({ where: { user_id: userId }, transaction: tx }),
+            Notification.destroy({ where: { user_id: userId }, transaction: tx }),
+            ProductReview.destroy({ where: { user_id: userId }, transaction: tx }),
+            ProductQuestion.destroy({ where: { user_id: userId }, transaction: tx }),
+            OrderStatusHistory.destroy({ where: { changed_by_user_id: userId }, transaction: tx }),
+            Order.destroy({ where: { user_id: userId }, transaction: tx }),
+        ]);
+
+        await user.destroy({ transaction: tx });
+    });
 };
 
 export const getSellerMe = async (userId: string): Promise<SellerWithUserResponseDto> => {

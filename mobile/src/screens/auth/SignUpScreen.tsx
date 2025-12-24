@@ -76,10 +76,19 @@ const SignUpScreen = ({ navigation }: any) => {
     }
 
     try {
-      setIsLoading(true);
+      const nameParts = data.name.trim().split(' ');
+      const firstName = nameParts.pop();
+      const lastName = nameParts.join(' ');
+
       await handleAuthentication(
-        '/verification',
-        { email: data.email },
+        '/register/start',
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email: data.email,
+          password: data.password,
+          confirm_password: data.confirmPassword,
+        },
         'post',
       );
 

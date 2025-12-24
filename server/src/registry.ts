@@ -30,7 +30,7 @@ registerCartOpenApi(registry);
 registerNotificationOpenApi(registry);
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
-
+//
 export const openApiDocument = generator.generateDocument({
     openapi: '3.0.0',
     info: {

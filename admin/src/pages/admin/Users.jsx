@@ -8,8 +8,6 @@ const Users = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
-  const [userIdInput, setUserIdInput] = useState('');
-  const [sellerIdInput, setSellerIdInput] = useState('');
   const [acting, setActing] = useState(false);
 
   const tryPaths = async (paths, config) => {
@@ -66,38 +64,6 @@ const Users = () => {
     }
   };
 
-  const handleDeleteUser = () => {
-    if (!userIdInput) return setActionMessage('Enter user ID to delete.');
-    if (!isUUID(userIdInput)) return setActionMessage('User ID phải là UUID hợp lệ (36 ký tự).');
-    if (!window.confirm('Delete this user?')) return;
-    withAction(() =>
-      tryPaths(
-        [
-          `/api/users/admin/users/${userIdInput}`,
-          `/api/user/admin/users/${userIdInput}`,
-          `/api/admin/users/${userIdInput}`,
-        ],
-        { method: 'delete' },
-      ),
-    );
-  };
-
-  const handleDeleteSeller = () => {
-    if (!sellerIdInput) return setActionMessage('Enter seller ID to delete.');
-    if (!isUUID(sellerIdInput)) return setActionMessage('Seller ID phải là UUID hợp lệ (36 ký tự).');
-    if (!window.confirm('Delete this seller?')) return;
-    withAction(() =>
-      tryPaths(
-        [
-          `/api/users/admin/sellers/${sellerIdInput}`,
-          `/api/user/admin/sellers/${sellerIdInput}`,
-          `/api/admin/sellers/${sellerIdInput}`,
-        ],
-        { method: 'delete' },
-      ),
-    );
-  };
-
   const resolveSellerId = async (user) => {
     const existing = user.seller?.id || user.seller_id;
     if (existing) return existing;
@@ -141,14 +107,11 @@ const Users = () => {
     }
   };
 
-  const getSellerId = (user) => user.seller?.id || user.seller_id || '';
   const normalizeRole = (u) => String(u.role || '').trim().toLowerCase();
-  const sellers = users.filter((u) => normalizeRole(u) === 'seller' || !!getSellerId(u));
-  const customers = users.filter((u) => normalizeRole(u) === 'customer' && !getSellerId(u));
+  const customers = users.filter((u) => normalizeRole(u) === 'customer');
 
-  const renderTable = (title, list, options = { mode: 'sellers' }) => {
-    const { mode = 'sellers' } = options;
-    const colCount = 6;
+  const renderTable = (title, list) => {
+    const colCount = 5;
     return (
       <div className="overflow-x-auto">
         <div className="flex items-center justify-between mb-2">
@@ -174,71 +137,23 @@ const Users = () => {
                 </td>
               </tr>
             ) : (
-              list.map((user) => {
-                const sellerId = getSellerId(user);
-                return (
-                  <tr key={user.id} className="border-b border-slate-800/80">
-                    <td className="px-3 py-2 font-semibold text-white">{user.id}</td>
-                    <td className="px-3 py-2 text-slate-200 inline-flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-slate-500" /> {user.email}
-                    </td>
-                    <td className="px-3 py-2">
-                      <Badge tone={user.role === 'admin' ? 'success' : 'default'}>{user.role}</Badge>
-                    </td>
-                    <td className="px-3 py-2">
-                      <Badge tone="default">{user.status || user.state || '--'}</Badge>
-                    </td>
-                    <td className="px-3 py-2 text-slate-200 inline-flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-slate-500" /> {user.phone || '--'}
-                    </td>
-                    <td className="px-3 py-2 text-slate-200">
-                      {mode === 'sellers' ? (
-                        <div className="flex flex-wrap gap-1">
-                          <button
-                            onClick={() => actOnSellerRow(user, 'activate')}
-                            className="px-2 py-1 rounded bg-emerald-500 text-slate-950 text-xs font-semibold disabled:opacity-60"
-                            disabled={acting}
-                          >
-                            Activate
-                          </button>
-                          <button
-                            onClick={() => actOnSellerRow(user, 'suspend')}
-                            className="px-2 py-1 rounded bg-amber-500 text-slate-950 text-xs font-semibold disabled:opacity-60"
-                            disabled={acting}
-                          >
-                            Suspend
-                          </button>
-                          <button
-                            onClick={() => actOnSellerRow(user, 'close')}
-                            className="px-2 py-1 rounded bg-slate-700 text-slate-50 text-xs font-semibold disabled:opacity-60"
-                            disabled={acting}
-                          >
-                            Close
-                          </button>
-                          <button
-                            onClick={() => actOnSellerRow(user, 'delete')}
-                            className="px-2 py-1 rounded bg-rose-500 text-slate-50 text-xs font-semibold disabled:opacity-60"
-                            disabled={acting}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            const ok = window.confirm('Delete this user?');
-                            if (ok) deleteUserRow(user.id);
-                          }}
-                          className="px-3 py-1.5 rounded bg-rose-500 text-slate-50 text-xs font-semibold disabled:opacity-60"
-                          disabled={acting}
-                        >
-                          Delete user
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
+              list.map((user) => (
+                <tr key={user.id} className="border-b border-slate-800/80">
+                  <td className="px-3 py-2 font-semibold text-white">{user.id}</td>
+                  <td className="px-3 py-2 text-slate-200 inline-flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-slate-500" /> {user.email}
+                  </td>
+                  <td className="px-3 py-2">
+                    <Badge tone={user.role === 'admin' ? 'success' : 'default'}>{user.role}</Badge>
+                  </td>
+                  <td className="px-3 py-2">
+                    <Badge tone="default">{user.status || user.state || '--'}</Badge>
+                  </td>
+                  <td className="px-3 py-2 text-slate-200 inline-flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-slate-500" /> {user.phone || '--'}
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
@@ -248,49 +163,7 @@ const Users = () => {
 
   return (
     <PanelShell>
-      <SectionHeader title="Users (admin)" subtitle="Manage users and sellers" />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <div className="border border-slate-800 rounded-xl p-3 bg-slate-900/50 space-y-2">
-          <p className="text-sm font-semibold text-white">Delete user</p>
-          <input
-            value={userIdInput}
-            onChange={(e) => setUserIdInput(e.target.value)}
-            placeholder="User ID"
-            className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100"
-          />
-          <button
-            onClick={handleDeleteUser}
-            disabled={acting}
-            className="px-3 py-2 rounded-lg text-sm font-semibold bg-rose-500 text-slate-50 disabled:opacity-60"
-          >
-            Delete user
-          </button>
-        </div>
-
-        <div className="border border-slate-800 rounded-xl p-3 bg-slate-900/50 space-y-2">
-          <p className="text-sm font-semibold text-white">Delete seller</p>
-          <input
-            value={sellerIdInput}
-            onChange={(e) => setSellerIdInput(e.target.value)}
-            placeholder="Seller ID"
-            className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100"
-          />
-          <button
-            onClick={handleDeleteSeller}
-            disabled={acting}
-            className="px-3 py-2 rounded-lg text-sm font-semibold bg-rose-500 text-slate-50 disabled:opacity-60"
-          >
-            Delete seller
-          </button>
-        </div>
-      </div>
-
-      {actionMessage ? (
-        <div className="text-sm text-emerald-200 bg-emerald-500/10 border border-emerald-400/40 rounded-xl px-3 py-2 mb-3">
-          {actionMessage}
-        </div>
-      ) : null}
+      <SectionHeader title="Users (admin)" subtitle="Manage users" />
 
       {loading ? (
         <div className="px-3 py-4 text-center text-sm text-slate-300">Loading...</div>
@@ -300,8 +173,7 @@ const Users = () => {
         <EmptyState text="No users yet." />
       ) : (
         <div className="space-y-6">
-          {renderTable('Sellers', sellers, { mode: 'sellers' })}
-          {renderTable('Customers', customers, { mode: 'customers' })}
+          {renderTable('Customers', customers)}
         </div>
       )}
     </PanelShell>

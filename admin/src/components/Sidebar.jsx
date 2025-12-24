@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Gauge,
-  Users,
-  BadgeCheck,
-  Store,
-  ClipboardList,
-  Truck,
-  DollarSign,
-  LogOut,
-  Bell,
-} from 'lucide-react';
+import { Gauge, Users, BadgeCheck, Store, ClipboardList, Truck, DollarSign, LogOut } from 'lucide-react';
 
 const Sidebar = ({ active = 'overview', onSelect, onLogout, user }) => {
   const items = [
@@ -20,7 +10,6 @@ const Sidebar = ({ active = 'overview', onSelect, onLogout, user }) => {
     { icon: ClipboardList, label: 'Orders', key: 'orders' },
     { icon: Truck, label: 'Shipments', key: 'shipments' },
     { icon: DollarSign, label: 'Shipping Rates', key: 'rates' },
-    { icon: Bell, label: 'Notifications', key: 'notifications' },
   ];
 
   return (

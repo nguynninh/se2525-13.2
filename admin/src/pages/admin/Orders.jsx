@@ -47,7 +47,7 @@ const Orders = () => {
 
   return (
     <PanelShell>
-      <SectionHeader title="Orders (admin)" subtitle="List, update status, refund" />
+      <SectionHeader title="Orders (admin)"/>
 
       <div className="flex items-center gap-2 mb-2">
         <button

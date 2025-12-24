@@ -137,6 +137,27 @@ Users can navigate through the guide using "Next" or bypass it with "Skip" to ju
   <img src="readme_file/forgot_password_ui.png" width="200" />
 </p>
 
+### Main Application
+**Home & Products**
+<p float="left">
+  <img src="readme_file/home_ui.png" width="200" />
+  <img src="readme_file/product_detail.png" width="200" />
+</p>
+
+**Shopping Cart**
+<p float="left">
+  <img src="readme_file/cart.png" width="200" />
+  <img src="readme_file/bill.png" width="200" />
+</p>
+
+### User Profile & Settings
+**Profile & Address Management**
+<p float="left">
+  <img src="readme_file/profile.png" width="200" />
+  <img src="readme_file/address.png" width="200" />
+  <img src="readme_file/address_create.png" width="200" />
+</p>
+
 ## Troubleshooting
 
 ### Android Build Issues

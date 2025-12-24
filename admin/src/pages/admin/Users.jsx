@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Mail, Phone, MapPin, UserRound } from 'lucide-react';
+import { Mail, Phone, MapPin, UserRound, Search } from 'lucide-react';
 import api from '../../api/client';
 import { Badge, EmptyState, PanelShell, SectionHeader, safeArray, formatDate } from './shared.jsx';
 
@@ -14,6 +14,8 @@ const Users = () => {
   const [detailError, setDetailError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
   const [acting, setActing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
 
   const tryPaths = async (paths, config) => {
     let lastError;
@@ -31,13 +33,22 @@ const Users = () => {
 
   const isUUID = (val) => typeof val === 'string' && val.trim().length === 36 && val.includes('-');
 
-  const loadUsers = async (signal) => {
+  const loadUsers = async (signal, opts = {}) => {
     setLoading(true);
     setError('');
     try {
+      const searchVal = opts.search !== undefined ? opts.search : searchTerm;
+      const roleVal = opts.role !== undefined ? opts.role : roleFilter;
       const { data } = await tryPaths(
         ['/api/users/admin/users', '/api/user/admin/users', '/api/admin/users'],
-        { method: 'get', signal },
+        {
+          method: 'get',
+          signal,
+          params: {
+            search: searchVal?.trim() || undefined,
+            role: roleVal || undefined,
+          },
+        },
       );
       const list = safeArray(data);
       setUsers(list);
@@ -98,6 +109,22 @@ const Users = () => {
   };
 
   const reload = async () => loadUsers();
+  const applyFilters = async (overrides = {}) => loadUsers(undefined, overrides);
+
+  const deleteUser = async (user) => {
+    if (!user?.id) return;
+    const ok = window.confirm('Are you sure you want to delete this user? This will cascade linked records.');
+    if (!ok) return;
+    await withAction(() =>
+      tryPaths(
+        [`/api/user/admin/users/${user.id}`, `/api/users/admin/users/${user.id}`, `/api/admin/users/${user.id}`],
+        { method: 'delete' },
+      ),
+    );
+    setSelectedUser(null);
+    setDetail(null);
+    await reload();
+  };
 
   const withAction = async (fn) => {
     setActing(true);
@@ -158,6 +185,7 @@ const Users = () => {
 
   const normalizeRole = (u) => String(u.role || '').trim().toLowerCase();
   const customers = users.filter((u) => normalizeRole(u) === 'customer');
+  const sellers = users.filter((u) => normalizeRole(u) === 'seller');
 
   const renderTable = (title, list) => {
     const colCount = 6;
@@ -303,6 +331,56 @@ const Users = () => {
             </div>
           )}
         </div>
+
+        <div className="space-y-2">
+          <p className="text-xs text-slate-400">Actions</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => deleteUser(selectedUser)}
+              className="px-3 py-2 rounded-lg text-sm font-semibold bg-rose-500 text-slate-50 hover:bg-rose-400 disabled:opacity-60"
+              disabled={acting}
+            >
+              Delete user
+            </button>
+            {seller ? (
+              <>
+                <button
+                  onClick={() => actOnSellerRow(selectedUser, 'activate')}
+                  disabled={acting}
+                  className="px-3 py-2 rounded-lg text-sm font-semibold border border-slate-800 text-slate-100 hover:border-emerald-400/60 disabled:opacity-60"
+                >
+                  Set active
+                </button>
+                <button
+                  onClick={() => actOnSellerRow(selectedUser, 'suspend')}
+                  disabled={acting}
+                  className="px-3 py-2 rounded-lg text-sm font-semibold border border-slate-800 text-slate-100 hover:border-amber-400/60 disabled:opacity-60"
+                >
+                  Suspend
+                </button>
+                <button
+                  onClick={() => actOnSellerRow(selectedUser, 'close')}
+                  disabled={acting}
+                  className="px-3 py-2 rounded-lg text-sm font-semibold border border-slate-800 text-slate-100 hover:border-rose-400/60 disabled:opacity-60"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => actOnSellerRow(selectedUser, 'delete')}
+                  disabled={acting}
+                  className="px-3 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-100 hover:border-rose-400/60 disabled:opacity-60"
+                >
+                  Delete seller role
+                </button>
+              </>
+            ) : null}
+          </div>
+          {actionMessage ? (
+            <div className="text-xs text-emerald-200 bg-emerald-500/10 border border-emerald-400/40 rounded-lg px-2 py-1">
+              {actionMessage}
+            </div>
+          ) : null}
+        </div>
       </div>
     );
   };
@@ -310,6 +388,58 @@ const Users = () => {
   return (
     <PanelShell>
       <SectionHeader title="Users (admin)" subtitle="Manage users" />
+
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            applyFilters();
+          }}
+          className="flex items-center gap-2 flex-1 min-w-[240px]"
+        >
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by email"
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-slate-900/70 border border-slate-800 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-400/60 outline-none"
+            />
+          </div>
+          <select
+            value={roleFilter}
+            onChange={(e) => {
+              const value = e.target.value;
+              setRoleFilter(value);
+              applyFilters({ role: value });
+            }}
+            className="rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100"
+          >
+            <option value="">All roles</option>
+            <option value="customer">Customer</option>
+            <option value="seller">Seller</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button
+            type="submit"
+            className="px-3 py-2 rounded-lg text-sm font-semibold bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+          >
+            Search
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm('');
+              setRoleFilter('');
+              applyFilters({ search: '', role: '' });
+            }}
+            className="px-3 py-2 rounded-lg text-sm font-semibold border border-slate-800 text-slate-100 hover:border-emerald-400/60"
+          >
+            Clear
+          </button>
+        </form>
+      </div>
 
       {loading ? (
         <div className="px-3 py-4 text-center text-sm text-slate-300">Loading...</div>
@@ -321,6 +451,7 @@ const Users = () => {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           <div className="xl:col-span-2 space-y-4">
             {renderTable('Customers', customers)}
+            {renderTable('Sellers', sellers)}
           </div>
           <div className="space-y-2">
             <p className="text-sm font-semibold text-white">User detail</p>

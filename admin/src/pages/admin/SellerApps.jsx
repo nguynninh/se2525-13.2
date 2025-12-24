@@ -73,13 +73,15 @@ const SellerApps = () => {
         selected?.id === app.id ? 'ring-1 ring-emerald-400/60' : ''
       }`}
     >
-      <div className="flex items-center justify-between gap-3">
-        <div>
+      <div className="grid grid-cols-[1fr_auto] items-start gap-3">
+        <div className="min-w-0">
           <p className="font-semibold text-white truncate">{app.id}</p>
           <p className="text-xs text-slate-400 truncate">{app.user?.email || app.user_id || '--'}</p>
-          {!compact ? <p className="text-xs text-slate-500">submitted: {formatDate(app.created_at || app.createdAt)}</p> : null}
+          {!compact ? (
+            <p className="text-xs text-slate-500">submitted: {formatDate(app.created_at || app.createdAt)}</p>
+          ) : null}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
           <Badge tone={app.status === 'approved' ? 'success' : app.status === 'rejected' ? 'danger' : 'warning'}>
             {app.status || 'pending'}
           </Badge>

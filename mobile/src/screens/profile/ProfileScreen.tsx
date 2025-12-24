@@ -165,14 +165,14 @@ const ProfileScreen = ({ navigation }: any) => {
             renderMenuRow(<Shop size={22} color={appColors.primary} />, t('profile:register_seller', { defaultValue: 'Đăng ký bán hàng' }), () => navigation.navigate('SellerRegistrationScreen'))
           )}
 
-          {renderMenuRow(<Shop size={22} color={appColors.link} />, user?.role === 'seller' ? 'Chuyển về tài khoản cá nhân' : 'Chuyển thành nhà bán hàng', async () => {
+          {renderMenuRow(<Shop size={22} color={appColors.link} />, user?.role === 'seller' ? t('profile:convert_to_personal') : t('profile:convert_to_seller'), async () => {
             if (user?.role === 'seller') {
-              Alert.alert('Thông báo', 'Hiện tại bạn không được cấp quyền chuc nang nay');
+              Alert.alert(t('common:notification'), t('profile:not_authorized_feature'));
             } else {
-              Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn đăng ký trở thành nhà bán hàng?', [
-                { text: 'Hủy', style: 'cancel' },
+              Alert.alert(t('profile:confirm'), t('profile:confirm_register_seller'), [
+                { text: t('common:cancel'), style: 'cancel' },
                 {
-                  text: 'Đồng ý', onPress: async () => {
+                  text: t('common:agree'), onPress: async () => {
                     try {
                       const res = await userApi.registerSellerApplication();
                       if (res) {

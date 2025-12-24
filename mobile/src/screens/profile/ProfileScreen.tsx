@@ -84,7 +84,7 @@ const ProfileScreen = ({ navigation }: any) => {
       <RowComponent styles={{ paddingVertical: 12 }}>
         <View style={{
           width: 40, height: 40, borderRadius: 12,
-          backgroundColor: color ? color + '15' : appColors.primary + '10', // Light background
+          backgroundColor: color ? color + '15' : appColors.primary + '10',
           justifyContent: 'center', alignItems: 'center'
         }}>
           {icon}

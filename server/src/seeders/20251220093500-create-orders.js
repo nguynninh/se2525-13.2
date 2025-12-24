@@ -11,8 +11,7 @@ module.exports = {
             INSERT INTO payment_methods (id, code, name, is_active, created_at, updated_at)
             VALUES 
               (1, 'cod', 'Cash on Delivery', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-              (2, 'vnpay', 'VNPAY', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-              (3, 'momo', 'MOMO', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+              (2, 'sepay', 'Sepay', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT (id) DO NOTHING;
             `,
         );
@@ -285,6 +284,6 @@ module.exports = {
             {},
         );
 
-        await queryInterface.bulkDelete('payment_methods', { id: [1, 2, 3] }, {});
+        await queryInterface.bulkDelete('payment_methods', { id: [1, 2] }, {});
     },
 };

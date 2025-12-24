@@ -34,7 +34,6 @@ import Shipment from './Shipment.model';
 import ShipmentStatusHistory from './ShipmentStatusHistory.model';
 import ShippingRate from './ShippingRate.model';
 import Notification from './Notification.model';
-import DeviceToken from './DeviceToken.model';
 import { associations } from './associations';
 
 const env = process.env.NODE_ENV || 'development';
@@ -84,7 +83,6 @@ const ShipmentModel = Shipment.initModel(sequelize);
 const ShipmentStatusHistoryModel = ShipmentStatusHistory.initModel(sequelize);
 const ShippingRateModel = ShippingRate.initModel(sequelize);
 const NotificationModel = Notification.initModel(sequelize);
-const DeviceTokenModel = DeviceToken.initModel(sequelize);
 
 export const models = {
     User: UserModel,
@@ -119,7 +117,6 @@ export const models = {
     ShipmentStatusHistory: ShipmentStatusHistoryModel,
     ShippingRate: ShippingRateModel,
     Notification: NotificationModel,
-    DeviceToken: DeviceTokenModel,
 };
 
 associations(models);

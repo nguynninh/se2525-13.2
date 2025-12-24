@@ -26,10 +26,6 @@ app.get('/', (_req, res) => {
 
 const apiPrefix = process.env.API_PREFIX || '/api';
 
-app.get('/', (req, res) => {
-    res.status(200).send('Server is running');
-});
-
 app.use(apiPrefix, indexRouter);
 
 app.use(errorHandler);

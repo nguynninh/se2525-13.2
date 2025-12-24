@@ -10,7 +10,7 @@ const Shops = () => {
   const [error, setError] = useState('');
   const [actingId, setActingId] = useState('');
   const [actionMsg, setActionMsg] = useState('');
-  const [statusSelect, setStatusSelect] = useState('active');
+  const [statusDraft, setStatusDraft] = useState({});
 
   const load = async (signal) => {
     setLoading(true); setError('');
@@ -19,6 +19,7 @@ const Shops = () => {
       const feat = await api.get('/api/shop/admin/featured', { signal });
       setShops(safeArray(data));
       setFeatured(safeArray(feat.data));
+      setStatusDraft({});
     } catch (err) {
       if (err.name !== 'CanceledError') setError(err.message || 'Failed to load shops');
     } finally {
@@ -33,6 +34,7 @@ const Shops = () => {
   }, []);
 
   const reload = async () => load();
+  const getStatusValue = (shop) => statusDraft[shop.id] ?? shop.status ?? 'active';
 
   const withAction = async (fn, shopId) => {
     setActingId(shopId || '');
@@ -50,7 +52,7 @@ const Shops = () => {
 
   return (
     <PanelShell>
-      <SectionHeader title="Shop (admin)" subtitle="Manage shops: status, featured, delete" />
+      <SectionHeader title="Shops" subtitle="Manage shops: status, featured, delete" />
       {actionMsg ? <div className="text-sm text-emerald-200 bg-emerald-500/10 border border-emerald-400/40 rounded-xl px-3 py-2 mb-3">{actionMsg}</div> : null}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {loading ? <EmptyState text="Loading shops..." /> : null}
@@ -75,8 +77,8 @@ const Shops = () => {
             ) : null}
             <div className="flex flex-wrap items-center gap-2">
               <select
-                value={statusSelect}
-                onChange={(e) => setStatusSelect(e.target.value)}
+                value={getStatusValue(shop)}
+                onChange={(e) => setStatusDraft((prev) => ({ ...prev, [shop.id]: e.target.value }))}
                 className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-2 text-sm text-slate-100"
               >
                 <option value="active">active</option>
@@ -84,7 +86,7 @@ const Shops = () => {
                 <option value="closed">closed</option>
               </select>
               <button
-                onClick={() => withAction(() => api.patch(`/api/shop/admin/${shop.id}/status`, { status: statusSelect }), shop.id)}
+                onClick={() => withAction(() => api.patch(`/api/shop/admin/${shop.id}/status`, { status: getStatusValue(shop) }), shop.id)}
                 disabled={actingId === shop.id}
                 className="px-3 py-2 rounded-lg text-sm font-semibold bg-emerald-500 text-slate-950 disabled:opacity-60"
               >

@@ -19,15 +19,6 @@ const Header = ({ user, onLogout, onNavigate }) => {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Quick search user / shop / order"
-            className="pl-10 pr-3 py-2 rounded-xl bg-slate-900/70 border border-slate-800 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-            onFocus={() => onNavigate?.('overview')}
-          />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-        </div>
         <button
           onClick={onLogout}
           className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-800 bg-slate-900/80 text-sm font-semibold text-slate-100 hover:border-emerald-400/60 hover:text-white"

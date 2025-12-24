@@ -13,6 +13,9 @@ const getProfile = async () => {
 const userApi = {
     requestSeller,
     getProfile,
+    getShippingAddresses: async () => {
+        return await handleAPI(`https://api.hiki.io.vn/api/user/me/shipping-addresses`, undefined, 'get');
+    }
 };
 
 export default userApi;

@@ -1,6 +1,6 @@
 import handleAPI from './handleApi';
 
-const url = '/categories';
+const url = 'https://api.hiki.io.vn/api/categories';
 
 const getList = async () => {
     return await handleAPI(`${url}`, undefined, 'get');

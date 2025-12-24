@@ -26,13 +26,7 @@ const uploadImage = createImageUploadMiddleware(5);
 // Public: list categories
 router.get('/products/categories', ProductController.getCategories);
 
-router.post(
-    '/categories',
-    authenticate,
-    restrictTo('admin'),
-    v({ body: CreateCategorySchema }),
-    ProductController.createCategory,
-);
+router.post('/categories', v({ body: CreateCategorySchema }), ProductController.createCategory);
 
 router.patch(
     '/categories/:id',

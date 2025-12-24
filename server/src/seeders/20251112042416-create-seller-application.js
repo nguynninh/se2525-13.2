@@ -78,12 +78,7 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.sequelize.query(
-            `DELETE FROM seller_applications sa
-       USING users u
-       WHERE sa.user_id = u.id
-         AND u.email IN (:emails)`,
-            { replacements: { emails: APPLICANTS.map((a) => a.email) } },
-        );
+        // Delete all to avoid FK issues when users are removed during seed:reset
+        await queryInterface.bulkDelete('seller_applications', {}, {});
     },
 };

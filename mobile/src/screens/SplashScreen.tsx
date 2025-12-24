@@ -15,7 +15,7 @@ const SplashScreen = () => {
             }}
             imageStyle={{ flex: 1 }}>
             <Image
-                source={require('../assets/images/logo-text.png')}
+                source={require('../assets/images/logo.png')}
                 style={{
                     width: appInfo.sizes.WIDTH * 0.7,
                     resizeMode: 'contain',

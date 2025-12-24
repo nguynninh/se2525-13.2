@@ -197,33 +197,6 @@ const Settings = () => {
     setMessage('Shop status is managed by admin approval.');
   };
 
-  const handleSelectAvatar = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setAvatarFile(file);
-    setAvatarPreview(URL.createObjectURL(file));
-  };
-
-  const saveAvatar = async () => {
-    if (!avatarFile) {
-      setError('Choose an image before uploading.');
-      return;
-    }
-    setUploadingAvatar(true);
-    setError('');
-    setMessage('');
-    try {
-      await updateMyAvatar(avatarFile);
-      setMessage('Avatar updated.');
-      setAvatarFile(null);
-      await load();
-    } catch (err) {
-      setError(err.message || 'Failed to update avatar.');
-    } finally {
-      setUploadingAvatar(false);
-    }
-  };
-
   return (
     <div className="p-4 lg:p-5 space-y-4 bg-content-bg min-h-screen">
       <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm flex items-center justify-between">
@@ -265,23 +238,6 @@ const Settings = () => {
               )}
             </div>
             <div className="flex-1 space-y-2">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm bg-white hover:bg-gray-50 cursor-pointer w-fit">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Choose image
-                  <input type="file" accept="image/*" className="hidden" onChange={handleSelectAvatar} />
-                </label>
-                <button
-                  type="button"
-                  onClick={saveAvatar}
-                  disabled={uploadingAvatar || !avatarFile}
-                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-md bg-gray-900 text-white shadow-sm hover:bg-gray-800 disabled:opacity-60"
-                >
-                  {uploadingAvatar ? 'Uploading...' : 'Save avatar'}
-                </button>
-              </div>
-              {avatarFile && <p className="text-xs text-gray-600">Selected: {avatarFile.name}</p>}
-              <p className="text-xs text-gray-500">Recommended: square image, max 5MB.</p>
             </div>
           </div>
         </div>

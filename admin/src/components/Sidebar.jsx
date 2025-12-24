@@ -1,7 +1,7 @@
 import React from 'react';
-import { Gauge, Users, BadgeCheck, Store, ClipboardList, Truck, DollarSign, LogOut } from 'lucide-react';
+import { Gauge, Users, BadgeCheck, Store, ClipboardList, Truck, DollarSign } from 'lucide-react';
 
-const Sidebar = ({ active = 'overview', onSelect, onLogout, user }) => {
+const Sidebar = ({ active = 'overview', onSelect, user }) => {
   const items = [
     { icon: Gauge, label: 'Overview', key: 'overview' },
     { icon: Users, label: 'Users', key: 'users' },
@@ -41,12 +41,6 @@ const Sidebar = ({ active = 'overview', onSelect, onLogout, user }) => {
         ))}
       </nav>
 
-      <button
-        onClick={onLogout}
-        className="mt-6 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl w-full border border-slate-800 bg-slate-900/80 text-sm font-semibold text-slate-200 hover:bg-slate-800/80"
-      >
-        <LogOut className="w-4 h-4" /> Sign out
-      </button>
     </div>
   );
 };

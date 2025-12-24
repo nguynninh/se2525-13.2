@@ -59,8 +59,259 @@
 - Admin web: `cd admin && npm install && npm run dev` (Vite mặc định 5173 hoặc 5175 tùy cổng trống).
 - Mobile: `cd mobile && npm install` (hoặc `yarn`), `npm start` khởi Metro, `npm run android` / `npm run ios` để build; đặt biến API trong `.env` (dùng `react-native-dotenv`).
 
+
 ## Ghi chú & khuyến nghị
 - Kiểm tra CORS, JWT secret, Redis secret trước khi deploy production.
 - MinIO đang local; lên cloud cần cập nhật endpoint/bucket và policy public/TTL ảnh.
 - Chưa có bộ test tự động; nên bổ sung test API (Postman/Newman hoặc Jest) cho các luồng auth, giỏ hàng, đặt hàng, shipment.
 - Nếu dùng SSL thật, cập nhật mount cert và rule Nginx trước khi chạy Certbot.
+
+---
+
+# Tài liệu Ứng dụng Di động
+
+## SE2525 Mobile App
+
+Đây là ứng dụng mobile client cho dự án SE2525, được xây dựng bằng React Native. Ứng dụng cung cấp trải nghiệm thương mại điện tử trọn vẹn bao gồm xác thực, duyệt sản phẩm, quản lý giỏ hàng và hồ sơ người dùng.
+
+### Mục lục
+- [Yêu cầu tiên quyết](#yêu-cầu-tiên-quyết)
+- [Cài đặt](#cài-đặt)
+- [Chạy ứng dụng](#chạy-ứng-dụng)
+- [Cấu trúc dự án](#cấu-trúc-dự-án)
+- [Ảnh chụp màn hình](#ảnh-chụp-màn-hình)
+- [Khắc phục sự cố](#khắc-phục-sự-cố)
+
+### Yêu cầu tiên quyết
+
+Đảm bảo bạn đã cài đặt các công cụ sau trên máy phát triển:
+- **Node.js** (>= 18)
+- **Yarn** (Trình quản lý gói ưu tiên)
+- **Java Development Kit (JDK)** (phiên bản 17 được khuyến nghị cho React Native 0.78)
+- **Android Studio** (kèm Android SDK và Emulator)
+- **Xcode** (để phát triển iOS, chỉ dành cho Mac)
+- **CocoaPods** (cho các thư viện phụ thuộc của iOS)
+
+### Cài đặt
+
+1.  **Clone repository:**
+    ```bash
+    git clone <repository_url>
+    cd se2525-13.2/mobile
+    ```
+
+2.  **Cài đặt các gói phụ thuộc:**
+    ```bash
+    yarn install
+    ```
+
+3.  **Dành riêng cho iOS (chỉ trên Mac):**
+    ```bash
+    cd ios
+    pod install
+    cd ..
+    ```
+
+### Chạy ứng dụng
+
+#### Android
+
+Để chạy ứng dụng Android:
+
+1.  Khởi động Metro bundler:
+    ```bash
+    yarn start
+    ```
+
+2.  Trong một terminal khác, chạy ứng dụng Android:
+    ```bash
+    yarn android
+    ```
+
+   *Lưu ý: Lệnh này sẽ tự động tạo `debug.keystore` nếu chưa có trong `android/app`.*
+
+#### iOS
+
+Để chạy ứng dụng iOS:
+
+1.  Khởi động Metro bundler:
+    ```bash
+    yarn start
+    ```
+
+2.  Chạy ứng dụng iOS:
+    ```bash
+    yarn ios
+    ```
+
+### Cấu trúc dự án
+
+Dự án tuân theo cấu trúc thư mục chuẩn của React Native:
+
+```
+mobile/
+├── android/            # Mã nguồn native Android
+├── ios/                # Mã nguồn native iOS
+├── src/
+│   ├── apis/           # Tích hợp API
+│   ├── assets/         # Hình ảnh, phông chữ và tài nguyên tĩnh khác
+│   ├── components/     # Các UI component tái sử dụng
+│   ├── constants/      # Hằng số ứng dụng (màu sắc, phông chữ, kích thước)
+│   ├── models/         # TypeScript interfaces/types
+│   ├── navigators/     # Cấu hình React Navigation (Stack, Tab, Drawer)
+│   ├── redux/          # Quản lý trạng thái Redux (slices, store)
+│   ├── screens/        # Các màn hình (Xác thực, Thương mại, Hồ sơ, v.v.)
+│   ├── styles/         # Styles toàn cục
+│   └── utils/          # Các hàm tiện ích (validation, v.v.)
+├── App.tsx             # Component gốc
+└── package.json        # Các gói phụ thuộc và scripts
+```
+
+### Tính năng chính
+
+-   **Xác thực**: Đăng nhập, Đăng ký, **Xác thực Email (OTP)**, Quên mật khẩu, Đăng nhập mạng xã hội.
+-   **Thương mại**: Danh sách sản phẩm, Chi tiết sản phẩm, Giỏ hàng, Thanh toán.
+-   **Hồ sơ**: Cài đặt người dùng, Quản lý địa chỉ, và **Bảng điều khiển Người bán (Seller Dashboard)**.
+-   **Khuyến mãi**: Màn hình Sale chuyên biệt làm nổi bật các sản phẩm giảm giá cho người dùng.
+-   **Điều hướng**: Sử dụng `@react-navigation/native` với Stack và Tab navigators.
+-   **Quản lý trạng thái**: Sử dụng `@reduxjs/toolkit` cho trạng thái toàn cục.
+-   **Đa ngôn ngữ**: Hỗ trợ đa ngôn ngữ (Anh/Việt) thông qua `react-i18next`.
+
+### Cập nhật gần đây (Giao diện Sáng & Thiết kế mới)
+
+Ứng dụng đã trải qua một cuộc đại tu giao diện người dùng để áp dụng **Giao diện Sáng (Clean Light Theme)** hiện đại:
+-   **Màn hình chính**: Giao diện sáng, sạch sẽ với các thẻ sản phẩm và banner carousel.
+-   **Màn hình hồ sơ**: Được thiết kế lại theo phong cách "Cài đặt hệ thống", với các thẻ được nhóm lại, biểu tượng đầy màu sắc và typography rõ ràng.
+-   **Màn hình giỏ hàng**: Cải thiện "Trạng thái trống" với hình minh họa trực quan và nền trắng sạch.
+-   **Quản lý địa chỉ**: Tinh chỉnh màn hình "Thêm/Sửa địa chỉ" với khoảng cách hợp lý và biểu mẫu nhập liệu rõ ràng hơn.
+-   **Xác thực người dùng**: Đã thêm **Màn hình Xác thực** chuyên dụng trong quá trình đăng ký hợp lệ. Người dùng hiện nhận được mã OTP 4 chữ số qua email để xác nhận tài khoản trước khi đăng nhập.
+
+
+### Ảnh chụp màn hình
+
+#### Onboarding (Giới thiệu)
+
+Luồng Onboarding giới thiệu cho người dùng các giá trị cốt lõi của ứng dụng thông qua hướng dẫn vuốt 3 bước:
+1.  **Duyệt sản phẩm**: Khám phá đa dạng các mặt hàng.
+2.  **Đặt hàng dễ dàng**: Quy trình thanh toán liền mạch.
+3.  **Giao hàng nhanh chóng**: Nhận hàng nhanh chóng.
+
+Người dùng có thể điều hướng qua hướng dẫn bằng cách nhấn "Tiếp theo" hoặc bỏ qua bằng "Bỏ qua" để chuyển trực tiếp đến màn hình Đăng nhập.
+
+<p float="left">
+  <img src="mobile/readme_file/onboarding-1.png" width="200" />
+  <img src="mobile/readme_file/onboarding-2.png" width="200" />
+  <img src="mobile/readme_file/onboarding-3.png" width="200" />
+</p>
+
+#### Xác thực (Authentication)
+
+Luồng quản lý người dùng toàn diện bao gồm hướng dẫn sử dụng bảo mật và xử lý lỗi.
+
+<p float="left">
+  <img src="mobile/readme_file/login_ui.png" width="200" />
+  <img src="mobile/readme_file/signup_ui.png" width="200" />
+  <img src="mobile/readme_file/verify_user.png" width="200" />
+  <img src="mobile/readme_file/forgot_password_ui.png" width="200" />
+</p>
+
+##### 1. Đăng nhập (Login)
+*   **Mô tả**: Truy cập tài khoản của bạn bằng email và mật khẩu hoặc Đăng nhập mạng xã hội (Google/Facebook).
+*   **Cách dùng**: Nhập thông tin đăng nhập và nhấn "Đăng nhập". Sử dụng "Ghi nhớ đăng nhập" để duy trì trạng thái đăng nhập.
+*   **Lỗi thường gặp**:
+    *   *"Email hoặc mật khẩu không hợp lệ"*: Kiểm tra lại thông tin đăng nhập.
+    *   *"Lỗi mạng"*: Kiểm tra kết nối internet.
+
+##### 2. Đăng ký (Sign Up)
+*   **Mô tả**: Tạo tài khoản mới để bắt đầu mua sắm.
+*   **Cách dùng**: Cung cấp Thông tin cá nhân hợp lệ (Tên, Email) và Mật khẩu mạnh.
+*   **Xác thực**: Email phải là duy nhất. Mật khẩu phải có tối thiểu 6 ký tự.
+
+##### 3. Xác thực (Verification)
+*   **Mô tả**: Bước bảo mật để xác thực quyền sở hữu email.
+*   **Cách dùng**: Nhập **mã OTP 4 chữ số** được gửi đến email đăng ký của bạn.
+*   **Khắc phục sự cố**:
+    *   *Không nhận được mã?*: Kiểm tra thư mục Spam hoặc đợi 30 giây để yêu cầu mã mới.
+    *   *Mã hết hạn*: Yêu cầu mã OTP mới.
+
+##### 4. Quên mật khẩu (Forgot Password)
+*   **Mô tả**: Khôi phục quyền truy cập vào tài khoản của bạn.
+*   **Cách dùng**: Nhập email đã đăng ký để nhận liên kết/OTP đặt lại mật khẩu.
+
+
+#### Ứng dụng chính (Main Application)
+Khám phá sản phẩm, quản lý giỏ hàng và hoàn tất mua hàng một cách liền mạch.
+
+<p float="left">
+  <img src="mobile/readme_file/home_ui.png" width="200" />
+  <img src="mobile/readme_file/product_detail.png" width="200" />
+  <img src="mobile/readme_file/cart.png" width="200" />
+  <img src="mobile/readme_file/bill.png" width="200" />
+</p>
+
+##### 1. Màn hình chính (Home Screen)
+*   **Mô tả**: Trung tâm khám phá sản phẩm.
+*   **Tính năng**:
+    *   **Danh mục**: Truy cập nhanh vào các loại sản phẩm khác nhau.
+    *   **Carousels**: Banner nổi bật và khuyến mãi.
+    *   **Tìm kiếm**: Tìm mặt hàng cụ thể ngay lập tức.
+
+##### 2. Chi tiết sản phẩm (Product Detail)
+*   **Mô tả**: Chế độ xem chi tiết của một mặt hàng đã chọn.
+*   **Cách dùng**: Chọn kích thước/màu sắc, xem hình ảnh và đọc thông số kỹ thuật.
+*   **Hành động**: "Thêm vào giỏ hàng" hoặc "Mua ngay".
+
+##### 3. Giỏ hàng (Shopping Cart)
+*   **Mô tả**: Xem lại các mặt hàng đã chọn trước khi mua.
+*   **Cách dùng**: Điều chỉnh số lượng hoặc xóa mặt hàng.
+*   **Trạng thái trống**: Thông báo trực quan để bắt đầu mua sắm nếu giỏ hàng trống.
+
+##### 4. Thanh toán (Checkout/Bill)
+*   **Mô tả**: Hoàn tất đơn hàng của bạn.
+*   **Cách dùng**: Chọn địa chỉ giao hàng và phương thức thanh toán.
+*   **Xác nhận**: Xem lại tổng chi phí bao gồm phí vận chuyển.
+
+#### Hồ sơ người dùng & Cài đặt
+Quản lý tùy chọn cá nhân và địa chỉ.
+
+<p float="left">
+  <img src="mobile/readme_file/profile_screen.png" width="200" />
+  <img src="mobile/readme_file/tab_profile.png" width="200" />
+  <img src="mobile/readme_file/address.png" width="200" />
+  <img src="mobile/readme_file/address_create.png" width="200" />
+</p>
+
+##### Tính năng hồ sơ
+*   **Dashboard**: Truy cập thông tin cá nhân, lịch sử đơn hàng và cài đặt.
+*   **Quản lý địa chỉ**: Thêm nhiều địa chỉ giao hàng.
+*   **Cài đặt**: Chuyển đổi các tùy chọn như Ngôn ngữ (EN/VI) hoặc Thông báo.
+
+#### Tính năng Sale & Người bán
+Ưu đãi đặc biệt và công cụ cho người bán.
+
+<p float="left">
+  <img src="mobile/readme_file/sale_screen.png" width="200" />
+  <img src="mobile/readme_file/seller_registration.png" width="200" />
+</p>
+
+##### Tính năng
+*   **Màn hình Sale**: Danh sách chọn lọc các mặt hàng giảm giá.
+*   **Đăng ký người bán**: Luồng để người dùng đăng ký trở thành người bán.
+
+### Khắc phục sự cố
+
+#### Vấn đề Build Android
+
+*   **Thiếu `debug.keystore`**: Ứng dụng yêu cầu debug keystore để ký APK. Nếu bạn thấy lỗi log về keystore, hãy đảm bảo `android/app/debug.keystore` tồn tại. Bạn có thể tạo nó bằng cách dùng lệnh:
+    ```bash
+    keytool -genkey -v -keystore android/app/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000
+    ```
+    *(Mật khẩu: `android`)*
+
+*   **Lỗi `react-native-screens`**: Dự án này yêu cầu `react-native-screens` phiên bản **4.18.0** để tương thích với các thư viện điều hướng khác. Đừng nâng cấp gói này mà không kiểm tra tính tương thích.
+
+#### Lỗi Runtime
+
+*   **"No bundle URL present"**: Đảm bảo Metro bundler đang chạy (`yarn start`).
+*   **"INSTALL_FAILED_INSUFFICIENT_STORAGE"**: Giải phóng dung lượng trên emulator hoặc thiết bị của bạn bằng cách gỡ cài đặt các ứng dụng không sử dụng.
+

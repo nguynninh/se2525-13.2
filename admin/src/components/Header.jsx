@@ -1,29 +1,30 @@
 import React from 'react';
+import { Search, LogOut, ShieldCheck, Sparkles } from 'lucide-react';
 
-const Header = ({ title, showDatePicker = false }) => {
+const Header = ({ user, onLogout, onNavigate }) => {
   return (
-    <div className="bg-white px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between">
-      <h1 className="text-lg lg:text-xl font-bold text-gray-800">{title}</h1>
-      <div className="flex items-center gap-2 lg:gap-4">
-        {showDatePicker && (
-          <div className="relative">
-            <select className="bg-gray-100 text-gray-800 px-3 lg:px-4 py-2 pr-7 lg:pr-8 rounded-lg text-xs lg:text-sm focus:outline-none appearance-none cursor-pointer">
-              <option value="may2022">May 2022</option>
-              <option value="apr2022">April 2022</option>
-              <option value="mar2022">March 2022</option>
-            </select>
-            <svg className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 lg:w-4 lg:h-4 text-gray-800 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        )}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <img
-            src="https://randomuser.me/api/portraits/men/32.jpg"
-            alt="Profile"
-            className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border-2 border-gray-300"
-          />
+    <div className="sticky top-0 z-10 bg-slate-950/70 backdrop-blur border-b border-slate-800 px-8 py-4 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400/60 to-sky-500/60 border border-slate-800 grid place-items-center text-slate-950 font-extrabold">
+          AD
         </div>
+        <div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900 border border-emerald-500/40 text-emerald-200 text-xs font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5" /> Admin role
+          </div>
+          <h1 className="text-xl font-bold text-white mt-1">Tiki Mobile Admin</h1>
+          <p className="text-xs text-slate-400 flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5" /> {user?.email || 'admin'}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onLogout}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-800 bg-slate-900/80 text-sm font-semibold text-slate-100 hover:border-emerald-400/60 hover:text-white"
+        >
+          <LogOut className="w-4 h-4" /> Sign out
+        </button>
       </div>
     </div>
   );

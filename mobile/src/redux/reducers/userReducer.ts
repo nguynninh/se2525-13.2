@@ -6,7 +6,11 @@ interface UserState {
     email: string;
     firstname?: string;
     lastname?: string;
+    first_name?: string;
+    last_name?: string;
     avatar?: string;
+    profile_url?: string;
+    photoUrl?: string; // Add this too since it was referenced
     seller_request_status?: string;
     store?: {
         store_name: string;

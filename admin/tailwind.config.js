@@ -11,8 +11,6 @@ export default {
         accent: '#10b981',
         sidebar: '#f8fafc',
         card: '#ffffff',
-        // Neutral gray background for all main content areas
-        'content-bg': '#eef2f5',
       },
     },
   },

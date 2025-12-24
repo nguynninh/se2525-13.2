@@ -112,7 +112,7 @@ const DrawerCustom = ({ navigation }: any) => {
             }}>
             <AvatarComponent
               shape="circle"
-              imageUrl={user.photoUrl}
+              imageUrl={user?.photoUrl || user?.avatar || user?.profile_url}
               size={60}
               styles={[localStyles.avatar, { borderWidth: 2, borderColor: 'rgba(255,255,255,0.5)' }]}
             />
@@ -123,7 +123,7 @@ const DrawerCustom = ({ navigation }: any) => {
                   ? <SunFog variant="Bold" size={16} color={appColors.warning} />
                   : <Moon variant="Bold" size={16} color={appColors.white} />}
               </RowComponent>
-              <TextComponent text={`${user.lastname} ${user.firstname}` || t('home:new_user')} title color={appColors.white} size={20} font={fontFamilies.bold} />
+              <TextComponent text={`${user?.lastname || user?.last_name || ''} ${user?.firstname || user?.first_name || ''}` || t('home:new_user')} title color={appColors.white} size={20} font={fontFamilies.bold} />
             </View>
           </TouchableOpacity>
 

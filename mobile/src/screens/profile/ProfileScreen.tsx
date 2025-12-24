@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Alert, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { Alert, View, TouchableOpacity, ScrollView, RefreshControl, Platform } from 'react-native';
 import { AvatarComponent, ButtonComponent, ContainerComponent, RowComponent, SectionComponent, SpaceComponent, TextComponent } from '../../components';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager } from 'react-native-fbsdk-next';
@@ -10,7 +10,7 @@ import { removeAuth } from '../../redux/reducers/authReducer';
 import { useTranslation } from '../../../node_modules/react-i18next';
 import { appColors } from '../../constants/appColors';
 import { getProfile, removeUser, userSelector } from '../../redux/reducers/userReducer';
-import { ArrowRight, Camera, PictureFrame, UserSquare, Verify, Shop } from 'iconsax-react-native';
+import { ArrowRight, Camera, PictureFrame, UserSquare, Verify, Shop, Sms, Call, Location, Edit2, ArchiveBook, LogoutCurve, User } from 'iconsax-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileMenuModal } from '../../modals';
 import { MenuItem } from '../../modals/ProfileMenuModal';
@@ -22,6 +22,7 @@ const ProfileScreen = ({ navigation }: any) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
+  const user = useSelector(userSelector);
 
   const onRefresh = async () => {
     setIsRefreshing(true);
@@ -34,8 +35,6 @@ const ProfileScreen = ({ navigation }: any) => {
     }
   };
 
-  const user = useSelector(userSelector);
-
   useEffect(() => {
     dispatch(getProfile() as any);
   }, []);
@@ -44,138 +43,150 @@ const ProfileScreen = ({ navigation }: any) => {
     try {
       setShowProfileMenu(false);
       await new Promise(resolve => setTimeout(resolve, 300));
-
-      const result = await launchImageLibrary({
-        mediaType: 'photo',
-        quality: 1,
-        selectionLimit: 1,
-      });
-
+      const result = await launchImageLibrary({ mediaType: 'photo', quality: 1, selectionLimit: 1 });
       if (result.assets && result.assets[0]) {
-        const imageUri = result.assets[0].uri;
-        navigation.push('AvatarPreview', { imageUri });
+        navigation.push('AvatarPreview', { imageUri: result.assets[0].uri });
       }
-    } catch (error) {
-    }
+    } catch (error) { }
   };
 
   const menuItemsProfileMenu: MenuItem[] = [
-    {
-      icon: <UserSquare size={20} color={appColors.white} variant="Bold" />,
-      title: t('profile:avatar_view'),
-      onPress: () => console.log('Xem ảnh đại diện'),
-    },
-    {
-      icon: <PictureFrame size={20} color={appColors.white} />,
-      title: t('profile:choose_avatar'),
-      onPress: handleChooseAvatar,
-    },
+    { icon: <UserSquare size={20} color={appColors.white} variant="Bold" />, title: t('profile:avatar_view'), onPress: () => console.log('View Avatar') },
+    { icon: <PictureFrame size={20} color={appColors.white} />, title: t('profile:choose_avatar'), onPress: handleChooseAvatar },
   ];
-  return (
-    <ContainerComponent isImageBackground>
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            colors={[appColors.primary]}
-            tintColor={appColors.gray}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <AvatarComponent
-          shape="circle"
-          imageUrl={user.avatar}
-          size={60}
-          dot
-          dotColor={appColors.white}
-          dotPosition="bottom-right"
-          dotIcon={<Camera size={16} color={appColors.gray} variant="Bold" />}
-          border={[2, 'solid', appColors.gray2]}
-          styles={{ alignSelf: 'center', marginTop: 20 }}
-          onPress={() => setShowProfileMenu(true)}
-        />
-        <TextComponent
-          text={`${user.lastname} ${user.firstname} ` || t('common:profile')}
-          title
-          styles={{ textAlign: 'center' }}
-        />
 
-        {/* Seller Status Section replacing UUID */}
-        <View style={{ marginVertical: 20, alignItems: 'center', justifyContent: 'center' }}>
-          {user.seller_request_status === 'pending' ? (
-            <View style={{ alignItems: 'center' }}>
-              <RowComponent>
-                <Shop size={22} color={appColors.text} variant="Bold" />
-                <SpaceComponent width={8} />
-                <TextComponent text={user.store?.store_name || user.email || 'Cửa hàng'} font={fontFamilies.bold} size={18} color={appColors.text} />
-              </RowComponent>
-            </View>
-          ) : (user.seller_request_status === 'approved' && user.store?.store_name) ? (
-            <TouchableOpacity onPress={() => navigation.navigate('MyProducts')}>
-              <RowComponent>
-                <TextComponent
-                  text={user.store.store_name}
-                  font={fontFamilies.bold}
-                  size={18}
-                  color={appColors.text}
-                />
-                <SpaceComponent width={6} />
-                <Verify size={20} color={appColors.primary} variant="Bold" />
-              </RowComponent>
-            </TouchableOpacity>
+  const renderInfoRow = (icon: React.ReactNode, label: string, value: string, isLast?: boolean) => (
+    <RowComponent styles={{ marginBottom: isLast ? 0 : 16 }}>
+      <View style={{
+        width: 40, height: 40, borderRadius: 12,
+        backgroundColor: '#F5F5F5',
+        justifyContent: 'center', alignItems: 'center'
+      }}>
+        {icon}
+      </View>
+      <SpaceComponent width={12} />
+      <View style={{ flex: 1 }}>
+        <TextComponent text={label} size={12} color={appColors.gray5} />
+        <SpaceComponent height={4} />
+        <TextComponent text={value || t('profile:not_updated')} size={15} color={appColors.text} font={fontFamilies.medium} />
+      </View>
+    </RowComponent>
+  );
+
+  const renderMenuRow = (icon: React.ReactNode, label: string, onPress: () => void, isLast?: boolean, color?: string) => (
+    <TouchableOpacity onPress={onPress}>
+      <RowComponent styles={{ paddingVertical: 12 }}>
+        <View style={{
+          width: 40, height: 40, borderRadius: 12,
+          backgroundColor: color ? color + '15' : appColors.primary + '10', // Light background
+          justifyContent: 'center', alignItems: 'center'
+        }}>
+          {icon}
+        </View>
+        <SpaceComponent width={12} />
+        <TextComponent text={label} size={16} color={color || appColors.text} font={fontFamilies.medium} flex={1} />
+        <ArrowRight size={18} color={appColors.gray5} />
+      </RowComponent>
+      {!isLast && <View style={{ height: 1, backgroundColor: '#F5F5F5', marginLeft: 52 }} />}
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#F2F4F8' }}>
+      <View style={{ backgroundColor: appColors.white, paddingBottom: 20, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, paddingTop: Platform.OS === 'android' ? 40 : 60, paddingHorizontal: 20 }}>
+        <RowComponent justify='space-between'>
+          <TextComponent text={t('common:profile')} title size={28} font={fontFamilies.bold} />
+          <TouchableOpacity onPress={() => navigation.navigate('SettingScreen')} style={{ padding: 8, backgroundColor: '#F8F9FA', borderRadius: 12 }}>
+            <Edit2 size={20} color={appColors.text} />
+          </TouchableOpacity>
+        </RowComponent>
+
+        <SpaceComponent height={20} />
+
+        <RowComponent>
+          <AvatarComponent
+            shape="circle"
+            imageUrl={user?.avatar || user?.profile_url}
+            size={80}
+            onPress={() => setShowProfileMenu(true)}
+          />
+          <SpaceComponent width={16} />
+          <View style={{ flex: 1 }}>
+            <TextComponent
+              text={user?.store?.store_name || `${user?.lastname || ''} ${user?.firstname || ''}`}
+              title
+              size={20}
+              font={fontFamilies.bold}
+            />
+            <SpaceComponent height={4} />
+            <TextComponent text={user?.email || 'email@example.com'} color={appColors.gray5} size={14} />
+          </View>
+        </RowComponent>
+      </View>
+
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} colors={[appColors.primary]} />}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+      >
+        {/* Info Card */}
+        <View style={{
+          backgroundColor: appColors.white,
+          borderRadius: 16,
+          padding: 16,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2,
+          marginBottom: 16
+        }}>
+          <TextComponent text={t('profile:personal_info')} size={16} font={fontFamilies.bold} styles={{ marginBottom: 16 }} />
+          {renderInfoRow(<Sms size={20} color={appColors.primary} />, t('profile:email'), user?.email)}
+          {renderInfoRow(<Call size={20} color={appColors.orange} />, t('profile:phone_number'), user?.phone || '')}
+          {renderInfoRow(<Location size={20} color={'#2ecc71'} />, t('profile:address'), user?.address || '', true)}
+        </View>
+
+        {/* Menu Card */}
+        <View style={{
+          backgroundColor: appColors.white,
+          borderRadius: 16,
+          padding: 16,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2
+        }}>
+          <TextComponent text={t('profile:settings')} size={16} font={fontFamilies.bold} styles={{ marginBottom: 8 }} />
+
+          {/* Seller Check */}
+          {user?.seller_request_status === 'approved' ? (
+            renderMenuRow(<Shop size={22} color={appColors.primary} variant='Bold' />, t('profile:seller_dashboard', { defaultValue: 'Cửa hàng của tôi' }), () => navigation.navigate('MyProducts'))
           ) : (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('SellerRegistrationScreen')}
-              style={{
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-                backgroundColor: appColors.primary + '15',
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: appColors.primary + '50'
-              }}
-            >
-              <TextComponent text="Đăng ký nhà bán hàng" color={appColors.primary} font={fontFamilies.medium} />
-            </TouchableOpacity>
+            renderMenuRow(<Shop size={22} color={appColors.primary} />, t('profile:register_seller', { defaultValue: 'Đăng ký bán hàng' }), () => navigation.navigate('SellerRegistrationScreen'))
+          )}
+
+          {renderMenuRow(<ArchiveBook size={22} color={'#FF9F43'} variant='Bold' />, t('profile:favorites', { defaultValue: 'Yêu thích' }), () => { })}
+
+          {renderMenuRow(
+            <LogoutCurve size={22} color={appColors.danger} variant='Bold' />,
+            t('auth:btn_log_out'),
+            async () => {
+              Alert.alert(t('auth:confirm_logout'), t('auth:logout_message'), [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Logout', style: 'destructive', onPress: async () => {
+                    await GoogleSignin.signOut();
+                    await LoginManager.logOut();
+                    await AsyncStorage.removeItem('auth');
+                    dispatch(removeAuth({}));
+                    dispatch(removeUser({}));
+                  }
+                }
+              ]);
+            },
+            true,
+            appColors.danger
           )}
         </View>
 
-        <SectionComponent>
-          <ButtonComponent
-            type="primary"
-            text={t('auth:btn_log_out')}
-            onPress={async () => {
-              await GoogleSignin.signOut();
-              await LoginManager.logOut();
-              await AsyncStorage.removeItem('auth');
-              dispatch(removeAuth({}));
-              dispatch(removeUser({}));
-            }}
-            icon={<ArrowRight size={20} color={appColors.white} />}
-            iconFlex="right"
-          />
-
-          {/* Removed redundant buttons as logic is moved up */}
-          {user.seller_request_status === 'approved' && (
-            <ButtonComponent
-              type="link"
-              text={t('profile:seller_dashboard', { defaultValue: 'Seller Dashboard' })}
-              onPress={() => navigation.navigate('MyProducts')}
-              styles={{ marginTop: 20 }}
-            />
-          )}
-        </SectionComponent>
       </ScrollView>
 
-      <ProfileMenuModal
-        visible={showProfileMenu}
-        onClose={() => setShowProfileMenu(false)}
-        menuItems={menuItemsProfileMenu}
-      />
-    </ContainerComponent>
+      <ProfileMenuModal visible={showProfileMenu} onClose={() => setShowProfileMenu(false)} menuItems={menuItemsProfileMenu} />
+    </View>
   );
 };
 

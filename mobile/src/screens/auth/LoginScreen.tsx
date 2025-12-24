@@ -60,12 +60,17 @@ const LoginScreen = ({ navigation }: any) => {
         'post',
       );
 
-      dispatch(addAuth(res.data.auth));
+      const auth = {
+        accessToken: res.data.accessToken,
+        refreshToken: res.data.refreshToken,
+      };
+
+      dispatch(addAuth(auth));
       dispatch(addUser(res.data.user));
 
       await AsyncStorage.setItem(
         'auth',
-        data.isRemember ? JSON.stringify(res.data.auth) : data.email,
+        data.isRemember ? JSON.stringify(auth) : data.email,
       );
     } catch (error) {
       Alert.alert(t('common:error'), (error as Error).message || t('auth:login_failed'));
@@ -85,9 +90,10 @@ const LoginScreen = ({ navigation }: any) => {
         <Image
           source={require('../../assets/images/logo.png')}
           style={{
-            width: 80,
-            height: 100,
+            width: 120,
+            height: 120,
             marginBottom: 30,
+            resizeMode: 'contain',
           }}
         />
       </SectionComponent>

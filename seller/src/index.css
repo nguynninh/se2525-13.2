@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #eef2f5; /* Solid gray background */
+  overflow-x: hidden;
+}
+
+html, #root {
+  overflow-x: hidden;
+}

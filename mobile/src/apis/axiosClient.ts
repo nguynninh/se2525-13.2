@@ -16,9 +16,8 @@ axiosClient.interceptors.request.use(async (config: any) => {
     if (authData) {
         try {
             const auth = JSON.parse(authData);
-            token = auth.access_token;
+            token = auth.accessToken || auth.access_token;
         } catch (error) {
-            // If parse fails, it might be just the email string (based on LoginScreen logic), so valid token is missing
             console.log('Error parsing auth data', error);
         }
     }

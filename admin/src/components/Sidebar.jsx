@@ -1,84 +1,63 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import {
+  Gauge,
+  Users,
+  BadgeCheck,
+  Store,
+  ClipboardList,
+  Truck,
+  DollarSign,
+  LogOut,
+  Bell,
+} from 'lucide-react';
 
-const Sidebar = () => {
-  const menuItems = [
-    { icon: 'dashboard-grid', label: 'Dashboard', path: '/' },
-    { icon: '/icons/Buy-1.png', label: 'Product', path: '/product' },
-    { icon: '/icons/Ticket.png', label: 'Delivery', path: '/delivery' },
-    { icon: '/icons/sale.png', label: 'Discounts', path: '/discounts' },
-    { icon: '/icons/Notification.png', label: 'Notification', path: '/notifications' },
-    { icon: '/icons/settings.jpg', label: 'Settings', path: '/settings' },
-    { icon: '/icons/signout.png', label: 'Sign out', path: null },
+const Sidebar = ({ active = 'overview', onSelect, onLogout, user }) => {
+  const items = [
+    { icon: Gauge, label: 'Overview', key: 'overview' },
+    { icon: Users, label: 'Users', key: 'users' },
+    { icon: BadgeCheck, label: 'Seller Applications', key: 'sellerApps' },
+    { icon: Store, label: 'Shops', key: 'shops' },
+    { icon: ClipboardList, label: 'Orders', key: 'orders' },
+    { icon: Truck, label: 'Shipments', key: 'shipments' },
+    { icon: DollarSign, label: 'Shipping Rates', key: 'rates' },
+    { icon: Bell, label: 'Notifications', key: 'notifications' },
   ];
 
-  const handleSignOut = () => {
-    const ok = window.confirm('Are you sure you want to sign out?');
-    if (!ok) return;
-    // TODO: wire to real sign-out flow
-    alert('Signed out (demo).');
-  };
-
   return (
-    <div className="w-52 bg-gray-50 h-screen flex flex-col border-r border-gray-200">
-      <div className="p-6">
-        <nav className="space-y-2">
-          {menuItems.map((item, index) =>
-            item.label === 'Sign out' ? (
-              <button
-                key={index}
-                onClick={handleSignOut}
-                className="w-full flex items-center justify-between gap-4 px-4 py-3.5 rounded-xl transition-colors text-gray-500 hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-100">
-                    <img src={item.icon} alt={item.label} className="w-5 h-5 object-contain" />
-                  </div>
-                  <span className="text-[15px] whitespace-nowrap font-medium">
-                    {item.label}
-                  </span>
-                </div>
-              </button>
-            ) : (
-              <NavLink
-                key={index}
-                to={item.path}
-                className={({ isActive }) =>
-                  `w-full flex items-center justify-between gap-4 px-4 py-3.5 rounded-xl transition-colors ${
-                    isActive
-                      ? 'bg-gray-100 text-gray-800'
-                      : 'text-gray-500 hover:bg-gray-100'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isActive ? 'bg-gray-200' : 'bg-gray-100'
-                      }`}>
-                        {item.icon === 'dashboard-grid' ? (
-                          <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                            <rect x="3" y="3" width="6" height="6" rx="1.5" />
-                            <rect x="11" y="3" width="6" height="6" rx="1.5" />
-                            <rect x="3" y="11" width="6" height="6" rx="1.5" />
-                            <rect x="11" y="11" width="6" height="6" rx="1.5" />
-                          </svg>
-                        ) : (
-                          <img src={item.icon} alt={item.label} className="w-5 h-5 object-contain" />
-                        )}
-                      </div>
-                      <span className={`text-[15px] whitespace-nowrap ${isActive ? 'font-semibold' : 'font-medium'}`}>
-                        {item.label}
-                      </span>
-                    </div>
-                  </>
-                )}
-              </NavLink>
-            )
-          )}
-        </nav>
+    <div className="w-72 bg-slate-900/60 backdrop-blur border-r border-slate-800 min-h-screen p-6 flex flex-col text-slate-100">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-11 h-11 bg-gradient-to-br from-emerald-400 to-sky-500 rounded-2xl flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-emerald-500/20">
+          AD
+        </div>
+        <div>
+          <p className="text-xs text-slate-400 uppercase tracking-wide">Admin console</p>
+          <p className="text-base font-semibold text-slate-50">{user?.email || 'Server Admin'}</p>
+        </div>
       </div>
+
+      <nav className="space-y-2 flex-1">
+        {items.map((item) => (
+          <button
+            key={item.key}
+            onClick={() => onSelect?.(item.key)}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all border ${
+              active === item.key
+                ? 'bg-slate-800/80 border-emerald-400/60 text-white shadow-lg shadow-emerald-500/15'
+                : 'bg-slate-900/50 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+            }`}
+          >
+            <item.icon className="w-5 h-5" />
+            <span className="text-sm font-semibold flex-1 text-left">{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <button
+        onClick={onLogout}
+        className="mt-6 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl w-full border border-slate-800 bg-slate-900/80 text-sm font-semibold text-slate-200 hover:bg-slate-800/80"
+      >
+        <LogOut className="w-4 h-4" /> Sign out
+      </button>
     </div>
   );
 };

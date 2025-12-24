@@ -113,25 +113,21 @@ Chỉ với vài thao tác đơn giản, thế giới mua sắm sẽ hiện ra t
     ```
 
 4.  **Chạm vào thế giới số (Run App):**
-    -   **Android**: `yarn android`
-    -   **iOS**: `yarn ios`
 
-    *Mẹo nhỏ: `yarn android` sẽ tự động rèn cho bạn một chiếc chìa khóa vạn năng `debug.keystore` nếu bạn chưa có.*
-   *Lưu ý: Lệnh này sẽ tự động tạo `debug.keystore` nếu chưa có trong `android/app`.*
+    Đây là giây phút sự thật, hãy đưa ứng dụng từ những dòng mã khô khan lên màn hình sống động:
 
-#### iOS
+    *   **Với Android (Biệt đội Robot):**
+        Đảm bảo thiết bị Emulator đã bật hoặc điện thoại đã kết nối qua USB. Sau đó, ra lệnh:
+        ```bash
+        yarn android
+        ```
+        *Bí mật: Nếu bạn chưa có chìa khóa, hệ thống sẽ tự động rèn một chiếc `debug.keystore` để mở lối vào khung trời Android.*
 
-Để chạy ứng dụng iOS:
-
-1.  Khởi động Metro bundler:
-    ```bash
-    yarn start
-    ```
-
-2.  Chạy ứng dụng iOS:
-    ```bash
-    yarn ios
-    ```
+    *   **Với iOS (Hệ sinh thái Táo):**
+        Khởi động Simulator hoặc kết nối iPhone của bạn. Mở cổng kết nối bằng lệnh:
+        ```bash
+        yarn ios
+        ```
     
 ### Cấu trúc dự án - Bản đồ kho báu
 

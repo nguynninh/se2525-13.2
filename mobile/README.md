@@ -102,6 +102,16 @@ mobile/
 -   **Profile**: User settings, Address management.
 -   **Navigation**: Uses `@react-navigation/native` with Stack and Tab navigators.
 -   **State Management**: Uses `@reduxjs/toolkit` for global state.
+-   **Localization**: Multi-language support (English/Vietnamese) via `react-i18next`.
+
+## Recent Updates (Light Theme & Redesign)
+
+The application has undergone a significant UI overhaul to adopt a modern **Clean Light Theme**:
+-   **Home Screen**: Bright, clean interface with product cards and banner carousels.
+-   **Profile Screen**: Redesigned with a "System Settings" style layout, featuring grouped cards, colorful icons, and clear typography.
+-   **Cart Screen**: Improved "Empty State" with visual illustrations and clean white background.
+-   **Address Management**: Refined "Add/Edit Address" screens with proper spacing and clearer input forms.
+
 
 ## Screenshots
 

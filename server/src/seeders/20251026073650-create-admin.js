@@ -8,35 +8,41 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const now = new Date();
         const adminHash = await bcrypt.hash('Admin@123', 10);
-        const email = 'admin@example.com';
+        const admins = [
+            { email: 'admin@example.com', first_name: 'System', last_name: 'Admin', password: adminHash },
+            { email: 'admin2@example.com', first_name: 'System', last_name: 'Admin2', password: adminHash },
+        ];
 
-        const exists = await queryInterface.sequelize.query(
-            `SELECT id FROM users WHERE email = :email LIMIT 1`,
-            { replacements: { email }, type: Sequelize.QueryTypes.SELECT },
+        const existing = await queryInterface.sequelize.query(
+            `SELECT email FROM users WHERE email IN (:emails)`,
+            { replacements: { emails: admins.map((a) => a.email) }, type: Sequelize.QueryTypes.SELECT },
         );
+        const existingEmails = new Set(existing.map((r) => r.email));
 
-        if (exists && exists.length > 0) {
-            // admin already exists -> skip
-            return;
+        const rows = admins
+            .filter((a) => !existingEmails.has(a.email))
+            .map((a) => ({
+                first_name: a.first_name,
+                last_name: a.last_name,
+                email: a.email,
+                password: a.password,
+                role: 'admin',
+                profile_url: null,
+                created_at: now,
+                updated_at: now,
+            }));
+
+        if (rows.length > 0) {
+            await queryInterface.bulkInsert('users', rows, {});
         }
-
-        await queryInterface.bulkInsert(
-            'users',
-            [
-                {
-                    first_name: 'System',
-                    last_name: 'Admin',
-                    email,
-                    password: adminHash,
-                    role: 'admin',
-                    profile_url: null,
-                },
-            ],
-            {},
-        );
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete('users', { email: 'admin@example.com' }, {});
+        const { Op } = Sequelize;
+        await queryInterface.bulkDelete(
+            'users',
+            { email: { [Op.in]: ['admin@example.com', 'admin2@example.com'] } },
+            {},
+        );
     },
 };

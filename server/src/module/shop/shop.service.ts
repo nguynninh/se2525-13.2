@@ -352,7 +352,7 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
             transaction: tx,
         });
         if (existed) {
-            throw new ValidationError('shop:already_exists');
+            return getMyShop(userId);
         }
 
         const nameExisted = await Shop.findOne({

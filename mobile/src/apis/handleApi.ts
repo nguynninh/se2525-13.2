@@ -12,7 +12,7 @@ class HandleAPI {
   handleApi = async (
     url: string,
     data?: any,
-    method: 'get' | 'post' | 'put' | 'delete' = 'get'
+    method: 'get' | 'post' | 'put' | 'delete' | 'patch' = 'get'
   ) => {
     try {
       const accessToken = this.getAccessToken();

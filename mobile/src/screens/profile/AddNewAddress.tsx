@@ -1,5 +1,5 @@
 import { View, Text, Switch, ImageBackground, Platform, TouchableOpacity, ScrollView, Modal, FlatList, Alert } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ButtonComponent, ContainerComponent, GlassView, InputComponent, RowComponent, SectionComponent, SpaceComponent, TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
@@ -9,8 +9,6 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import addressApi from '../../apis/addressApi';
 
 const AddNewAddress = () => {
-    // ... (same as before)
-
     const handleSave = async () => {
         if (!name || !phone || !address || !selectedProvince || !selectedWard) {
             Alert.alert(t('profile:error'), t('profile:fill_all_fields'));
@@ -18,14 +16,15 @@ const AddNewAddress = () => {
         }
 
         const data = {
-            name,
-            phone,
-            address,
-            province: JSON.stringify(selectedProvince),
-            district: '',
-            ward: JSON.stringify(selectedWard),
+            receiver_name: name,
+            receiver_phone: phone,
+            address: {
+                address_line: address,
+                ward_id: selectedWard.id
+            },
             is_default: isDefault
         };
+        console.log('Saving address payload:', JSON.stringify(data));
 
         setIsLoading(true);
         try {
@@ -44,16 +43,31 @@ const AddNewAddress = () => {
         }
     };
 
+    useEffect(() => {
+        const getProvinces = async () => {
+            try {
+                const res = await addressApi.getProvinces();
+                const data = Array.isArray(res) ? res : (res && res.data ? res.data : []);
+                setProvinces(data);
+            } catch (error) {
+                console.log('Error fetching provinces:', error);
+            }
+        };
+        getProvinces();
+    }, []);
+
     const handleOpenModal = async (type: 'province' | 'ward') => {
         setSelectionType(type);
         setIsVisible(true);
+        console.log('Opening modal for:', type);
 
         if (type === 'province' && provinces.length === 0) {
             try {
+                console.log('Fetching provinces...');
                 const res = await addressApi.getProvinces();
-                if (res && res.data) {
-                    setProvinces(res.data);
-                }
+                const data = Array.isArray(res) ? res : (res && res.data ? res.data : []);
+                console.log('Provinces fetched:', data.length);
+                setProvinces(data);
             } catch (error) {
                 console.log('Error fetching provinces:', error);
                 Alert.alert(t('profile:error'), 'Can not fetch provinces');
@@ -61,9 +75,8 @@ const AddNewAddress = () => {
         } else if (type === 'ward' && selectedProvince) {
             try {
                 const res = await addressApi.getWards(selectedProvince.code);
-                if (res && res.data) {
-                    setWards(res.data);
-                }
+                const data = Array.isArray(res) ? res : (res && res.data ? res.data : []);
+                setWards(data);
             } catch (error) {
                 console.log('Error fetching wards:', error);
                 Alert.alert(t('profile:error'), 'Can not fetch wards');
@@ -79,7 +92,6 @@ const AddNewAddress = () => {
     const [address, setAddress] = useState('');
     const [isDefault, setIsDefault] = useState(false);
 
-    // Address Selection State
     const [provinces, setProvinces] = useState<any[]>([]);
     const [wards, setWards] = useState<any[]>([]);
 
@@ -94,23 +106,16 @@ const AddNewAddress = () => {
     React.useEffect(() => {
         if (route.params && (route.params as any).addressData) {
             const data = (route.params as any).addressData;
-            setName(data.name);
-            setPhone(data.phone);
-            setAddress(data.address);
-            setIsDefault(data.is_default); // API returns is_default, mock was isDefault. checking both might be safer but model says is_default
-
-            if (data.province) {
-                try {
-                    const p = typeof data.province === 'string' ? JSON.parse(data.province) : data.province;
-                    setSelectedProvince(p);
-                } catch (e) { console.log(e) }
+            setName(data.receiver_name || data.name);
+            setPhone(data.receiver_phone || data.phone);
+            if (data.address && typeof data.address === 'object') {
+                setAddress(data.address.address_line);
+                if (data.address.ward) setSelectedWard(data.address.ward);
+                if (data.address.ward?.province) setSelectedProvince(data.address.ward.province);
+            } else {
+                setAddress(data.address);
             }
-            if (data.ward) {
-                try {
-                    const w = typeof data.ward === 'string' ? JSON.parse(data.ward) : data.ward;
-                    setSelectedWard(w);
-                } catch (e) { console.log(e) }
-            }
+            setIsDefault(data.is_default);
         }
     }, [route.params]);
 
@@ -132,7 +137,7 @@ const AddNewAddress = () => {
     return (
         <View style={{ flex: 1, backgroundColor: appColors.white2 }}>
             <View style={{
-                paddingTop: Platform.OS === 'ios' ? 50 : 30,
+                paddingTop: Platform.OS === 'ios' ? 60 : 42,
                 paddingHorizontal: 16,
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -171,33 +176,55 @@ const AddNewAddress = () => {
                             type="phone-pad"
                             allowClear
                         />
-                    </SectionComponent>
-
-                    <SectionComponent styles={{ backgroundColor: appColors.white, borderRadius: 12, padding: 16, marginBottom: 16 }}>
+                        <SpaceComponent height={16} />
                         <RowComponent>
                             <View style={{ flex: 1 }}>
-                                <InputComponent
-                                    value={selectedProvince ? selectedProvince.name : ''}
-                                    onChange={() => { }}
-                                    placeholder={t('profile:province')}
-                                    suffix={<ArrowDown2 size={20} color={appColors.gray} />}
-                                    disabled
-                                    onPress={() => handleOpenModal('province')}
-                                />
+                                <TouchableOpacity onPress={() => handleOpenModal('province')}>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        borderRadius: 12,
+                                        borderWidth: 1,
+                                        borderColor: appColors.gray8,
+                                        minHeight: 56,
+                                        alignItems: 'center',
+                                        paddingHorizontal: 15,
+                                        backgroundColor: appColors.white,
+                                    }}>
+                                        <View style={{ flex: 1 }}>
+                                            <TextComponent
+                                                text={selectedProvince ? selectedProvince.name : t('profile:province')}
+                                                color={selectedProvince ? appColors.text : '#747688'}
+                                            />
+                                        </View>
+                                        <ArrowDown2 size={20} color={appColors.gray} />
+                                    </View>
+                                </TouchableOpacity>
                             </View>
-                            <SpaceComponent width={12} />
+                            <SpaceComponent width={16} />
                             <View style={{ flex: 1 }}>
-                                <InputComponent
-                                    value={selectedWard ? selectedWard.name : ''}
-                                    onChange={() => { }}
-                                    placeholder={t('profile:ward')}
-                                    suffix={<ArrowDown2 size={20} color={appColors.gray} />}
-                                    disabled
-                                    onPress={() => {
-                                        if (selectedProvince) handleOpenModal('ward');
-                                        else Alert.alert(t('profile:warning'), t('profile:select_province_first'));
-                                    }}
-                                />
+                                <TouchableOpacity onPress={() => {
+                                    if (selectedProvince) handleOpenModal('ward');
+                                    else Alert.alert(t('profile:warning'), t('profile:select_province_first'));
+                                }}>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        borderRadius: 12,
+                                        borderWidth: 1,
+                                        borderColor: appColors.gray8,
+                                        minHeight: 56,
+                                        alignItems: 'center',
+                                        paddingHorizontal: 15,
+                                        backgroundColor: appColors.white,
+                                    }}>
+                                        <View style={{ flex: 1 }}>
+                                            <TextComponent
+                                                text={selectedWard ? selectedWard.name : t('profile:ward')}
+                                                color={selectedWard ? appColors.text : '#747688'}
+                                            />
+                                        </View>
+                                        <ArrowDown2 size={20} color={appColors.gray} />
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </RowComponent>
                         <SpaceComponent height={16} />
@@ -263,6 +290,7 @@ const AddNewAddress = () => {
                         </RowComponent>
                         <SpaceComponent height={16} />
                         <FlatList
+                            showsVerticalScrollIndicator={false}
                             data={selectionType === 'province' ? provinces : wards}
                             keyExtractor={(item) => item.code}
                             renderItem={({ item }) => (
@@ -270,11 +298,27 @@ const AddNewAddress = () => {
                                     <TextComponent text={item.name} color={appColors.text} size={16} />
                                 </TouchableOpacity>
                             )}
+                            ListEmptyComponent={
+                                <View style={{ padding: 20, alignItems: 'center' }}>
+                                    <TextComponent text="No data found" color={appColors.gray} />
+                                    {selectionType === 'province' && (
+                                        <ButtonComponent
+                                            text="Retry"
+                                            type="link"
+                                            onPress={async () => {
+                                                const res = await addressApi.getProvinces();
+                                                const data = Array.isArray(res) ? res : (res && res.data ? res.data : []);
+                                                setProvinces(data);
+                                            }}
+                                        />
+                                    )}
+                                </View>
+                            }
                         />
                     </View>
                 </View>
             </Modal>
-        </View>
+        </View >
     );
 };
 

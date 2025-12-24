@@ -40,7 +40,7 @@
     "save": "Lưu",
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
-    "ward": "Phường/Xã",
+    "ward": "Xã",
     "product_options": "Tùy chọn sản phẩm",
     "product_description": "Mô tả sản phẩm",
     "related_products": "Sản phẩm liên quan",
@@ -54,5 +54,11 @@
     "edit_profile": "Chỉnh sửa hồ sơ",
     "register_seller": "Đăng ký bán hàng",
     "seller_dashboard": "Quản lý bán hàng",
-    "favorites": "Yêu thích"
+    "favorites": "Yêu thích",
+    "confirm": "Xác nhận",
+    "delete_confirm_message": "Bạn có chắc chắn muốn xoá địa chỉ này không?",
+    "cancel": "Hủy",
+    "delete": "Xoá",
+    "error": "Lỗi",
+    "success": "Thành công"
 }

@@ -196,9 +196,9 @@ const ProfileScreen = ({ navigation }: any) => {
             t('auth:btn_log_out'),
             async () => {
               Alert.alert(t('auth:confirm_logout'), t('auth:logout_message'), [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common:cancel'), style: 'cancel' },
                 {
-                  text: 'Logout', style: 'destructive', onPress: async () => {
+                  text: t('auth:btn_log_out'), style: 'destructive', onPress: async () => {
                     await GoogleSignin.signOut();
                     await LoginManager.logOut();
                     await AsyncStorage.removeItem('auth');

@@ -60,5 +60,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "convert_to_personal": "Switch to Personal Account",
+    "convert_to_seller": "Switch to Seller Account",
+    "not_authorized_feature": "You are not authorized for this feature currently"
 }

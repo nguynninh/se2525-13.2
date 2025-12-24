@@ -1,7 +1,7 @@
 import { apiRequest, buildQueryString } from './client';
 
-// Categories (server mounts productRoute at '/'; endpoint is /api/categories)
-export const fetchCategories = () => apiRequest('/categories');
+// Categories (server endpoint: GET /api/products/categories)
+export const fetchCategories = () => apiRequest('/products/categories');
 export const createCategory = (payload) =>
   apiRequest('/categories', {
     method: 'post',

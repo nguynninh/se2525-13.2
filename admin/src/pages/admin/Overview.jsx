@@ -17,7 +17,7 @@ const Overview = ({ onNavigate }) => {
       setLoading(true); setError('');
       try {
         const [u, sApp, sh, ord] = await Promise.all([
-          api.get('/api/users/admin/users', { signal: controller.signal }),
+          api.get('/api/user/admin/users', { signal: controller.signal }),
           api.get('/api/seller-applications/admin/pending', { signal: controller.signal }),
           api.get('/api/shop/admin', { signal: controller.signal }),
           api.get('/api/user/admin/orders', { signal: controller.signal }),

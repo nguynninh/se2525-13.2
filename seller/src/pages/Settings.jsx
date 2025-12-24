@@ -4,7 +4,9 @@ import { getSellerProfile, getMyShop, updateMyShop, createMyShop, updateMyAvatar
 import { fetchProvinces, fetchWards } from '../api/shipping';
 
 const Settings = () => {
-  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', profile_url: '' });
+  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', phone: '', profile_url: '' });
+  const [sellerId, setSellerId] = useState('');
+  const [sellerStatus, setSellerStatus] = useState('');
   const [shop, setShop] = useState({
     name: '',
     slug: '',
@@ -48,9 +50,17 @@ const Settings = () => {
           first_name: p.user.first_name || '',
           last_name: p.user.last_name || '',
           email: p.user.email || '',
+          phone: p.user.phone || '',
           profile_url: p.user.profile_url || '',
         });
         setAvatarPreview(p.user.profile_url || '');
+      }
+      if (p?.seller) {
+        setSellerId(p.seller.id || '');
+        setSellerStatus(p.seller.status || '');
+      } else {
+        setSellerId('');
+        setSellerStatus('');
       }
       if (s) {
         const addressLine =
@@ -238,6 +248,30 @@ const Settings = () => {
               )}
             </div>
             <div className="flex-1 space-y-2">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs text-gray-500">Name</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {[profile.first_name, profile.last_name].filter(Boolean).join(' ') || '--'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-semibold text-gray-900">{profile.email || '--'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Phone</p>
+                  <p className="text-sm font-semibold text-gray-900">{profile.phone || '--'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Seller ID</p>
+                  <p className="text-sm font-semibold text-gray-900">{sellerId || '--'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Seller status</p>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">{sellerStatus || '--'}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

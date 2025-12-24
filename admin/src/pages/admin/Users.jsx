@@ -39,17 +39,14 @@ const Users = () => {
     try {
       const searchVal = opts.search !== undefined ? opts.search : searchTerm;
       const roleVal = opts.role !== undefined ? opts.role : roleFilter;
-      const { data } = await tryPaths(
-        ['/api/users/admin/users', '/api/user/admin/users', '/api/admin/users'],
-        {
-          method: 'get',
-          signal,
-          params: {
-            search: searchVal?.trim() || undefined,
-            role: roleVal || undefined,
-          },
+      const { data } = await tryPaths(['/api/user/admin/users', '/api/admin/users'], {
+        method: 'get',
+        signal,
+        params: {
+          search: searchVal?.trim() || undefined,
+          role: roleVal || undefined,
         },
-      );
+      });
       const list = safeArray(data);
       setUsers(list);
       if (list.length === 0) {
@@ -81,10 +78,7 @@ const Users = () => {
     setDetailLoading(true);
     setDetailError('');
     try {
-      const res = await tryPaths(
-        [`/api/user/admin/users/${userId}`, `/api/users/admin/users/${userId}`, `/api/admin/users/${userId}`],
-        { method: 'get' },
-      );
+      const res = await tryPaths([`/api/user/admin/users/${userId}`, `/api/admin/users/${userId}`], { method: 'get' });
       const payload = res?.data ?? res;
       setDetail(payload);
       setDetailCache((prev) => ({ ...prev, [userId]: payload }));
@@ -115,9 +109,10 @@ const Users = () => {
     if (!user?.id) return;
     const ok = window.confirm('Are you sure you want to delete this user? This will cascade linked records.');
     if (!ok) return;
+    setRoleFilter('');
     await withAction(() =>
       tryPaths(
-        [`/api/user/admin/users/${user.id}`, `/api/users/admin/users/${user.id}`, `/api/admin/users/${user.id}`],
+        [`/api/user/admin/users/${user.id}`, `/api/admin/users/${user.id}`],
         { method: 'delete' },
       ),
     );
@@ -144,7 +139,7 @@ const Users = () => {
     const existing = user.seller?.id || user.seller_id;
     if (existing) return existing;
     const detailRes = await tryPaths(
-      [`/api/user/admin/users/${user.id}`, `/api/users/admin/users/${user.id}`, `/api/admin/users/${user.id}`],
+      [`/api/user/admin/users/${user.id}`, `/api/admin/users/${user.id}`],
       { method: 'get' },
     );
     const sid = detailRes?.data?.seller?.id || detailRes?.seller?.id || '';
@@ -160,9 +155,10 @@ const Users = () => {
       if (!window.confirm(`Execute ${action} for this seller?`)) return;
 
       if (action === 'delete') {
+        setRoleFilter('');
         await withAction(() =>
           tryPaths(
-            [`/api/user/admin/sellers/${sellerId}`, `/api/users/admin/sellers/${sellerId}`, `/api/admin/sellers/${sellerId}`],
+            [`/api/user/admin/sellers/${sellerId}`, `/api/admin/sellers/${sellerId}`],
             { method: 'delete' },
           ),
         );
@@ -171,7 +167,6 @@ const Users = () => {
           tryPaths(
             [
               `/api/user/admin/sellers/${sellerId}/status`,
-              `/api/users/admin/sellers/${sellerId}/status`,
               `/api/admin/sellers/${sellerId}/status`,
             ],
             { method: 'patch', data: { status: statusMap[action] } },

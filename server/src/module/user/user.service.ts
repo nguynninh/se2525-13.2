@@ -178,6 +178,21 @@ export const adminDeleteUser = async (userId: string): Promise<void> => {
         throw new NotFoundError('user:user_not_found');
     }
 
+    if (user.role === 'seller') {
+        const seller = await Seller.findOne({ where: { user_id: userId } });
+        if (seller) {
+            await adminDeleteSeller(seller.id);
+        } else {
+            user.role = 'customer';
+            await user.save();
+        }
+    } else if (user.role === 'customer') {
+        const customer = await Customer.findOne({ where: { user_id: userId } });
+        if (customer) {
+            await customer.destroy();
+        }
+    }
+
     await user.destroy();
 };
 

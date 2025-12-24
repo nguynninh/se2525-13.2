@@ -85,7 +85,12 @@ const Verification = ({ navigation, route }: any) => {
           'post',
         );
 
-        navigation.navigate('LoginScreen');
+        Alert.alert(t('common:success'), t('auth:sign_up_success'), [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('LoginScreen'),
+          },
+        ]);
       } catch (error) {
         setErrorMessage((error as Error).message || t('auth:invalid_verification_code'));
       } finally {

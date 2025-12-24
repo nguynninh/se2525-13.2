@@ -99,7 +99,8 @@ mobile/
 
 -   **Authentication**: Login, Sign Up, Forgot Password, Social Login.
 -   **Commerce**: Product listing, Product Details, Cart, Checkout.
--   **Profile**: User settings, Address management.
+-   **Profile**: User settings, Address management, and **Seller Dashboard**.
+-   **Promotions**: Dedicated Sale Screen highlighting discounted products for users.
 -   **Navigation**: Uses `@react-navigation/native` with Stack and Tab navigators.
 -   **State Management**: Uses `@reduxjs/toolkit` for global state.
 -   **Localization**: Multi-language support (English/Vietnamese) via `react-i18next`.
@@ -160,6 +161,13 @@ Users can navigate through the guide using "Next" or bypass it with "Skip" to ju
   <img src="readme_file/profile_screen.png" width="200" />
   <img src="readme_file/address.png" width="200" />
   <img src="readme_file/address_create.png" width="200" />
+</p>
+
+### Sale & Seller Features
+**Promotions & Seller Center**
+<p float="left">
+  <img src="readme_file/sale_screen.png" width="200" />
+  <img src="readme_file/seller_registration.png" width="200" />
 </p>
 
 ## Troubleshooting

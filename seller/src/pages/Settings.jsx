@@ -39,21 +39,21 @@ const Settings = () => {
       typeof data.address === 'string'
         ? data.address
         : data.address?.address_line || data.location || data.address_line || '';
+    const hasAddress = Boolean(addressLine);
     setShop((prev) => ({
       ...prev,
-      name: data.name || '',
-      slug: data.slug || '',
-      address: addressLine,
-      description: data.description || '',
-      hotline: data.hotline || '',
-      logo_url: data.logo_url || '',
-      banner_url: data.banner_url || '',
+      name: data.name || prev.name,
+      slug: data.slug || prev.slug,
+      address: hasAddress ? addressLine : prev.address,
+      description: data.description ?? prev.description,
+      hotline: data.hotline ?? prev.hotline,
+      logo_url: data.logo_url ?? prev.logo_url,
+      banner_url: data.banner_url ?? prev.banner_url,
     }));
-    const wardCode =
-      data.address?.ward?.id || data.address?.ward?.code || data.address?.ward_code || data.ward_id || '';
+    const wardId = data.address?.ward?.id || data.address?.ward_id || data.address?.ward?.code || data.ward_id || '';
     const provinceCode = data.address?.ward?.province?.code || data.address?.province_code || '';
-    if (wardCode) setSelectedWard(wardCode);
     if (provinceCode) setSelectedProvince(provinceCode);
+    if (wardId) setSelectedWard(wardId);
     setShopId(data.id || data._id || null);
     setShopStatus(data.status || 'pending');
     setShopLoadError('');
@@ -163,28 +163,41 @@ const Settings = () => {
     setError('');
     setMessage('');
     try {
+      if (!shop.name.trim()) {
+        setError('Store name is required.');
+        setSaving(false);
+        return;
+      }
+      if (!selectedProvince) {
+        setError('Please select province.');
+        setSaving(false);
+        return;
+      }
       if (!shop.address.trim()) {
         setError('Address is required.');
         setSaving(false);
         return;
       }
-      const ward = selectedWard || shop.address?.ward_id;
-      if (!ward) {
+      // Prefer ward.id from list to ensure UUID sent even if dropdown value is code
+      const wardMatch = wards.find((w) => String(w.id) === String(selectedWard));
+      const wardValue = wardMatch?.id || selectedWard || shop.address?.ward_id;
+      if (!wardValue) {
         setError('Please select ward.');
         setSaving(false);
         return;
       }
-      const wardValue = (selectedWard || shop.address?.ward_id || '').toString().trim();
+      const wardValueStr = wardValue.toString().trim();
       const payload = {
         name: shop.name?.trim(),
-        slug: shop.slug?.trim(),
         description: shop.description || '',
-        hotline: shop.hotline || '',
+        hotline: shop.hotline?.trim() || undefined,
         address: {
           address_line: shop.address,
-          ward_id: wardValue,
+          ward_id: wardValueStr,
         },
       };
+      const slugValue = shop.slug?.trim();
+      if (slugValue) payload.slug = slugValue;
       if (shop.logo_url) payload.logo_url = shop.logo_url;
       if (shop.banner_url) payload.banner_url = shop.banner_url;
       if (shopId) {
@@ -418,7 +431,7 @@ const Settings = () => {
                 >
                   <option value="">{loadingWard ? 'Loading...' : 'Select ward'}</option>
                   {wards.map((w) => (
-                    <option key={w.id || w.code} value={(w.id || w.code || '').toString()}>
+                    <option key={w.id || w.code} value={(w.id || '').toString()}>
                       {w.name}
                     </option>
                   ))}

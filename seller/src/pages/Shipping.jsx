@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Truck, RefreshCcw, Check, X } from 'lucide-react';
 import { getSellerOrders, confirmSellerOrder, rejectSellerOrder, updateSellerOrderDeliveryStatus } from '../api/seller';
+import { extractList } from '../api/client';
 
 const Shipping = () => {
   const [orders, setOrders] = useState([]);
@@ -16,14 +17,7 @@ const Shipping = () => {
     setError('');
     try {
       const allOrdersData = await getSellerOrders();
-      const list = Array.isArray(allOrdersData?.items)
-        ? allOrdersData.items
-        : Array.isArray(allOrdersData)
-          ? allOrdersData
-          : Array.isArray(allOrdersData?.data)
-            ? allOrdersData.data
-            : [];
-      setOrders(list);
+      setOrders(extractList(allOrdersData, ['orders']));
     } catch (err) {
       setError(err.message || 'Failed to load shipping data.');
     } finally {

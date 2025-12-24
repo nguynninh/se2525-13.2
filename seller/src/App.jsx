@@ -5,7 +5,6 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import Product from './pages/Product';
 import AddProduct from './pages/AddProduct';
-import AddCategory from './pages/AddCategory';
 import QA from './pages/QA';
 import Shipping from './pages/Shipping';
 import ShippingRates from './pages/ShippingRates';
@@ -33,8 +32,6 @@ const AppContent = ({ user, onLogout }) => {
     title = 'Products';
   } else if (location.pathname === '/add-product') {
     title = 'Add Product';
-  } else if (location.pathname === '/add-category') {
-    title = 'Add Category';
   } else if (location.pathname === '/qa') {
     title = 'Q&A';
   } else if (location.pathname === '/shipping') {
@@ -58,7 +55,6 @@ const AppContent = ({ user, onLogout }) => {
             <Route path="/products" element={<Product />} />
             <Route path="/product" element={<Product />} />
             <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/add-category" element={<AddCategory />} />
             <Route path="/qa" element={<QA />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/shipping/rates" element={<ShippingRates />} />

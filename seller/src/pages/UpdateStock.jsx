@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { extractList } from '../api/client';
 import { fetchProducts, fetchProductDetail, createProductStock, updateProductStock } from '../api/product';
 
 const UpdateStock = () => {
@@ -16,7 +17,7 @@ const UpdateStock = () => {
     setError('');
     try {
       const data = await fetchProducts();
-      const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+      const list = extractList(data, ['products']);
       setProducts(list);
       if (list.length) {
         setSelectedProductId(list[0].id || list[0]._id);

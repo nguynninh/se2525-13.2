@@ -54,6 +54,21 @@ export const apiRequest = async (path, options = {}) => {
   return response.data;
 };
 
+// Normalize various list response shapes into a flat array
+export const extractList = (payload, extraKeys = []) => {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+
+  const candidateKeys = ['items', 'data', ...extraKeys];
+  for (const key of candidateKeys) {
+    const value = payload[key];
+    if (Array.isArray(value)) return value;
+  }
+
+  const firstArrayKey = Object.keys(payload).find((key) => Array.isArray(payload[key]));
+  return firstArrayKey ? payload[firstArrayKey] : [];
+};
+
 export const buildQueryString = (params = {}) => {
   const query = new URLSearchParams();
 

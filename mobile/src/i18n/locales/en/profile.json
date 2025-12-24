@@ -63,5 +63,22 @@
     "success": "Success",
     "convert_to_personal": "Switch to Personal Account",
     "convert_to_seller": "Switch to Seller Account",
-    "not_authorized_feature": "You are not authorized for this feature currently"
+    "not_authorized_feature": "You are not authorized for this feature currently",
+    "shop_info": "Shop Information",
+    "shop_name_placeholder": "Shop Name *",
+    "contact_phone_placeholder": "Contact Phone *",
+    "province_placeholder": "Province/City *",
+    "ward_placeholder": "Ward/Commune *",
+    "address_placeholder": "House number, street name *",
+    "tax_code_placeholder": "Tax Code",
+    "images": "Images",
+    "logo": "Logo",
+    "cover_image": "Cover Image",
+    "submit_registration": "Submit Registration",
+    "select_province": "Select Province/City",
+    "select_ward": "Select Ward/Commune",
+    "close": "Close",
+    "fill_required_fields": "Please fill in all required fields (Name, Phone, Address, Province, Ward)",
+    "registration_success_message": "Registration successful! Please wait for approval.",
+    "select_province_first": "Please select Province/City first"
 }

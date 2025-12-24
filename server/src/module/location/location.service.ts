@@ -68,6 +68,7 @@ export const listWardsByProvince = async (provinceCode: string): Promise<WardRes
 
     return wards.map(
         (w: Ward): WardResponseDto => ({
+            id: w.id,
             code: w.code,
             name: w.name,
             province_id: province.id,

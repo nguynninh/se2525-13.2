@@ -74,7 +74,7 @@ router.get('/test/redis', async (req: Request, res: Response) => {
 });
 
 router.use('/auth', authRoute);
-router.use('/users', userRoute);
+router.use('/user', userRoute);
 router.use('/seller-applications', sellerApplicationRoute);
 router.use('/', productRoute);
 router.use('/', locationRoute);

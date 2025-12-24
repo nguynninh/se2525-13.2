@@ -31,9 +31,8 @@ router.get('/public', redisCache(300), v({ query: ShopListQuerySchema }), public
 // GET /api/shop/public/:slug
 router.get('/public/:slug', redisCache(300), v({ params: ShopSlugParamSchema }), publicShopController.detail);
 
-// GET /api/shop/me
 router.get('/me', authenticate, restrictTo('seller'), sellerShopController.getMine);
-// POST /api/shop/me
+
 router.post(
     '/me',
     authenticate,
@@ -45,7 +44,6 @@ router.post(
     v({ body: CreateSellerShopSchema }),
     sellerShopController.create,
 );
-// PATCH /api/shop/me
 router.patch(
     '/me',
     authenticate,
@@ -57,7 +55,6 @@ router.patch(
     v({ body: UpdateSellerShopSchema }),
     sellerShopController.update,
 );
-// PATCH /api/shop/me/status
 router.patch(
     '/me/status',
     authenticate,

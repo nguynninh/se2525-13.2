@@ -4,6 +4,7 @@ export interface ProvinceResponseDto {
 }
 
 export interface WardResponseDto {
+    id: string;
     code: string;
     name: string;
     province_id: string;

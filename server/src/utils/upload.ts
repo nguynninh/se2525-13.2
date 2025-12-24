@@ -1,6 +1,6 @@
 import multer, { FileFilterCallback } from 'multer';
 import { Request } from 'express';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand, CreateBucketCommand } from '@aws-sdk/client-s3';
 import { minioClient, MINIO_BUCKET, publicBaseUrl } from '../config/minio';
 
 import path from 'path';
@@ -16,6 +16,19 @@ export const uploadFileToMinIO = async (
     contentType: string,
     folder = 'uploads',
 ): Promise<string> => {
+    // Ensure bucket exists (idempotent)
+    try {
+        await minioClient.send(
+            new CreateBucketCommand({
+                Bucket: MINIO_BUCKET,
+            }),
+        );
+    } catch (err: any) {
+        if (err.name !== 'BucketAlreadyOwnedByYou' && err.name !== 'BucketAlreadyExists') {
+            throw err;
+        }
+    }
+
     const ext = path.extname(fileName);
     const name = path.basename(fileName, ext).replace(/\s+/g, '_');
 

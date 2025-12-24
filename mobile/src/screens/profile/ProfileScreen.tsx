@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileMenuModal } from '../../modals';
 import { MenuItem } from '../../modals/ProfileMenuModal';
 import { fontFamilies } from '../../constants/fontFamilies';
+import userApi from '../../apis/userApi';
 
 const ProfileScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['profile', 'common']);
@@ -158,6 +159,22 @@ const ProfileScreen = ({ navigation }: any) => {
           ) : (
             renderMenuRow(<Shop size={22} color={appColors.primary} />, t('profile:register_seller', { defaultValue: 'Đăng ký bán hàng' }), () => navigation.navigate('SellerRegistrationScreen'))
           )}
+
+          {renderMenuRow(<Shop size={22} color={appColors.link} />, 'Chuyển thành nhà bán hàng', async () => {
+            Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn đăng ký trở thành nhà bán hàng?', [
+              { text: 'Hủy', style: 'cancel' },
+              {
+                text: 'Đồng ý', onPress: async () => {
+                  try {
+                    await userApi.registerSellerApplication();
+                    Alert.alert('Thành công', 'Gửi yêu cầu thành công!');
+                  } catch (error: any) {
+                    Alert.alert('Lỗi', error.message || 'Gửi yêu cầu thất bại');
+                  }
+                }
+              }
+            ]);
+          })}
 
           {renderMenuRow(<ArchiveBook size={22} color={'#FF9F43'} variant='Bold' />, t('profile:favorites', { defaultValue: 'Yêu thích' }), () => { })}
 

@@ -560,11 +560,15 @@ export const updateMyShop = async (userId: string, dto: UpdateSellerShopDto): Pr
             }
 
             if (dto.address.ward_id) {
-                const ward = await Ward.findByPk(dto.address.ward_id, { transaction: tx });
+                const wardId = dto.address.ward_id;
+                const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
+                const ward = uuidRegex.test(wardId)
+                    ? await Ward.findByPk(wardId, { transaction: tx })
+                    : await Ward.findOne({ where: { code: wardId }, transaction: tx });
                 if (!ward) {
                     throw new NotFoundError('shop:ward_not_found');
                 }
-                addr.ward_id = dto.address.ward_id;
+                addr.ward_id = ward.id;
             }
 
             if (dto.address.address_line !== undefined) {

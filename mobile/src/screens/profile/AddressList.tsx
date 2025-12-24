@@ -1,4 +1,5 @@
 import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from '../../../node_modules/react-i18next';
@@ -40,8 +41,25 @@ const AddressList = () => {
                 const addressList = Array.isArray(res) ? res : (res.data || []);
                 setAddresses(addressList);
                 dispatch(setAddresses(addressList));
-                if (selectedAddress) {
+
+                // Check Async Storage for persistent selection
+                const savedAddressId = await AsyncStorage.getItem('selectedAddressId');
+
+                if (savedAddressId) {
+                    const savedAddress = addressList.find((a: any) => a.id === savedAddressId);
+                    if (savedAddress) {
+                        setSelectedId(savedAddressId);
+                        dispatch(addAddress(savedAddress));
+                    }
+                } else if (selectedAddress) {
                     setSelectedId(selectedAddress.id);
+                } else {
+                    // Fallback to default address if available
+                    const defaultAddress = addressList.find((a: any) => a.is_default);
+                    if (defaultAddress) {
+                        setSelectedId(defaultAddress.id);
+                        dispatch(addAddress(defaultAddress));
+                    }
                 }
             }
         } catch (error) {
@@ -51,11 +69,12 @@ const AddressList = () => {
         }
     };
 
-    const handleSelectAddress = (id: string) => {
+    const handleSelectAddress = async (id: string) => {
         const item = addresses.find(i => i.id === id);
         if (item) {
             setSelectedId(id);
             dispatch(addAddress(item));
+            await AsyncStorage.setItem('selectedAddressId', id);
         }
     };
 
@@ -77,6 +96,12 @@ const AddressList = () => {
                         try {
                             console.log('Deleting address with ID:', id);
                             await addressApi.deleteAddress(id);
+
+                            if (id === selectedId) {
+                                await AsyncStorage.removeItem('selectedAddressId');
+                                setSelectedId('');
+                            }
+
                             console.log('Delete success');
                             fetchData();
                         } catch (error: any) {

@@ -23,7 +23,7 @@ import {
 const router = Router();
 const uploadImage = createImageUploadMiddleware(5);
 
-router.get('/categories', ProductController.getCategories);
+// Public: list categories
 router.get('/products/categories', ProductController.getCategories);
 
 router.post(
@@ -31,7 +31,7 @@ router.post(
     authenticate,
     restrictTo('admin'),
     v({ body: CreateCategorySchema }),
-    ProductController.createCategory
+    ProductController.createCategory,
 );
 
 router.patch(
@@ -39,7 +39,7 @@ router.patch(
     authenticate,
     restrictTo('admin'),
     v({ body: UpdateCategorySchema }),
-    ProductController.updateCategory
+    ProductController.updateCategory,
 );
 
 // DELETE /api/product/categories/:id
@@ -48,7 +48,7 @@ router.delete(
     authenticate,
     restrictTo('admin'),
     v({ params: z.object({ id: z.string().uuid() }) }),
-    ProductController.deleteCategory
+    ProductController.deleteCategory,
 );
 
 router.get('/products', v({ query: FilterProductQuerySchema }), ProductController.getProducts);
@@ -58,7 +58,7 @@ router.post(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: CreateProductSchema }),
-    ProductController.createProduct
+    ProductController.createProduct,
 );
 
 router.post(
@@ -67,7 +67,7 @@ router.post(
     restrictTo('seller', 'admin'),
     uploadImage.single('file'),
     v({ body: AddProductImageSchema }),
-    ProductController.addProductImage
+    ProductController.addProductImage,
 );
 
 router.post(
@@ -75,7 +75,7 @@ router.post(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: CreateProductVariantSchema }),
-    ProductController.createVariant
+    ProductController.createVariant,
 );
 
 router.post(
@@ -83,7 +83,7 @@ router.post(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: CreateProductVariantOptionSchema }),
-    ProductController.createVariantOption
+    ProductController.createVariantOption,
 );
 
 router.post(
@@ -91,7 +91,7 @@ router.post(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: CreateProductStockSchema }),
-    ProductController.createStock
+    ProductController.createStock,
 );
 
 router.post(
@@ -99,7 +99,7 @@ router.post(
     authenticate,
     restrictTo('customer', 'seller'),
     v({ body: CreateReviewSchema }),
-    ProductController.createReview
+    ProductController.createReview,
 );
 
 router.post(
@@ -107,7 +107,7 @@ router.post(
     authenticate,
     restrictTo('customer', 'seller'),
     v({ body: CreateQuestionSchema }),
-    ProductController.createQuestion
+    ProductController.createQuestion,
 );
 
 router.patch(
@@ -115,7 +115,7 @@ router.patch(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: UpdateProductStockSchema }),
-    ProductController.updateStock
+    ProductController.updateStock,
 );
 
 router.patch(
@@ -123,7 +123,7 @@ router.patch(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: AnswerQuestionSchema }),
-    ProductController.answerQuestion
+    ProductController.answerQuestion,
 );
 
 router.get('/products/:id/reviews', ProductController.getReviews);
@@ -136,14 +136,9 @@ router.patch(
     authenticate,
     restrictTo('seller', 'admin'),
     v({ body: UpdateProductSchema }),
-    ProductController.updateProduct
+    ProductController.updateProduct,
 );
 
-router.delete(
-    '/products/:id',
-    authenticate,
-    restrictTo('seller', 'admin'),
-    ProductController.deleteProduct
-);
+router.delete('/products/:id', authenticate, restrictTo('seller', 'admin'), ProductController.deleteProduct);
 
 export default router;

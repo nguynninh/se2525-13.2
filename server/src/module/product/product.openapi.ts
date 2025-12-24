@@ -30,7 +30,7 @@ import {
 export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
-        path: '/api/product/categories',
+        path: '/api/products/categories',
         tags: ['Category'],
         summary: 'Lấy danh sách danh mục',
         responses: {
@@ -47,7 +47,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'post',
-        path: '/api/product/categories',
+        path: '/api/categories',
         tags: ['Category'],
         summary: 'Tạo danh mục',
         security: [{ BearerAuth: [] }],
@@ -74,7 +74,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'patch',
-        path: '/api/product/categories/{id}',
+        path: '/api/categories/{id}',
         tags: ['Category'],
         summary: 'Cập nhật danh mục',
         security: [{ BearerAuth: [] }],
@@ -102,7 +102,7 @@ export const registerProductOpenApi = (registry: OpenAPIRegistry) => {
 
     registry.registerPath({
         method: 'delete',
-        path: '/api/product/categories/{id}',
+        path: '/api/categories/{id}',
         tags: ['Category'],
         summary: 'Xóa danh mục',
         security: [{ BearerAuth: [] }],

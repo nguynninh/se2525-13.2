@@ -6,7 +6,7 @@ module.exports = {
         const now = new Date();
 
         const rows = await queryInterface.sequelize.query(`SELECT id, email FROM users WHERE email IN (:emails)`, {
-            replacements: { emails: ['admin@example.com'] },
+            replacements: { emails: ['admin@example.com', 'admin2@example.com'] },
             type: Sequelize.QueryTypes.SELECT,
         });
 
@@ -18,9 +18,10 @@ module.exports = {
         );
         const existingIds = new Set(existing.map((r) => r.user_id));
 
-        const admins = [{ user_id: idByEmail['admin@example.com'], created_at: now, updated_at: now }].filter(
-            (a) => a.user_id && !existingIds.has(a.user_id),
-        );
+        const admins = [
+            { user_id: idByEmail['admin@example.com'], created_at: now, updated_at: now },
+            { user_id: idByEmail['admin2@example.com'], created_at: now, updated_at: now },
+        ].filter((a) => a.user_id && !existingIds.has(a.user_id));
 
         if (admins.length > 0) {
             await queryInterface.bulkInsert('admins', admins, { ignoreDuplicates: true });
@@ -29,7 +30,7 @@ module.exports = {
 
     async down(queryInterface, Sequelize) {
         const rows = await queryInterface.sequelize.query(`SELECT id, email FROM users WHERE email IN (:emails)`, {
-            replacements: { emails: ['admin@example.com'] },
+            replacements: { emails: ['admin@example.com', 'admin2@example.com'] },
             type: Sequelize.QueryTypes.SELECT,
         });
         const userIds = rows.map((r) => r.id);

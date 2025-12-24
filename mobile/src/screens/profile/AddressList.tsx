@@ -1,7 +1,6 @@
 import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addAddress, addressSelector } from '../../redux/reducers/addressReducer';
 import { useTranslation } from '../../../node_modules/react-i18next';
 import { ContainerComponent, GlassView, RowComponent, SectionComponent, SpaceComponent, TextComponent, ButtonComponent } from '../../components';
 import { Add, ArrowLeft, Edit2, Location, TickCircle, Trash } from 'iconsax-react-native';
@@ -9,7 +8,8 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import addressApi from '../../apis/addressApi';
+import userApi from '../../apis/userApi';
+import { addAddress, addressSelector, setAddresses } from '../../redux/reducers/addressReducer';
 
 const AddressList = () => {
     const navigation = useNavigation();
@@ -34,9 +34,10 @@ const AddressList = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const res = await addressApi.getAllAddresses();
-            if (res && res.data) {
-                setAddresses(res.data);
+            const res = await userApi.getShippingAddresses();
+            if (res) {
+                setAddresses(res);
+                dispatch(setAddresses(res));
                 if (selectedAddress) {
                     setSelectedId(selectedAddress.id);
                 }
@@ -69,9 +70,9 @@ const AddressList = () => {
 
     const renderAddressLabel = (item: any) => {
         try {
-            const ward = item.ward ? (typeof item.ward === 'string' ? JSON.parse(item.ward) : item.ward) : null;
-            const province = item.province ? (typeof item.province === 'string' ? JSON.parse(item.province) : item.province) : null;
-            return [ward?.name, province?.name].filter(Boolean).join(', ');
+            const ward = item.address?.ward?.name;
+            const province = item.address?.ward?.province?.name;
+            return [ward, province].filter(Boolean).join(', ');
         } catch (error) {
             return '';
         }
@@ -158,7 +159,7 @@ const AddressList = () => {
                                             <RowComponent justify="space-between" styles={{ alignItems: 'center' }}>
                                                 <View style={{ flex: 1 }}>
                                                     <RowComponent justify="flex-start">
-                                                        <TextComponent text={item.name} font={fontFamilies.bold} size={18} color={appColors.text} />
+                                                        <TextComponent text={item.receiver_name} font={fontFamilies.bold} size={18} color={appColors.text} />
                                                         {item.is_default && (
                                                             <View style={{
                                                                 marginLeft: 12,
@@ -172,9 +173,9 @@ const AddressList = () => {
                                                         )}
                                                     </RowComponent>
                                                     <SpaceComponent height={8} />
-                                                    <TextComponent text={item.phone} size={14} color={appColors.gray} font={fontFamilies.medium} />
+                                                    <TextComponent text={item.receiver_phone} size={14} color={appColors.gray} font={fontFamilies.medium} />
                                                     <SpaceComponent height={4} />
-                                                    <TextComponent text={item.address} size={14} color={appColors.text} numberOfLine={2} styles={{ lineHeight: 20 }} />
+                                                    <TextComponent text={item.address?.address_line} size={14} color={appColors.text} numberOfLine={2} styles={{ lineHeight: 20 }} />
                                                     <TextComponent text={renderAddressLabel(item)} size={13} color={appColors.gray4} numberOfLine={1} />
                                                 </View>
 

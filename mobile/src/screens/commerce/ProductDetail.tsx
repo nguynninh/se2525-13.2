@@ -23,6 +23,7 @@ import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { ContainerComponent, RowComponent, SpaceComponent, TextComponent, ButtonComponent, SectionComponent } from '../../components';
 import productApi from '../../apis/productApi';
+import { Product } from '../../models/Product';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,7 +36,7 @@ const ProductDetail = () => {
     const selectedAddress = useSelector(addressSelector);
     const cartCount = useSelector(cartCountSelector);
 
-    const [product, setProduct] = useState<any>(null);
+    const [product, setProduct] = useState<Product | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
 
@@ -58,48 +59,15 @@ const ProductDetail = () => {
     const getData = async () => {
         try {
             const res = await productApi.getProductDetail(id);
-            if (res && res.data) {
-                setProduct(res.data);
+            if (res) {
+                setProduct(res);
             } else {
-                throw new Error("No data");
+                setProduct(null);
             }
         } catch (error) {
             console.log('Error fetching product detail:', error);
-            // Detailed Mock Data Fallback
-            setProduct({
-                id: id,
-                name: "Tai Nghe Sony WH-1000XM5 Chống Ồn Chủ Động",
-                price: 6490000,
-                description: "Tai nghe chống ồn hàng đầu thị trường với thiết kế mới nhẹ hơn, ôm sát tai hơn. Âm thanh Hi-Res chuẩn mực, pin trâu 30 giờ.",
-                brand: "Sony",
-                image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600",
-                images: ["https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600"],
-                category: { name: "Đồ điện tử" },
-                shop: {
-                    name: "Sony Official Store",
-                    image: "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=100"
-                },
-                variants: [
-                    {
-                        id: "v1",
-                        price: 6490000,
-                        image_url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600",
-                        values: [
-                            { value: "Đen", attribute: { name: "Màu sắc" } },
-                            { value: "Tiêu chuẩn", attribute: { name: "Phiên bản" } }
-                        ]
-                    },
-                    {
-                        id: "v2",
-                        price: 6590000,
-                        image_url: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600",
-                        values: [
-                            { value: "Bạc", attribute: { name: "Màu sắc" } },
-                            { value: "Tiêu chuẩn", attribute: { name: "Phiên bản" } }
-                        ]
-                    }
-                ]
-            });
+            setProduct(null);
+            Alert.alert('Error', 'Could not fetch product details');
         } finally {
             setIsLoading(false);
         }
@@ -108,8 +76,8 @@ const ProductDetail = () => {
     const getRelated = async () => {
         try {
             const res = await productApi.getProducts();
-            if (res && res.data) {
-                setRelatedProducts(res.data.filter((p: any) => p.id !== id).slice(0, 5));
+            if (res && res.data && res.data.products) {
+                setRelatedProducts(res.data.products.filter((p: any) => p.id !== id).slice(0, 5));
             }
         } catch (error) {
             console.log('Error fetching related:', error);
@@ -128,6 +96,10 @@ const ProductDetail = () => {
             const variants = product.variants;
 
             variants.forEach((variant: any) => {
+                // Safeguard: User JSON variants struct is different from code assumption.
+                // Assuming variant has 'values' property like [{ attribute: { name: 'Color' }, value: 'Red' }]
+                // If the API variant structure is { name: "s", id: "..." }, then this logic will fail or do nothing.
+                // We will cast to any to avoid TS error 'Property values does not exist' until we fully refactor this loop.
                 if (variant.values) {
                     variant.values.forEach((val: any) => {
                         const attrName = val.attribute.name;
@@ -193,17 +165,22 @@ const ProductDetail = () => {
     };
 
     const getPrice = () => {
-        if (selectedVariant) return selectedVariant.price;
-        if (!product || !product.variants || product.variants.length === 0) return product ? product.price : 0;
-        return product.variants[0].price;
+        if (selectedVariant && selectedVariant.price) return selectedVariant.price;
+        // In new model, stocks have prices, variants might not.
+        // For now, default to product price if no specific stock/variant price found.
+        return product ? product.price : 0;
     }
 
     const getImage = () => {
-        if (selectedVariant && selectedVariant.image_url) return selectedVariant.image_url;
-        if (selectedVariant && selectedVariant.image) return selectedVariant.image;
-        if (!product) return '';
-        if (product.image) return product.image;
-        if (product.variants && product.variants.length > 0) return product.variants[0].image_url;
+        if (product && product.images && product.images.length > 0) {
+            const img = product.images[0];
+            if (typeof img === 'string') return img;
+            if (typeof img === 'object' && (img as any).url) return (img as any).url;
+            if (typeof img === 'object' && (img as any).image_url) return (img as any).image_url;
+        }
+        // Fallback for no images in list
+        if (product && product.shop && product.shop.image) return product.shop.image;
+        if (product && (product as any).image) return (product as any).image; // Checking root image
         return 'https://via.placeholder.com/300';
     }
 
@@ -293,11 +270,6 @@ const ProductDetail = () => {
                 <View style={styles.container}>
                     {/* Brand & Category Tags */}
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                        {product.brand && (
-                            <View style={styles.tagBadge}>
-                                <TextComponent text={product.brand.toUpperCase()} size={10} font={fontFamilies.bold} color={appColors.primary} />
-                            </View>
-                        )}
                         <View style={[styles.tagBadge, { backgroundColor: '#F0F0F0' }]}>
                             <TextComponent text={product.category?.name || t('common:category')} size={10} font={fontFamilies.medium} color={appColors.gray} />
                         </View>
@@ -326,8 +298,8 @@ const ProductDetail = () => {
                         <RowComponent>
                             <Star size={16} color="#FFC107" variant="Bold" />
                             <SpaceComponent width={4} />
-                            <TextComponent text="4.8" font={fontFamilies.bold} size={14} />
-                            <TextComponent text=" (1.2k)" color={appColors.gray4} size={13} />
+                            <TextComponent text={product.rating_avg ? parseFloat(product.rating_avg).toFixed(1) : "0.0"} font={fontFamilies.bold} size={14} />
+                            <TextComponent text={` (${product.rating_count || 0})`} color={appColors.gray4} size={13} />
                         </RowComponent>
                     </RowComponent>
                 </View>
@@ -382,7 +354,13 @@ const ProductDetail = () => {
                                 <TextComponent text="Giao đến" size={13} color={appColors.gray} />
                                 <SpaceComponent height={4} />
                                 <TextComponent
-                                    text={selectedAddress ? selectedAddress.address : "Vị trí của bạn"}
+                                    text={
+                                        selectedAddress
+                                            ? (typeof selectedAddress.address === 'object'
+                                                ? (selectedAddress.address as any).address_line || "Địa chỉ không xác định"
+                                                : selectedAddress.address)
+                                            : "Vị trí của bạn"
+                                    }
                                     size={14}
                                     color={appColors.text}
                                     font={fontFamilies.medium}
@@ -497,7 +475,7 @@ const ProductDetail = () => {
                                     onPress={() => (navigation as any).push('ProductDetail', { id: item.id })}
                                     style={styles.relatedItem}
                                 >
-                                    <Image source={{ uri: item.image || item.image_url }} style={{ width: 140, height: 140, borderRadius: 8 }} resizeMode="cover" />
+                                    <Image source={{ uri: typeof item.image === 'string' ? item.image : (item.image_url || 'https://via.placeholder.com/150') }} style={{ width: 140, height: 140, borderRadius: 8 }} resizeMode="cover" />
                                     <SpaceComponent height={8} />
                                     <TextComponent text={item.name} numberOfLine={2} size={13} font={fontFamilies.medium} />
                                     <SpaceComponent height={4} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { View, StatusBar, Platform, Image, ScrollView, ImageBackground, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StatusBar, Platform, Image, ScrollView, ImageBackground, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, InputComponent, RowComponent, SpaceComponent, TextComponent, GlassView } from '../../components';
 import { appColors } from '../../constants/appColors';
@@ -12,6 +12,7 @@ import { appInfo } from '../../constants/appInfos';
 import categoryApi from '../../apis/categoryApi';
 import productApi from '../../apis/productApi';
 import { fontFamilies } from '../../constants/fontFamilies';
+import { Category } from '../../models/Category';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { cartCountSelector, getCart } from '../../redux/reducers/cartReducer';
@@ -20,7 +21,7 @@ const HomeScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const cartCount = useSelector(cartCountSelector);
   const { t } = useTranslation();
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [banner, setBanner] = useState<Banner[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,35 +71,26 @@ const HomeScreen = ({ navigation }: any) => {
     return () => clearInterval(iconInterval);
   }, []);
 
-  const bgImage = { uri: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop' };
-
   const fetchInitialData = async () => {
     setIsLoading(true);
     try {
       const [catRes, prodRes, bannerRes]: any[] = await Promise.all([
-        categoryApi.getList(),
-        productApi.getProducts('page=1&limit=10'),
-        handleApi('/banners', {}, 'get')
+        categoryApi.getList().catch(error => { console.log('Category API error:', error); return { categories: [] }; }),
+        productApi.getProducts('page=1&limit=10').catch(error => { console.log('Product API error:', error); return { products: [] }; }),
+        handleApi('/banners', {}, 'get').catch(error => { console.log('Banner API error:', error); return { banners: [] }; })
       ]);
 
       const fetchedCategories = catRes.categories || (Array.isArray(catRes) ? catRes : []);
       if (fetchedCategories.length > 0) {
         setCategories(fetchedCategories);
       } else {
-        setCategories([
-          { id: '1', name: 'Thời trang', image_url: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=200' },
-          { id: '2', name: 'Đồ điện tử', image_url: 'https://images.unsplash.com/photo-1498049381960-a45bd3d135e7?w=200' },
-          { id: '3', name: 'Giày dép', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200' },
-          { id: '4', name: 'Phụ kiện', image_url: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=200' },
-          { id: '5', name: 'Gia dụng', image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=200' },
-        ]);
+        setCategories([]);
       }
 
       const fetchedProducts = prodRes.products || (Array.isArray(prodRes) ? prodRes : []);
       if (fetchedProducts.length > 0) {
         setProducts(fetchedProducts);
       } else {
-        // Fallback Mock Data as requested
         setProducts([
           {
             "id": "b68818dc-b938-4aef-b66f-962bc0898bf4",
@@ -183,16 +175,11 @@ const HomeScreen = ({ navigation }: any) => {
 
       setBanner(bannerRes.banners || (Array.isArray(bannerRes) ? bannerRes : []));
 
-    } catch (error) {
+    } catch (error: any) {
       console.log('Error fetching home data:', error);
+      Alert.alert('Error fetching data', error?.message || 'Unknown error');
       // Fallback on error too
-      setCategories([
-        { id: '1', name: 'Thời trang', image_url: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=200' },
-        { id: '2', name: 'Đồ điện tử', image_url: 'https://images.unsplash.com/photo-1498049381960-a45bd3d135e7?w=200' },
-        { id: '3', name: 'Giày dép', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200' },
-        { id: '4', name: 'Phụ kiện', image_url: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=200' },
-        { id: '5', name: 'Gia dụng', image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=200' },
-      ]);
+      setCategories([]);
       setProducts([
         { id: "1", name: "Nhà Giả Kim (Tái Bản)", price: "79000", images: [{ image_url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" }] },
         { id: "2", name: "Áo Polo Nam", price: "299000", images: [{ image_url: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500" }] },
@@ -232,7 +219,7 @@ const HomeScreen = ({ navigation }: any) => {
   const renderCategoryItem = ({ item }: { item: any }) => (
     <TouchableOpacity onPress={() => console.log('Category press:', item.name)} style={{ marginRight: 12 }}>
       <View style={[globalStyles.shadow, { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 100, flexDirection: 'row', alignItems: 'center', backgroundColor: appColors.white, marginBottom: 4, marginLeft: 4 }]}>
-        {item.image_url && <Image source={{ uri: item.image_url }} style={{ width: 20, height: 20, marginRight: 8, borderRadius: 4 }} />}
+        {item.icon_url && <Image source={{ uri: item.icon_url }} style={{ width: 20, height: 20, marginRight: 8, borderRadius: 4 }} />}
         <TextComponent text={item.name} color={appColors.text} size={14} font={fontFamilies.medium} />
       </View>
     </TouchableOpacity>

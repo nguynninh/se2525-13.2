@@ -6,7 +6,7 @@ services:
         env_file:
             - ./server/.env
         ports:
-            - '8888:8888'
+            - '3001:3001'
         depends_on:
             - postgres
             - redis

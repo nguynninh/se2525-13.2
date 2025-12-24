@@ -147,13 +147,17 @@ Users can navigate through the guide using "Next" or bypass it with "Skip" to ju
 **Shopping Cart**
 <p float="left">
   <img src="readme_file/cart.png" width="200" />
+</p>
+
+**Bill**
+<p float="left">
   <img src="readme_file/bill.png" width="200" />
 </p>
 
 ### User Profile & Settings
 **Profile & Address Management**
 <p float="left">
-  <img src="readme_file/profile.png" width="200" />
+  <img src="readme_file/profile_screen.png" width="200" />
   <img src="readme_file/address.png" width="200" />
   <img src="readme_file/address_create.png" width="200" />
 </p>

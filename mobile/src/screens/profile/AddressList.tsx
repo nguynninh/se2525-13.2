@@ -9,6 +9,7 @@ import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import userApi from '../../apis/userApi';
+import addressApi from '../../apis/addressApi';
 import { addAddress, addressSelector, setAddresses } from '../../redux/reducers/addressReducer';
 
 const AddressList = () => {

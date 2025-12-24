@@ -54,5 +54,11 @@
     "edit_profile": "Chỉnh sửa hồ sơ",
     "register_seller": "Đăng ký bán hàng",
     "seller_dashboard": "Quản lý bán hàng",
-    "favorites": "Yêu thích"
+    "favorites": "Yêu thích",
+    "confirm": "Xác nhận",
+    "delete_confirm_message": "Bạn có chắc chắn muốn xoá địa chỉ này không?",
+    "cancel": "Hủy",
+    "delete": "Xoá",
+    "error": "Lỗi",
+    "success": "Thành công"
 }

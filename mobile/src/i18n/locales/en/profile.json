@@ -47,5 +47,11 @@
     "buy_now": "Buy Now",
     "add_to_cart": "Add to Cart",
     "chat_now": "Chat Now",
-    "view_shop": "View Shop"
+    "view_shop": "View Shop",
+    "confirm": "Confirm",
+    "delete_confirm_message": "Are you sure you want to delete this address?",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "error": "Error",
+    "success": "Success"
 }

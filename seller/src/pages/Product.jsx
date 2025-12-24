@@ -87,6 +87,23 @@ const Product = () => {
     (categoryPage - 1) * categoriesPerPage,
     categoryPage * categoriesPerPage,
   );
+  const categoryCounts = useMemo(() => {
+    const counts = new Map();
+    products.forEach((p) => {
+      const id = p.category_id || p.category?.id;
+      if (!id) return;
+      counts.set(id, (counts.get(id) || 0) + 1);
+    });
+    return counts;
+  }, [products]);
+  const categoryById = useMemo(() => {
+    const map = new Map();
+    categories.forEach((c) => {
+      const id = c.id || c._id;
+      if (id) map.set(id, c.name || c.title);
+    });
+    return map;
+  }, [categories]);
   const featuredCount = useMemo(
     () => products.filter((p) => p.featured || p.is_featured).length,
     [products],
@@ -166,37 +183,34 @@ const Product = () => {
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 text-gray-700 text-xs uppercase border-b border-gray-100">
               <tr>
+                <th className="px-4 py-3 text-left font-semibold">Category</th>
                 <th className="px-4 py-3 text-left font-semibold">Product</th>
-                <th className="px-4 py-3 text-left font-semibold">SKU</th>
-                <th className="px-4 py-3 text-left font-semibold">Price</th>
-                <th className="px-4 py-3 text-left font-semibold">Stock</th>
-                <th className="px-4 py-3 text-left font-semibold">Variants</th>
                 <th className="px-4 py-3 text-left font-semibold">Status</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="px-4 py-6 text-center text-sm text-gray-600">
+                  <td colSpan="3" className="px-4 py-6 text-center text-sm text-gray-600">
                     Loading products...
                   </td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-4 py-6 text-center text-sm text-gray-600">
+                  <td colSpan="3" className="px-4 py-6 text-center text-sm text-gray-600">
                     No products yet.
                   </td>
                 </tr>
               ) : (
                 products.map((product) => (
                   <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-semibold text-gray-900">{product.name}</td>
-                    <td className="px-4 py-3 text-gray-700">{product.sku}</td>
-                    <td className="px-4 py-3 font-semibold text-gray-900">{product.price}</td>
-                    <td className="px-4 py-3 text-gray-700">{product.stock ?? product.total_stock ?? 'N/A'}</td>
                     <td className="px-4 py-3 text-gray-700">
-                      {Array.isArray(product.variants) ? product.variants.length : product.variants || 0}
+                      {product.category?.name ||
+                        product.category_name ||
+                        categoryById.get(product.category_id) ||
+                        'N/A'}
                     </td>
+                    <td className="px-4 py-3 font-semibold text-gray-900">{product.name}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full ${statusStyles[product.status]}`}>
                         {product.status}
@@ -239,7 +253,9 @@ const Product = () => {
                       <p className="text-xs text-gray-500 line-clamp-1">{category.description}</p>
                     ) : null}
                   </div>
-                  <span className="text-sm text-gray-600">{category.count || 0} products</span>
+                  <span className="text-sm text-gray-600">
+                    {categoryCounts.get(category.id || category._id) || 0} products
+                  </span>
                 </div>
               ))
             )}

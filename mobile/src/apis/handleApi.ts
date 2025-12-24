@@ -5,7 +5,8 @@ import axiosClient from './axiosClient';
 
 class HandleAPI {
   private getAccessToken = () => {
-    return authSelector(store.getState())?.access_token || '';
+    const authData = authSelector(store.getState());
+    return authData?.accessToken || authData?.access_token || '';
   };
 
   handleApi = async (

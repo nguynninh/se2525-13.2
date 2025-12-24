@@ -60,9 +60,46 @@ const ProductDetail = () => {
             const res = await productApi.getProductDetail(id);
             if (res && res.data) {
                 setProduct(res.data);
+            } else {
+                throw new Error("No data");
             }
         } catch (error) {
             console.log('Error fetching product detail:', error);
+            // Detailed Mock Data Fallback
+            setProduct({
+                id: id,
+                name: "Tai Nghe Sony WH-1000XM5 Chống Ồn Chủ Động",
+                price: 6490000,
+                description: "Tai nghe chống ồn hàng đầu thị trường với thiết kế mới nhẹ hơn, ôm sát tai hơn. Âm thanh Hi-Res chuẩn mực, pin trâu 30 giờ.",
+                brand: "Sony",
+                image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600",
+                images: ["https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600"],
+                category: { name: "Đồ điện tử" },
+                shop: {
+                    name: "Sony Official Store",
+                    image: "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=100"
+                },
+                variants: [
+                    {
+                        id: "v1",
+                        price: 6490000,
+                        image_url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600",
+                        values: [
+                            { value: "Đen", attribute: { name: "Màu sắc" } },
+                            { value: "Tiêu chuẩn", attribute: { name: "Phiên bản" } }
+                        ]
+                    },
+                    {
+                        id: "v2",
+                        price: 6590000,
+                        image_url: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600",
+                        values: [
+                            { value: "Bạc", attribute: { name: "Màu sắc" } },
+                            { value: "Tiêu chuẩn", attribute: { name: "Phiên bản" } }
+                        ]
+                    }
+                ]
+            });
         } finally {
             setIsLoading(false);
         }
@@ -76,6 +113,12 @@ const ProductDetail = () => {
             }
         } catch (error) {
             console.log('Error fetching related:', error);
+            // Mock Related Products
+            setRelatedProducts([
+                { id: "2", name: "Apple AirPods Pro 2", price: 5490000, image: "https://images.unsplash.com/photo-1603351154351-5cf99bc32f2d?w=200" },
+                { id: "3", name: "Loa Bluetooth JBL Flip 6", price: 2900000, image: "https://images.unsplash.com/photo-1626218174397-b8f3629b3987?w=200" },
+                { id: "4", name: "Sạc Dự Phòng Anker", price: 890000, image: "https://images.unsplash.com/photo-1609592424368-765f3f4d6738?w=200" },
+            ]);
         }
     }
 

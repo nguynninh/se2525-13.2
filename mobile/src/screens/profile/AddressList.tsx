@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addAddress, addressSelector } from '../../redux/reducers/addressReducer';
 import { useTranslation } from '../../../node_modules/react-i18next';
-import { ContainerComponent, GlassView, RowComponent, SectionComponent, SpaceComponent, TextComponent } from '../../components';
+import { ContainerComponent, GlassView, RowComponent, SectionComponent, SpaceComponent, TextComponent, ButtonComponent } from '../../components';
 import { Add, ArrowLeft, Edit2, Location, TickCircle, Trash } from 'iconsax-react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { appColors } from '../../constants/appColors';
@@ -78,32 +78,33 @@ const AddressList = () => {
     };
 
     return (
-        <View style={{ flex: 1 }}>
-            <ImageBackground source={bgImage} style={{ flex: 1 }} blurRadius={Platform.OS === 'ios' ? 10 : 3}>
-                <View style={{
-                    paddingTop: Platform.OS === 'ios' ? 50 : 30,
-                    paddingHorizontal: 16,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: 20
+        <View style={{ flex: 1, backgroundColor: appColors.white2 }}>
+            <View style={{
+                paddingTop: Platform.OS === 'ios' ? 50 : 30,
+                paddingHorizontal: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 20
+            }}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{
+                    width: 40, height: 40, borderRadius: 20,
+                    backgroundColor: appColors.white,
+                    justifyContent: 'center', alignItems: 'center',
+                    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3
                 }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={{
-                        width: 40, height: 40, borderRadius: 20,
-                        backgroundColor: 'rgba(255,255,255,0.4)',
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <ArrowLeft size={24} color={appColors.text} />
-                    </TouchableOpacity>
-                    <TextComponent text={t('profile:delivery_address')} title color={appColors.text} size={20} font={fontFamilies.bold} />
-                    <View style={{ width: 40 }} />
-                </View>
+                    <ArrowLeft size={24} color={appColors.text} />
+                </TouchableOpacity>
+                <TextComponent text={t('profile:delivery_address')} title color={appColors.text} size={20} font={fontFamilies.bold} />
+                <View style={{ width: 40 }} />
+            </View>
 
-                {isLoading ? (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size="large" color={appColors.primary} />
-                    </View>
-                ) : (
+            {isLoading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={appColors.primary} />
+                </View>
+            ) : (
+                <View style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}>
                         {addresses.map((item) => {
                             const isSelected = item.id === selectedId;
@@ -116,37 +117,43 @@ const AddressList = () => {
                                                 onPress={() => (navigation as any).navigate('AddNewAddress', { addressData: item })}
                                                 style={{
                                                     backgroundColor: appColors.primary,
-                                                    padding: 12,
-                                                    borderRadius: 12,
-                                                    marginRight: 8,
-                                                    height: '80%',
-                                                    justifyContent: 'center'
+                                                    width: 50,
+                                                    height: 50,
+                                                    borderRadius: 25,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    marginRight: 10
                                                 }}>
-                                                <Edit2 size={24} color={appColors.white} />
+                                                <Edit2 size={22} color={appColors.white} />
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 onPress={() => handleDelete(item.id)}
                                                 style={{
                                                     backgroundColor: appColors.danger,
-                                                    padding: 12,
-                                                    borderRadius: 12,
-                                                    marginRight: 10,
-                                                    height: '80%',
-                                                    justifyContent: 'center'
+                                                    width: 50,
+                                                    height: 50,
+                                                    borderRadius: 25,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
                                                 }}>
-                                                <Trash size={24} color={appColors.white} />
+                                                <Trash size={22} color={appColors.white} />
                                             </TouchableOpacity>
                                         </View>
                                     )}
                                 >
-                                    <TouchableOpacity onPress={() => handleSelectAddress(item.id)} activeOpacity={0.9}>
-                                        <GlassView style={{
+                                    <TouchableOpacity onPress={() => handleSelectAddress(item.id)} activeOpacity={0.9} style={{ marginBottom: 16 }}>
+                                        <View style={{
                                             padding: 16,
-                                            marginBottom: 16,
                                             borderRadius: 16,
-                                            backgroundColor: isSelected ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.4)',
-                                            borderColor: isSelected ? appColors.primary : appColors.gray8,
-                                            borderWidth: isSelected ? 1.5 : 1
+                                            backgroundColor: appColors.white,
+                                            // Card Shadow
+                                            shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.05,
+                                            shadowRadius: 10,
+                                            elevation: 3,
+                                            borderWidth: isSelected ? 1.5 : 0,
+                                            borderColor: appColors.primary
                                         }}>
                                             <RowComponent justify="space-between" styles={{ alignItems: 'center' }}>
                                                 <View style={{ flex: 1 }}>
@@ -157,18 +164,18 @@ const AddressList = () => {
                                                                 marginLeft: 12,
                                                                 paddingHorizontal: 10,
                                                                 paddingVertical: 4,
-                                                                backgroundColor: appColors.primary,
+                                                                backgroundColor: '#E3F2FD',
                                                                 borderRadius: 20
                                                             }}>
-                                                                <TextComponent text={t('profile:default_address')} size={10} color={appColors.white} font={fontFamilies.bold} />
+                                                                <TextComponent text={t('profile:default')} size={10} color={appColors.primary} font={fontFamilies.bold} />
                                                             </View>
                                                         )}
                                                     </RowComponent>
                                                     <SpaceComponent height={8} />
-                                                    <TextComponent text={item.phone} size={14} color={appColors.text} font={fontFamilies.medium} />
+                                                    <TextComponent text={item.phone} size={14} color={appColors.gray} font={fontFamilies.medium} />
                                                     <SpaceComponent height={4} />
-                                                    <TextComponent text={item.address} size={14} color={appColors.text} numberOfLine={2} />
-                                                    <TextComponent text={renderAddressLabel(item)} size={12} color={appColors.gray} numberOfLine={1} />
+                                                    <TextComponent text={item.address} size={14} color={appColors.text} numberOfLine={2} styles={{ lineHeight: 20 }} />
+                                                    <TextComponent text={renderAddressLabel(item)} size={13} color={appColors.gray4} numberOfLine={1} />
                                                 </View>
 
                                                 <View>
@@ -177,38 +184,38 @@ const AddressList = () => {
                                                         :
                                                         <View style={{
                                                             width: 20, height: 20, borderRadius: 10,
-                                                            borderWidth: 1.5, borderColor: appColors.gray
+                                                            borderWidth: 1.5, borderColor: appColors.gray4
                                                         }} />
                                                     }
                                                 </View>
                                             </RowComponent>
-                                        </GlassView>
+                                        </View>
                                     </TouchableOpacity>
                                 </Swipeable>
                             );
                         })}
-
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('AddNewAddress' as never)}
-                            style={{
-                                marginTop: 10,
-                                alignSelf: 'center',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: 'rgba(255,255,255,0.5)',
-                                paddingHorizontal: 20,
-                                paddingVertical: 12,
-                                borderRadius: 24,
-                                borderWidth: 1,
-                                borderColor: appColors.text // Visible border
-                            }}>
-                            <Add size={20} color={appColors.text} />
-                            <SpaceComponent width={8} />
-                            <TextComponent text={t('profile:add_new_address')} color={appColors.text} font={fontFamilies.semiBold} />
-                        </TouchableOpacity>
                     </ScrollView>
-                )}
-            </ImageBackground>
+
+                    <View style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        backgroundColor: appColors.white,
+                        padding: 16,
+                        paddingBottom: Platform.OS === 'ios' ? 30 : 16,
+                        borderTopWidth: 1,
+                        borderTopColor: '#F0F0F0'
+                    }}>
+                        <ButtonComponent
+                            text={t('profile:add_new_address').toUpperCase()}
+                            type="primary"
+                            onPress={() => navigation.navigate('AddNewAddress' as never)}
+                            icon={<Add size={20} color={appColors.white} />}
+                        />
+                    </View>
+                </View>
+            )}
         </View>
     );
 };

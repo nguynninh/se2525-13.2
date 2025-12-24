@@ -130,33 +130,36 @@ const AddNewAddress = () => {
     const bgImage = { uri: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop' };
 
     return (
-        <View style={{ flex: 1 }}>
-            <ImageBackground source={bgImage} style={{ flex: 1 }} blurRadius={Platform.OS === 'ios' ? 10 : 3}>
-                <View style={{
-                    paddingTop: Platform.OS === 'ios' ? 50 : 30,
-                    paddingHorizontal: 16,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginBottom: 20
-                }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={{
-                        width: 40, height: 40, borderRadius: 20,
-                        backgroundColor: 'rgba(255,255,255,0.4)',
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <ArrowLeft size={24} color={appColors.text} />
-                    </TouchableOpacity>
-                    <SpaceComponent width={12} />
-                    <TextComponent text={route.params && (route.params as any).addressData ? t('profile:update_address') : t('profile:add_new_address')} title color={appColors.text} size={20} font={fontFamilies.bold} />
-                </View>
+        <View style={{ flex: 1, backgroundColor: appColors.white2 }}>
+            <View style={{
+                paddingTop: Platform.OS === 'ios' ? 50 : 30,
+                paddingHorizontal: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 20,
+                backgroundColor: appColors.white,
+                paddingBottom: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.05,
+                shadowRadius: 10,
+                elevation: 3
+            }}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 4 }}>
+                    <ArrowLeft size={24} color={appColors.text} />
+                </TouchableOpacity>
+                <SpaceComponent width={12} />
+                <TextComponent text={route.params && (route.params as any).addressData ? t('profile:update_address') : t('profile:add_new_address')} title color={appColors.text} size={18} font={fontFamilies.bold} />
+            </View>
 
-                <ScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
-                    <GlassView style={{ padding: 16, borderRadius: 16 }}>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}>
+                <View style={{ paddingHorizontal: 16 }}>
+                    <SectionComponent styles={{ backgroundColor: appColors.white, borderRadius: 12, padding: 16, marginBottom: 16 }}>
                         <InputComponent
                             value={name}
                             onChange={val => setName(val)}
                             placeholder={t('profile:full_name')}
-                            affix={<User size={22} color={appColors.text} />}
+                            affix={<User size={22} color={appColors.gray} />}
                             allowClear
                         />
                         <SpaceComponent height={16} />
@@ -164,30 +167,31 @@ const AddNewAddress = () => {
                             value={phone}
                             onChange={val => setPhone(val)}
                             placeholder={t('profile:phone_number')}
-                            affix={<Sms size={22} color={appColors.text} />}
+                            affix={<Sms size={22} color={appColors.gray} />}
                             type="phone-pad"
                             allowClear
                         />
-                        <SpaceComponent height={16} />
-                        {/* Selection Fields */}
+                    </SectionComponent>
+
+                    <SectionComponent styles={{ backgroundColor: appColors.white, borderRadius: 12, padding: 16, marginBottom: 16 }}>
                         <RowComponent>
                             <View style={{ flex: 1 }}>
                                 <InputComponent
                                     value={selectedProvince ? selectedProvince.name : ''}
                                     onChange={() => { }}
                                     placeholder={t('profile:province')}
-                                    suffix={<ArrowDown2 size={20} color={appColors.text} />}
+                                    suffix={<ArrowDown2 size={20} color={appColors.gray} />}
                                     disabled
                                     onPress={() => handleOpenModal('province')}
                                 />
                             </View>
-                            <SpaceComponent width={10} />
+                            <SpaceComponent width={12} />
                             <View style={{ flex: 1 }}>
                                 <InputComponent
                                     value={selectedWard ? selectedWard.name : ''}
                                     onChange={() => { }}
                                     placeholder={t('profile:ward')}
-                                    suffix={<ArrowDown2 size={20} color={appColors.text} />}
+                                    suffix={<ArrowDown2 size={20} color={appColors.gray} />}
                                     disabled
                                     onPress={() => {
                                         if (selectedProvince) handleOpenModal('ward');
@@ -205,60 +209,71 @@ const AddNewAddress = () => {
                             numberOfLines={3}
                             allowClear
                         />
+                    </SectionComponent>
 
-                        <SpaceComponent height={16} />
+                    <SectionComponent styles={{ backgroundColor: appColors.white, borderRadius: 12, padding: 16 }}>
                         <RowComponent justify="space-between">
-                            <TextComponent text={t('profile:default_address')} color={appColors.text} size={16} />
+                            <TextComponent text={t('profile:default_address')} color={appColors.text} size={16} font={fontFamilies.medium} />
                             <Switch
-                                trackColor={{ false: appColors.gray, true: appColors.primary }}
+                                trackColor={{ false: appColors.gray2, true: appColors.primary }}
                                 thumbColor={appColors.white}
                                 onValueChange={() => setIsDefault(!isDefault)}
                                 value={isDefault}
                             />
                         </RowComponent>
-                    </GlassView>
+                    </SectionComponent>
+                </View>
+            </ScrollView>
 
-                    <SpaceComponent height={24} />
-                    <ButtonComponent
-                        text={isLoading ? 'Loading...' : t('profile:save')}
-                        type="primary"
-                        onPress={handleSave}
-                    />
-                </ScrollView>
+            <View style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: appColors.white,
+                padding: 16,
+                paddingBottom: Platform.OS === 'ios' ? 30 : 16,
+                borderTopWidth: 1,
+                borderTopColor: '#F0F0F0'
+            }}>
+                <ButtonComponent
+                    text={isLoading ? 'Loading...' : t('profile:save').toUpperCase()}
+                    type="primary"
+                    onPress={handleSave}
+                />
+            </View>
 
-                {/* Selection Modal */}
-                <Modal visible={isVisible} transparent animationType="slide">
-                    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-                        <View style={{
-                            backgroundColor: appColors.white,
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                            padding: 20,
-                            maxHeight: '80%'
-                        }}>
-                            <RowComponent justify="space-between">
-                                <TextComponent text={selectionType === 'province' ? t('profile:province') : t('profile:ward')} title size={18} font={fontFamilies.bold} color={appColors.text} />
-                                <TouchableOpacity onPress={() => setIsVisible(false)}>
-                                    <View style={{ padding: 4 }}>
-                                        <TextComponent text="Close" color={appColors.gray} />
-                                    </View>
+            {/* Selection Modal */}
+            <Modal visible={isVisible} transparent animationType="slide">
+                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+                    <View style={{
+                        backgroundColor: appColors.white,
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        padding: 20,
+                        maxHeight: '80%'
+                    }}>
+                        <RowComponent justify="space-between">
+                            <TextComponent text={selectionType === 'province' ? t('profile:province') : t('profile:ward')} title size={18} font={fontFamilies.bold} color={appColors.text} />
+                            <TouchableOpacity onPress={() => setIsVisible(false)}>
+                                <View style={{ padding: 4 }}>
+                                    <TextComponent text="Close" color={appColors.gray} />
+                                </View>
+                            </TouchableOpacity>
+                        </RowComponent>
+                        <SpaceComponent height={16} />
+                        <FlatList
+                            data={selectionType === 'province' ? provinces : wards}
+                            keyExtractor={(item) => item.code}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => handleSelect(item)} style={{ paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: appColors.gray2 }}>
+                                    <TextComponent text={item.name} color={appColors.text} size={16} />
                                 </TouchableOpacity>
-                            </RowComponent>
-                            <SpaceComponent height={16} />
-                            <FlatList
-                                data={selectionType === 'province' ? provinces : wards}
-                                keyExtractor={(item) => item.code}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => handleSelect(item)} style={{ paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: appColors.gray8 }}>
-                                        <TextComponent text={item.name} color={appColors.text} size={16} />
-                                    </TouchableOpacity>
-                                )}
-                            />
-                        </View>
+                            )}
+                        />
                     </View>
-                </Modal>
-
-            </ImageBackground>
+                </View>
+            </Modal>
         </View>
     );
 };

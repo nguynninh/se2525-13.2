@@ -163,7 +163,7 @@ const CartScreen = () => {
   };
 
   return (
-    <ContainerComponent isImageBackground>
+    <ContainerComponent>
       <View style={{ flex: 1 }}>
         <RowComponent justify="space-between" styles={{ paddingHorizontal: 16, paddingVertical: 10, paddingTop: Platform.OS === 'android' ? 40 : 10 }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -172,13 +172,13 @@ const CartScreen = () => {
           <View style={{ alignItems: 'center' }}>
             <TextComponent text={`Giỏ hàng (${cartItems.length})`} font={fontFamilies.bold} size={16} />
             <RowComponent onPress={() => (navigation as any).navigate('AddressList')}>
-              <Location size={12} color={appColors.gray5} variant="Bold" />
+              <Location size={12} color={appColors.gray} variant="Bold" />
               <SpaceComponent width={4} />
               <TextComponent
                 text={selectedAddress ? selectedAddress.address : 'Chọn địa chỉ'}
-                size={12} color={appColors.gray5} numberOfLine={1} styles={{ maxWidth: 200 }}
+                size={12} color={appColors.gray} numberOfLine={1} styles={{ maxWidth: 200 }}
               />
-              <ArrowRight2 size={12} color={appColors.gray5} />
+              <ArrowRight2 size={12} color={appColors.gray} />
             </RowComponent>
           </View>
           <TouchableOpacity onPress={() => setIsEdit(!isEdit)}>
@@ -237,8 +237,30 @@ const CartScreen = () => {
           ))}
 
           {cartItems.length === 0 && (
-            <SectionComponent styles={{ alignItems: 'center', marginTop: 40 }}>
-              <TextComponent text={t('common:empty_cart')} color={appColors.gray} />
+            <SectionComponent styles={{ alignItems: 'center', marginTop: 100 }}>
+              <View style={{
+                width: 150,
+                height: 150,
+                backgroundColor: appColors.gray2,
+                borderRadius: 75,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 20
+              }}>
+                <Shop size={80} color={appColors.gray} variant='Bold' />
+              </View>
+              <TextComponent text={t('common:empty_cart')} color={appColors.text} size={20} font={fontFamilies.bold} />
+              <SpaceComponent height={8} />
+              <TextComponent text="Mua sắm ngay nào!" color={appColors.gray} size={14} />
+              <SpaceComponent height={20} />
+              <TouchableOpacity onPress={() => (navigation as any).navigate('HomeScreen')} style={{
+                paddingHorizontal: 20,
+                paddingVertical: 12,
+                backgroundColor: appColors.primary,
+                borderRadius: 24
+              }}>
+                <TextComponent text="Khám phá ngay" color={appColors.white} font={fontFamilies.bold} />
+              </TouchableOpacity>
             </SectionComponent>
           )}
         </ScrollView>

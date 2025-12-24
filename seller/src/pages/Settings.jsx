@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { RefreshCcw, Save, Upload } from 'lucide-react';
-import { getSellerProfile, getMyShop, updateMyShop, updateMyShopStatus, createMyShop, updateMyAvatar } from '../api/seller';
+import { getSellerProfile, getMyShop, updateMyShop, createMyShop, updateMyAvatar } from '../api/seller';
+import { fetchProvinces, fetchWards } from '../api/shipping';
 
 const Settings = () => {
   const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', profile_url: '' });
@@ -15,15 +16,21 @@ const Settings = () => {
     banner_url: '',
   });
   const [shopId, setShopId] = useState(null);
+  // Status is managed by admin, keep local for display only
   const [shopStatus, setShopStatus] = useState('pending');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [savingStatus, setSavingStatus] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [provinces, setProvinces] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedWard, setSelectedWard] = useState('');
+  const [loadingProvince, setLoadingProvince] = useState(false);
+  const [loadingWard, setLoadingWard] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -32,7 +39,7 @@ const Settings = () => {
       const [p, s] = await Promise.all([
         getSellerProfile(),
         getMyShop().catch((err) => {
-          if (err?.status === 404) return null; // chưa tạo shop thì coi như null, không báo lỗi
+          if (err?.status === 404) return null; // no shop yet -> treat as null
           throw err;
         }),
       ]);
@@ -46,16 +53,22 @@ const Settings = () => {
         setAvatarPreview(p.user.profile_url || '');
       }
       if (s) {
+        const addressLine =
+          typeof s.address === 'string' ? s.address : s.address?.address_line || s.location || s.address_line || '';
         setShop({
           name: s.name || '',
           slug: s.slug || '',
           email: s.email || s.contact_email || '',
-          address: s.address || s.location || '',
+          address: addressLine,
           description: s.description || '',
           hotline: s.hotline || '',
           logo_url: s.logo_url || '',
           banner_url: s.banner_url || '',
         });
+        const wardCode = s.address?.ward?.id || s.address?.ward?.code || s.address?.ward_code || s.ward_id || '';
+        const provinceCode = s.address?.ward?.province?.code || s.address?.province_code || '';
+        setSelectedWard(wardCode);
+        setSelectedProvince(provinceCode);
         setShopId(s.id || s._id || null);
         setShopStatus(s.status || 'pending');
       } else {
@@ -71,6 +84,8 @@ const Settings = () => {
         });
         setShopId(null);
         setShopStatus('pending');
+        setSelectedWard('');
+        setSelectedProvince('');
       }
     } catch (err) {
       setError(err.message || 'Failed to load settings.');
@@ -78,6 +93,49 @@ const Settings = () => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    const normalizeList = (payload) => {
+      if (Array.isArray(payload)) return payload;
+      if (Array.isArray(payload?.provinces)) return payload.provinces;
+      if (Array.isArray(payload?.data)) return payload.data;
+      return [];
+    };
+
+    const loadProvinces = async () => {
+      try {
+        setLoadingProvince(true);
+        const data = await fetchProvinces();
+        const list = normalizeList(data);
+        setProvinces(list);
+      } catch (err) {
+        setError(err.message || 'Failed to load provinces.');
+      } finally {
+        setLoadingProvince(false);
+      }
+    };
+    loadProvinces();
+  }, []);
+
+  useEffect(() => {
+    const loadWards = async () => {
+      if (!selectedProvince) {
+        setWards([]);
+        return;
+      }
+      try {
+        setLoadingWard(true);
+        const data = await fetchWards(selectedProvince);
+        const list = Array.isArray(data?.wards) ? data.wards : Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+        setWards(list);
+      } catch (err) {
+        setError(err.message || 'Failed to load wards.');
+      } finally {
+        setLoadingWard(false);
+      }
+    };
+    loadWards();
+  }, [selectedProvince]);
 
   useEffect(() => {
     load();
@@ -88,7 +146,30 @@ const Settings = () => {
     setError('');
     setMessage('');
     try {
-      const payload = { ...shop };
+      if (!shop.address.trim()) {
+        setError('Address is required.');
+        setSaving(false);
+        return;
+      }
+      const ward = selectedWard || shop.address?.ward_id;
+      if (!ward) {
+        setError('Please select ward.');
+        setSaving(false);
+        return;
+      }
+      const wardValue = (selectedWard || shop.address?.ward_id || '').toString().trim();
+      const payload = {
+        name: shop.name?.trim(),
+        slug: shop.slug?.trim(),
+        description: shop.description || '',
+        hotline: shop.hotline || '',
+        address: {
+          address_line: shop.address,
+          ward_id: wardValue,
+        },
+      };
+      if (shop.logo_url) payload.logo_url = shop.logo_url;
+      if (shop.banner_url) payload.banner_url = shop.banner_url;
       if (shopId) {
         await updateMyShop(payload);
         setMessage('Shop info saved.');
@@ -99,29 +180,21 @@ const Settings = () => {
       }
       await load();
     } catch (err) {
-      setError(err.message || 'Failed to save shop info.');
+      const errorsObj = err?.data?.errors;
+      const details =
+        errorsObj && typeof errorsObj === 'object'
+          ? JSON.stringify(errorsObj)
+          : err?.data
+            ? JSON.stringify(err.data)
+            : '';
+      setError(details ? `${err.message || 'Failed to save shop info.'} (${details})` : err.message || 'Failed to save shop info.');
     } finally {
       setSaving(false);
     }
   };
 
   const saveStatus = async () => {
-    if (!shopId) {
-      setError('Create shop first.');
-      return;
-    }
-    setSavingStatus(true);
-    setError('');
-    setMessage('');
-    try {
-      await updateMyShopStatus({ status: shopStatus });
-      setMessage('Shop status updated.');
-      await load();
-    } catch (err) {
-      setError(err.message || 'Failed to update shop status.');
-    } finally {
-      setSavingStatus(false);
-    }
+    setMessage('Shop status is managed by admin approval.');
   };
 
   const handleSelectAvatar = (event) => {
@@ -211,35 +284,6 @@ const Settings = () => {
               <p className="text-xs text-gray-500">Recommended: square image, max 5MB.</p>
             </div>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-800">First name</label>
-              <input
-                type="text"
-                value={profile.first_name}
-                onChange={(e) => setProfile((prev) => ({ ...prev, first_name: e.target.value }))}
-                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-800">Last name</label>
-              <input
-                type="text"
-                value={profile.last_name}
-                onChange={(e) => setProfile((prev) => ({ ...prev, last_name: e.target.value }))}
-                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-800">Email</label>
-              <input
-                type="email"
-                value={profile.email}
-                disabled
-                className="mt-2 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm shadow-sm text-gray-600"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
@@ -272,7 +316,16 @@ const Settings = () => {
               <input
                 type="text"
                 value={shop.slug}
-                onChange={(e) => setShop((prev) => ({ ...prev, slug: e.target.value }))}
+                onChange={(e) =>
+                  setShop((prev) => ({
+                    ...prev,
+                    slug: e.target.value
+                      .toLowerCase()
+                      .replace(/[^a-z0-9-]/g, '-')
+                      .replace(/-+/g, '-')
+                      .replace(/^-+|-+$/g, ''),
+                  }))
+                }
                 placeholder="store-slug"
                 className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
               />
@@ -296,6 +349,93 @@ const Settings = () => {
                 placeholder="Enter store address"
                 className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-800">Province</label>
+              <div className="flex gap-2">
+                <select
+                  value={selectedProvince}
+                  onChange={(e) => {
+                    setSelectedProvince(e.target.value);
+                    setSelectedWard('');
+                  }}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                >
+                  <option value="">{loadingProvince ? 'Loading...' : 'Select province'}</option>
+                  {provinces.map((p) => (
+                    <option key={p.code || p.id} value={(p.code || p.id || '').toString()}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedProvince('');
+                    setSelectedWard('');
+                    setLoadingProvince(true);
+                    fetchProvinces()
+                      .then((data) => {
+                        const list = Array.isArray(data?.provinces)
+                          ? data.provinces
+                          : Array.isArray(data?.data)
+                            ? data.data
+                            : Array.isArray(data)
+                              ? data
+                              : [];
+                        setProvinces(list);
+                      })
+                      .catch((err) => setError(err.message || 'Failed to load provinces.'))
+                      .finally(() => setLoadingProvince(false));
+                  }}
+                  className="mt-2 inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-60"
+                  disabled={loadingProvince}
+                >
+                  <RefreshCcw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-800">Ward</label>
+              <div className="flex gap-2">
+                <select
+                  value={selectedWard}
+                  onChange={(e) => setSelectedWard(e.target.value)}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  disabled={!selectedProvince}
+                >
+                  <option value="">{loadingWard ? 'Loading...' : 'Select ward'}</option>
+                  {wards.map((w) => (
+                    <option key={w.id || w.code} value={(w.id || w.code || '').toString()}>
+                      {w.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!selectedProvince) return;
+                    setLoadingWard(true);
+                    fetchWards(selectedProvince)
+                      .then((data) => {
+                        const list = Array.isArray(data?.wards)
+                          ? data.wards
+                          : Array.isArray(data?.data)
+                            ? data.data
+                            : Array.isArray(data)
+                              ? data
+                              : [];
+                        setWards(list);
+                      })
+                      .catch((err) => setError(err.message || 'Failed to load wards.'))
+                      .finally(() => setLoadingWard(false));
+                  }}
+                  className="mt-2 inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-60"
+                  disabled={!selectedProvince || loadingWard}
+                >
+                  <RefreshCcw className="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-800">Description</label>
@@ -342,25 +482,17 @@ const Settings = () => {
 
         <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
           <h2 className="text-base font-semibold text-gray-900">Shop status</h2>
-          <p className="text-xs text-gray-600">Request update status for your shop.</p>
-          <select
-            value={shopStatus}
-            onChange={(e) => setShopStatus(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-          >
-            <option value="active">active</option>
-            <option value="pending">pending</option>
-            <option value="approved">approved</option>
-            <option value="rejected">rejected</option>
-            <option value="inactive">inactive</option>
-          </select>
+          <p className="text-xs text-gray-600">Status is set by admin approval.</p>
+          <div className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50 text-gray-700">
+            {shopId ? shopStatus || 'pending' : 'Create your shop first'}
+          </div>
           <button
             type="button"
             onClick={saveStatus}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60 w-full"
-            disabled={savingStatus || loading}
+            className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition"
+            disabled
           >
-            {savingStatus ? 'Updating...' : 'Update status'}
+            Status managed by admin
           </button>
         </div>
       </div>

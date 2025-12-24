@@ -1,0 +1,760 @@
+﻿{
+    "data":  [
+                 {
+                     "code":  "09877",
+                     "name":  "An Khánh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09700",
+                     "name":  "Ba Vì",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00004",
+                     "name":  "Ba Đình",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00577",
+                     "name":  "Bát Tràng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10126",
+                     "name":  "Bình Minh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00292",
+                     "name":  "Bạch Mai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09676",
+                     "name":  "Bất Bạt",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00118",
+                     "name":  "Bồ Đề",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10330",
+                     "name":  "Chuyên Mỹ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10237",
+                     "name":  "Chương Dương",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10015",
+                     "name":  "Chương Mỹ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00166",
+                     "name":  "Cầu Giấy",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09634",
+                     "name":  "Cổ Đô",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00082",
+                     "name":  "Cửa Nam",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10180",
+                     "name":  "Dân Hòa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09856",
+                     "name":  "Dương Hòa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09886",
+                     "name":  "Dương Nội",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00565",
+                     "name":  "Gia Lâm",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00025",
+                     "name":  "Giảng Võ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00256",
+                     "name":  "Hai Bà Trưng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09832",
+                     "name":  "Hoài Đức",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00070",
+                     "name":  "Hoàn Kiếm",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00337",
+                     "name":  "Hoàng Liệt",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00331",
+                     "name":  "Hoàng Mai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09556",
+                     "name":  "Hà Đông",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09772",
+                     "name":  "Hát Môn",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09988",
+                     "name":  "Hòa Lạc",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10096",
+                     "name":  "Hòa Phú",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10417",
+                     "name":  "Hòa Xá",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09931",
+                     "name":  "Hưng Đạo",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10489",
+                     "name":  "Hương Sơn",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09982",
+                     "name":  "Hạ Bằng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00097",
+                     "name":  "Hồng Hà",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10465",
+                     "name":  "Hồng Sơn",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10210",
+                     "name":  "Hồng Vân",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00364",
+                     "name":  "Khương Đình",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00382",
+                     "name":  "Kim Anh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00229",
+                     "name":  "Kim Liên",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09552",
+                     "name":  "Kiến Hưng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09910",
+                     "name":  "Kiều Phú",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09787",
+                     "name":  "Liên Minh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00145",
+                     "name":  "Long Biên",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00199",
+                     "name":  "Láng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00328",
+                     "name":  "Lĩnh Nam",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09661",
+                     "name":  "Minh Châu",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09022",
+                     "name":  "Mê Linh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10441",
+                     "name":  "Mỹ Đức",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00685",
+                     "name":  "Nam Phù",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00160",
+                     "name":  "Nghĩa Đô",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00008",
+                     "name":  "Ngọc Hà",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00679",
+                     "name":  "Ngọc Hồi",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00433",
+                     "name":  "Nội Bài",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00541",
+                     "name":  "Phù Đổng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09952",
+                     "name":  "Phú Cát",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00619",
+                     "name":  "Phú Diễn",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09568",
+                     "name":  "Phú Lương",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10030",
+                     "name":  "Phú Nghĩa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00091",
+                     "name":  "Phú Thượng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10273",
+                     "name":  "Phú Xuyên",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09739",
+                     "name":  "Phúc Lộc",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00136",
+                     "name":  "Phúc Lợi",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10459",
+                     "name":  "Phúc Sơn",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00466",
+                     "name":  "Phúc Thịnh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09715",
+                     "name":  "Phúc Thọ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00352",
+                     "name":  "Phương Liệt",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10279",
+                     "name":  "Phượng Dực",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "08974",
+                     "name":  "Quang Minh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10072",
+                     "name":  "Quảng Bị",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09619",
+                     "name":  "Quảng Oai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09895",
+                     "name":  "Quốc Oai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09694",
+                     "name":  "Suối Hai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00376",
+                     "name":  "Sóc Sơn",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09574",
+                     "name":  "Sơn Tây",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09871",
+                     "name":  "Sơn Đồng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10144",
+                     "name":  "Tam Hưng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00643",
+                     "name":  "Thanh Liệt",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10114",
+                     "name":  "Thanh Oai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00640",
+                     "name":  "Thanh Trì",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00367",
+                     "name":  "Thanh Xuân",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00493",
+                     "name":  "Thiên Lộc",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00562",
+                     "name":  "Thuận An",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00475",
+                     "name":  "Thư Lâm",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10183",
+                     "name":  "Thường Tín",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00598",
+                     "name":  "Thượng Cát",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10231",
+                     "name":  "Thượng Phúc",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09955",
+                     "name":  "Thạch Thất",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "08995",
+                     "name":  "Tiến Thắng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00385",
+                     "name":  "Trung Giã",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10081",
+                     "name":  "Trần Phú",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00103",
+                     "name":  "Tây Hồ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00634",
+                     "name":  "Tây Mỗ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10003",
+                     "name":  "Tây Phương",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00613",
+                     "name":  "Tây Tựu",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09604",
+                     "name":  "Tùng Thiện",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00322",
+                     "name":  "Tương Mai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00592",
+                     "name":  "Từ Liêm",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00127",
+                     "name":  "Việt Hưng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10354",
+                     "name":  "Vân Đình",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00226",
+                     "name":  "Văn Miếu - Quốc Tử Giám",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00301",
+                     "name":  "Vĩnh Hưng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00508",
+                     "name":  "Vĩnh Thanh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00283",
+                     "name":  "Vĩnh Tuy",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09664",
+                     "name":  "Vật Lại",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10045",
+                     "name":  "Xuân Mai",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00622",
+                     "name":  "Xuân Phương",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00611",
+                     "name":  "Xuân Đỉnh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09706",
+                     "name":  "Yên Bài",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00175",
+                     "name":  "Yên Hòa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "08980",
+                     "name":  "Yên Lãng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09562",
+                     "name":  "Yên Nghĩa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00340",
+                     "name":  "Yên Sở",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "04930",
+                     "name":  "Yên Xuân",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00190",
+                     "name":  "Ô Chợ Dừa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09817",
+                     "name":  "Ô Diên",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00430",
+                     "name":  "Đa Phúc",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09784",
+                     "name":  "Đan Phượng",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "09616",
+                     "name":  "Đoài Phương",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00454",
+                     "name":  "Đông Anh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00602",
+                     "name":  "Đông Ngạc",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00637",
+                     "name":  "Đại Mỗ",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00664",
+                     "name":  "Đại Thanh",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10342",
+                     "name":  "Đại Xuyên",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00316",
+                     "name":  "Định Công",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "00235",
+                     "name":  "Đống Đa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10402",
+                     "name":  "Ứng Hòa",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 },
+                 {
+                     "code":  "10369",
+                     "name":  "Ứng Thiên",
+                     "province_id":  "ee58be6e-6f9f-4303-970f-8b28216d9be0",
+                     "province_name":  "Hà Nội"
+                 }
+             ]
+}

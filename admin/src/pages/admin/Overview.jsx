@@ -37,10 +37,10 @@ const Overview = ({ onNavigate }) => {
   }, []);
 
   const counters = [
-    { icon: Users, label: 'Users', value: users.length || '—', desc: 'GET /api/users/admin/users', tone: 'bg-emerald-400' },
-    { icon: BadgeCheck, label: 'Seller apps', value: sellerApps.length || '—', desc: 'GET pending', tone: 'bg-amber-400' },
-    { icon: Store, label: 'Shops', value: shops.length || '—', desc: 'GET /api/shop/admin', tone: 'bg-sky-400' },
-    { icon: ClipboardList, label: 'Orders', value: orders.length || '—', desc: 'GET /api/user/admin/orders', tone: 'bg-indigo-400' },
+    { icon: Users, label: 'Users', value: users.length || '—', tone: 'bg-emerald-400' },
+    { icon: BadgeCheck, label: 'Seller apps', value: sellerApps.length || '—', tone: 'bg-amber-400' },
+    { icon: Store, label: 'Shops', value: shops.length || '—', tone: 'bg-sky-400' },
+    { icon: ClipboardList, label: 'Orders', value: orders.length || '—', tone: 'bg-indigo-400' },
   ];
 
   return (

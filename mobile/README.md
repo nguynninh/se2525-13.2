@@ -97,7 +97,7 @@ mobile/
 
 ## Key Features
 
--   **Authentication**: Login, Sign Up, Forgot Password, Social Login.
+-   **Authentication**: Login, Sign Up, **Email Verification (OTP)**, Forgot Password, Social Login.
 -   **Commerce**: Product listing, Product Details, Cart, Checkout.
 -   **Profile**: User settings, Address management, and **Seller Dashboard**.
 -   **Promotions**: Dedicated Sale Screen highlighting discounted products for users.
@@ -112,6 +112,7 @@ The application has undergone a significant UI overhaul to adopt a modern **Clea
 -   **Profile Screen**: Redesigned with a "System Settings" style layout, featuring grouped cards, colorful icons, and clear typography.
 -   **Cart Screen**: Improved "Empty State" with visual illustrations and clean white background.
 -   **Address Management**: Refined "Add/Edit Address" screens with proper spacing and clearer input forms.
+-   **User Verification**: Added a dedicated **Verification Screen** during the valid sign-up process. Users now receive a 4-digit OTP via email to confirm their account before logging in.
 
 
 ## Screenshots

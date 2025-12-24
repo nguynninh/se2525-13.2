@@ -3,15 +3,15 @@ import handleAPI from './handleApi';
 const url = '/address';
 
 const getProvinces = async () => {
-    return await handleAPI(`${url}/provinces`, undefined, 'get');
+    return await handleAPI(`https://api.hiki.io.vn/api/location/provinces`, undefined, 'get');
 };
 
 const getWards = async (provinceCode: string) => {
-    return await handleAPI(`${url}/wards?province_code=${provinceCode}`, undefined, 'get');
+    return await handleAPI(`https://api.hiki.io.vn/api/location/provinces/${provinceCode}/wards`, undefined, 'get');
 };
 
 const addNewAddress = async (data: any) => {
-    return await handleAPI(`${url}/add`, data, 'post');
+    return await handleAPI(`https://api.hiki.io.vn/api/user/me/shipping-addresses`, data, 'post');
 };
 
 const getAllAddresses = async () => {
@@ -19,7 +19,7 @@ const getAllAddresses = async () => {
 };
 
 const updateAddress = async (id: string, data: any) => {
-    return await handleAPI(`${url}/update?id=${id}`, data, 'put');
+    return await handleAPI(`https://api.hiki.io.vn/api/user/me/shipping-addresses/${id}`, data, 'patch');
 };
 
 const deleteAddress = async (id: string) => {

@@ -36,8 +36,9 @@ const AddressList = () => {
         try {
             const res = await userApi.getShippingAddresses();
             if (res) {
-                setAddresses(res);
-                dispatch(setAddresses(res));
+                const addressList = Array.isArray(res) ? res : (res.data || []);
+                setAddresses(addressList);
+                dispatch(setAddresses(addressList));
                 if (selectedAddress) {
                     setSelectedId(selectedAddress.id);
                 }
@@ -107,7 +108,7 @@ const AddressList = () => {
             ) : (
                 <View style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}>
-                        {addresses.map((item) => {
+                        {(addresses || []).map((item) => {
                             const isSelected = item.id === selectedId;
                             return (
                                 <Swipeable

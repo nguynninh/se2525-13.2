@@ -36,25 +36,29 @@ const Settings = () => {
   const [loadingWard, setLoadingWard] = useState(false);
 
   const applyShopData = (s) => {
-    if (!s) return;
+    const data = s?.data ?? s;
+    if (!data) return;
     const addressLine =
-      typeof s.address === 'string' ? s.address : s.address?.address_line || s.location || s.address_line || '';
+      typeof data.address === 'string'
+        ? data.address
+        : data.address?.address_line || data.location || data.address_line || '';
     setShop({
-      name: s.name || '',
-      slug: s.slug || '',
-      email: s.email || s.contact_email || '',
+      name: data.name || '',
+      slug: data.slug || '',
+      email: data.email || data.contact_email || '',
       address: addressLine,
-      description: s.description || '',
-      hotline: s.hotline || '',
-      logo_url: s.logo_url || '',
-      banner_url: s.banner_url || '',
+      description: data.description || '',
+      hotline: data.hotline || '',
+      logo_url: data.logo_url || '',
+      banner_url: data.banner_url || '',
     });
-    const wardCode = s.address?.ward?.id || s.address?.ward?.code || s.address?.ward_code || s.ward_id || '';
-    const provinceCode = s.address?.ward?.province?.code || s.address?.province_code || '';
+    const wardCode =
+      data.address?.ward?.id || data.address?.ward?.code || data.address?.ward_code || data.ward_id || '';
+    const provinceCode = data.address?.ward?.province?.code || data.address?.province_code || '';
     setSelectedWard(wardCode);
     setSelectedProvince(provinceCode);
-    setShopId(s.id || s._id || null);
-    setShopStatus(s.status || 'pending');
+    setShopId(data.id || data._id || null);
+    setShopStatus(data.status || 'pending');
     setShopLoadError('');
   };
 
@@ -62,7 +66,7 @@ const Settings = () => {
     setLoading(true);
     setError('');
     try {
-      const [p, s] = await Promise.all([
+      const [pRes, sRes] = await Promise.all([
         getSellerProfile(),
         getMyShop().catch((err) => {
           if (err?.status === 404) {
@@ -73,6 +77,8 @@ const Settings = () => {
           throw err;
         }),
       ]);
+      const p = pRes?.data ?? pRes;
+      const s = sRes?.data ?? sRes;
       if (p?.user) {
         setProfile({
           first_name: p.user.first_name || '',
@@ -197,7 +203,10 @@ const Settings = () => {
         setMessage('Shop info saved.');
       } else {
         const created = await createMyShop(payload);
-        setShopId(created?.id || created?._id || null);
+        const createdData = created?.data ?? created;
+        if (createdData) {
+          applyShopData(createdData);
+        }
         setMessage('Shop created.');
       }
       await load();

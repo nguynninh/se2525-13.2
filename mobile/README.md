@@ -1,97 +1,149 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# SE2525 Mobile App
 
-# Getting Started
+This is the mobile client for the SE2525 project, built with React Native. It features a complete e-commerce experience including authentication, product browsing, cart management, and user profiles.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the App](#running-the-app)
+- [Project Structure](#project-structure)
+- [Screenshots](#screenshots)
+- [Troubleshooting](#troubleshooting)
 
-## Step 1: Start Metro
+## Prerequisites
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Ensure you have the following installed on your development machine:
+- **Node.js** (>= 18)
+- **Yarn** (Preferred package manager)
+- **Java Development Kit (JDK)** (version 17 is recommended for React Native 0.78)
+- **Android Studio** (with Android SDK and Emulator)
+- **Xcode** (for iOS development, Mac only)
+- **CocoaPods** (for iOS dependencies)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Installation
 
-```sh
-# Using npm
-npm start
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd se2525-13.2/mobile
+    ```
 
-# OR using Yarn
-yarn start
-```
+2.  **Install dependencies:**
+    ```bash
+    yarn install
+    ```
 
-## Step 2: Build and run your app
+3.  **iOS specific (Mac only):**
+    ```bash
+    cd ios
+    pod install
+    cd ..
+    ```
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Running the App
 
 ### Android
 
-```sh
-# Using npm
-npm run android
+To run the Android application:
 
-# OR using Yarn
-yarn android
-```
+1.  Start the Metro bundler:
+    ```bash
+    yarn start
+    ```
+
+2.  In a separate terminal, run the Android app:
+    ```bash
+    yarn android
+    ```
+
+   *Note: This will automatically generate a `debug.keystore` if one is missing in `android/app`.*
 
 ### iOS
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+To run the iOS application:
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+1.  Start the Metro bundler:
+    ```bash
+    yarn start
+    ```
 
-```sh
-bundle install
+2.  Run the iOS app:
+    ```bash
+    yarn ios
+    ```
+
+## Project Structure
+
+The project follows a standard React Native directory structure:
+
+```
+mobile/
+├── android/            # Android native code
+├── ios/                # iOS native code
+├── src/
+│   ├── apis/           # API integration
+│   ├── assets/         # Images, fonts, and other static assets
+│   ├── components/     # Reusable UI components
+│   ├── constants/      # App constants (colors, fonts, sizes)
+│   ├── models/         # TypeScript interfaces/types
+│   ├── navigators/     # React Navigation setup (Stack, Tab, Drawer)
+│   ├── redux/          # Redux state management (slices, store)
+│   ├── screens/        # Screen components (Auth, Commerce, Profile, etc.)
+│   ├── styles/         # Global styles
+│   └── utils/          # Utility functions (validation, etc.)
+├── App.tsx             # Root component
+└── package.json        # Dependencies and scripts
 ```
 
-Then, and every time you update your native dependencies, run:
+## Key Features
 
-```sh
-bundle exec pod install
-```
+-   **Authentication**: Login, Sign Up, Forgot Password, Social Login.
+-   **Commerce**: Product listing, Product Details, Cart, Checkout.
+-   **Profile**: User settings, Address management.
+-   **Navigation**: Uses `@react-navigation/native` with Stack and Tab navigators.
+-   **State Management**: Uses `@reduxjs/toolkit` for global state.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Screenshots
 
-```sh
-# Using npm
-npm run ios
+### Onboarding
 
-# OR using Yarn
-yarn ios
-```
+The Onboarding flow introduces users to the app's core value proposition through a 3-step swipable guide:
+1.  **Browse Products**: Discover a wide variety of items.
+2.  **Easy Ordering**: Seamless checkout process.
+3.  **Fast Delivery**: Get your items delivered quickly.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Users can navigate through the guide using "Next" or bypass it with "Skip" to jump directly to the Login screen.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+<p float="left">
+  <img src="readme_file/onboarding-1.png" width="200" />
+  <img src="readme_file/onboarding-2.png" width="200" />
+  <img src="readme_file/onboarding-3.png" width="200" />
+</p>
 
-## Step 3: Modify your app
+### Authentication
+<p float="left">
+  <img src="readme_file/login_ui.png" width="200" />
+  <img src="readme_file/signup_ui.png" width="200" />
+  <img src="readme_file/forgot_password_ui.png" width="200" />
+</p>
 
-Now that you have successfully run the app, let's make changes!
+## Troubleshooting
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### Android Build Issues
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+*   **`debug.keystore` missing**: The app requires a debug keystore to sign the APK. If you see a keystore logging error, ensure `android/app/debug.keystore` exists. You can generate it using:
+    ```bash
+    keytool -genkey -v -keystore android/app/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000
+    ```
+    *(Password: `android`)*
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+*   **`react-native-screens` errors**: This project requires `react-native-screens` version **4.18.0** to be compatible with other navigation libraries. Do not upgrade this package without verifying compatibility.
 
-## Congratulations! :tada:
+### Runtime Errors
 
-You've successfully run and modified your React Native App. :partying_face:
+*   **"No bundle URL present"**: Ensure the Metro bundler is running (`yarn start`).
+*   **"INSTALL_FAILED_INSUFFICIENT_STORAGE"**: Free up space on your emulator or device by uninstalling unused apps.
 
-### Now what?
+## License
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+[Add License Here]

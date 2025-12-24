@@ -1,4 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import './src/i18n';
 import { StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
@@ -9,15 +10,17 @@ const App = () => {
   return (
     <>
       <Provider store={store}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent
-        />
+        <SafeAreaProvider>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+            translucent
+          />
 
-        <NavigationContainer>
-          <AppRouters />
-        </NavigationContainer>
+          <NavigationContainer>
+            <AppRouters />
+          </NavigationContainer>
+        </SafeAreaProvider>
       </Provider>
     </>
   );

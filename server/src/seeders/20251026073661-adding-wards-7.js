@@ -1,12 +1,194 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
+const DATA = [
+    // ===== Bắc Giang / Bắc Ninh (24) – Xã =====
+    { code: '07840', name: 'Hiệp Hòa', province_code: '24' },
+    { code: '07864', name: 'Hợp Thịnh', province_code: '24' },
+    { code: '07870', name: 'Xuân Cẩm', province_code: '24' },
+    { code: '09193', name: 'Yên Phong', province_code: '24' },
+    { code: '09202', name: 'Tam Giang', province_code: '24' },
+    { code: '09205', name: 'Yên Trung', province_code: '24' },
+    { code: '09208', name: 'Tam Đa', province_code: '24' },
+    { code: '09238', name: 'Văn Môn', province_code: '24' },
+    { code: '09292', name: 'Phù Lãng', province_code: '24' },
+    { code: '09313', name: 'Chi Lăng', province_code: '24' },
+    { code: '09319', name: 'Tiên Du', province_code: '24' },
+    { code: '09334', name: 'Liên Bão', province_code: '24' },
+    { code: '09340', name: 'Đại Đồng', province_code: '24' },
+    { code: '09343', name: 'Tân Chi', province_code: '24' },
+    { code: '09349', name: 'Phật Tích', province_code: '24' },
+    { code: '09454', name: 'Gia Bình', province_code: '24' },
+    { code: '09466', name: 'Cao Đức', province_code: '24' },
+    { code: '09469', name: 'Đại Lai', province_code: '24' },
+    { code: '09475', name: 'Nhân Thắng', province_code: '24' },
+    { code: '09487', name: 'Đông Cứu', province_code: '24' },
+    { code: '09496', name: 'Lương Tài', province_code: '24' },
+    { code: '09499', name: 'Trung Kênh', province_code: '24' },
+    { code: '09523', name: 'Trung Chính', province_code: '24' },
+    { code: '09529', name: 'Lâm Thao', province_code: '24' },
+
+    // ===== Hòa Bình / Phú Thọ / Vĩnh Phúc (25) – Phường =====
+    { code: '04792', name: 'Tân Hòa', province_code: '25' },
+    { code: '04795', name: 'Hòa Bình', province_code: '25' },
+    { code: '04828', name: 'Thống Nhất', province_code: '25' },
+    { code: '04894', name: 'Kỳ Sơn', province_code: '25' },
+    { code: '07894', name: 'Nông Trang', province_code: '25' },
+    { code: '07900', name: 'Việt Trì', province_code: '25' },
+    { code: '07909', name: 'Thanh Miếu', province_code: '25' },
+    { code: '07918', name: 'Vân Phú', province_code: '25' },
+    { code: '07942', name: 'Phú Thọ', province_code: '25' },
+    { code: '07948', name: 'Âu Cơ', province_code: '25' },
+    { code: '07954', name: 'Phong Châu', province_code: '25' },
+    { code: '08707', name: 'Vĩnh Yên', province_code: '25' },
+    { code: '08716', name: 'Vĩnh Phúc', province_code: '25' },
+    { code: '08740', name: 'Phúc Yên', province_code: '25' },
+    { code: '08746', name: 'Xuân Hòa', province_code: '25' },
+
+    // ===== Hòa Bình / Phú Thọ / Vĩnh Phúc (25) – Xã =====
+    { code: '04831', name: 'Đà Bắc', province_code: '25' },
+    { code: '04846', name: 'Đức Nhàn', province_code: '25' },
+    { code: '04849', name: 'Tân Pheo', province_code: '25' },
+    { code: '04873', name: 'Quy Đức', province_code: '25' },
+    { code: '04876', name: 'Cao Sơn', province_code: '25' },
+    { code: '04891', name: 'Tiền Phong', province_code: '25' },
+    { code: '04897', name: 'Thịnh Minh', province_code: '25' },
+    { code: '04924', name: 'Lương Sơn', province_code: '25' },
+    { code: '04960', name: 'Liên Sơn', province_code: '25' },
+    { code: '04990', name: 'Nật Sơn', province_code: '25' },
+    { code: '05014', name: 'Mường Động', province_code: '25' },
+    { code: '05047', name: 'Cao Dương', province_code: '25' },
+    { code: '05068', name: 'Hợp Kim', province_code: '25' },
+    { code: '05086', name: 'Dũng Tiến', province_code: '25' },
+    { code: '05089', name: 'Cao Phong', province_code: '25' },
+    { code: '05092', name: 'Thung Nai', province_code: '25' },
+    { code: '05116', name: 'Mường Thàng', province_code: '25' },
+    { code: '05128', name: 'Tân Lạc', province_code: '25' },
+    { code: '05134', name: 'Mường Hoa', province_code: '25' },
+    { code: '05152', name: 'Vân Sơn', province_code: '25' },
+    { code: '05158', name: 'Mường Bi', province_code: '25' },
+    { code: '05191', name: 'Toàn Thắng', province_code: '25' },
+    { code: '05200', name: 'Mai Châu', province_code: '25' },
+    { code: '05206', name: 'Tân Mai', province_code: '25' },
+    { code: '05212', name: 'Pà Cò', province_code: '25' },
+    { code: '05245', name: 'Bao La', province_code: '25' },
+    { code: '05251', name: 'Mai Hạ', province_code: '25' },
+    { code: '05266', name: 'Lạc Sơn', province_code: '25' },
+    { code: '05287', name: 'Mường Vang', province_code: '25' },
+    { code: '05290', name: 'Nhân Nghĩa', province_code: '25' },
+    { code: '05293', name: 'Thượng Cốc', province_code: '25' },
+    { code: '05305', name: 'Yên Phú', province_code: '25' },
+    { code: '05323', name: 'Quyết Thắng', province_code: '25' },
+    { code: '05329', name: 'Ngọc Sơn', province_code: '25' },
+    { code: '05347', name: 'Đại Đồng', province_code: '25' },
+    { code: '05353', name: 'Yên Thủy', province_code: '25' },
+    { code: '05362', name: 'Lạc Lương', province_code: '25' },
+    { code: '05386', name: 'Yên Trị', province_code: '25' },
+    { code: '05392', name: 'Lạc Thủy', province_code: '25' },
+    { code: '05395', name: 'An Nghĩa', province_code: '25' },
+    { code: '05425', name: 'An Bình', province_code: '25' },
+
+    { code: '07969', name: 'Đoan Hùng', province_code: '25' },
+    { code: '07996', name: 'Bằng Luân', province_code: '25' },
+    { code: '07999', name: 'Chí Đám', province_code: '25' },
+    { code: '08023', name: 'Tây Cốc', province_code: '25' },
+    { code: '08038', name: 'Chân Mộng', province_code: '25' },
+    { code: '08053', name: 'Hạ Hòa', province_code: '25' },
+    { code: '08071', name: 'Đan Thượng', province_code: '25' },
+    { code: '08110', name: 'Hiền Lương', province_code: '25' },
+    { code: '08113', name: 'Yên Kỳ', province_code: '25' },
+    { code: '08134', name: 'Văn Lang', province_code: '25' },
+    { code: '08143', name: 'Vĩnh Chân', province_code: '25' },
+    { code: '08152', name: 'Thanh Ba', province_code: '25' },
+    { code: '08173', name: 'Quảng Yên', province_code: '25' },
+    { code: '08203', name: 'Hoàng Cương', province_code: '25' },
+    { code: '08209', name: 'Đông Thành', province_code: '25' },
+    { code: '08218', name: 'Chí Tiên', province_code: '25' },
+    { code: '08227', name: 'Liên Minh', province_code: '25' },
+    { code: '08230', name: 'Phù Ninh', province_code: '25' },
+    { code: '08236', name: 'Phú Mỹ', province_code: '25' },
+    { code: '08245', name: 'Trạm Thản', province_code: '25' },
+    { code: '08254', name: 'Dân Chủ', province_code: '25' },
+    { code: '08275', name: 'Bình Phú', province_code: '25' },
+    { code: '08290', name: 'Yên Lập', province_code: '25' },
+    { code: '08296', name: 'Sơn Lương', province_code: '25' },
+    { code: '08305', name: 'Xuân Viên', province_code: '25' },
+    { code: '08311', name: 'Trung Sơn', province_code: '25' },
+    { code: '08323', name: 'Thượng Long', province_code: '25' },
+    { code: '08338', name: 'Minh Hòa', province_code: '25' },
+    { code: '08341', name: 'Cẩm Khê', province_code: '25' },
+    { code: '08344', name: 'Tiên Lương', province_code: '25' },
+    { code: '08377', name: 'Vân Bán', province_code: '25' },
+    { code: '08398', name: 'Phú Khê', province_code: '25' },
+    { code: '08416', name: 'Hùng Việt', province_code: '25' },
+    { code: '08431', name: 'Đồng Lương', province_code: '25' },
+    { code: '08434', name: 'Tam Nông', province_code: '25' },
+    { code: '08443', name: 'Hiền Quan', province_code: '25' },
+    { code: '08467', name: 'Vạn Xuân', province_code: '25' },
+    { code: '08479', name: 'Thọ Văn', province_code: '25' },
+    { code: '08494', name: 'Lâm Thao', province_code: '25' },
+    { code: '08500', name: 'Xuân Lũng', province_code: '25' },
+    { code: '08515', name: 'Hy Cương', province_code: '25' },
+    { code: '08521', name: 'Phùng Nguyên', province_code: '25' },
+    { code: '08527', name: 'Bản Nguyên', province_code: '25' },
+    { code: '08542', name: 'Thanh Sơn', province_code: '25' },
+    { code: '08545', name: 'Thu Cúc', province_code: '25' },
+    { code: '08560', name: 'Lai Đồng', province_code: '25' },
+    { code: '08566', name: 'Tân Sơn', province_code: '25' },
+    { code: '08584', name: 'Võ Miếu', province_code: '25' },
+    { code: '08590', name: 'Xuân Đài', province_code: '25' },
+    { code: '08593', name: 'Minh Đài', province_code: '25' },
+    { code: '08611', name: 'Văn Miếu', province_code: '25' },
+    { code: '08614', name: 'Cự Đồng', province_code: '25' },
+    { code: '08620', name: 'Long Cốc', province_code: '25' },
+    { code: '08632', name: 'Hương Cần', province_code: '25' },
+    { code: '08635', name: 'Khả Cửu', province_code: '25' },
+    { code: '08656', name: 'Yên Sơn', province_code: '25' },
+    { code: '08662', name: 'Đào Xá', province_code: '25' },
+    { code: '08674', name: 'Thanh Thủy', province_code: '25' },
+    { code: '08686', name: 'Tu Vũ', province_code: '25' },
+    { code: '08761', name: 'Lập Thạch', province_code: '25' },
+    { code: '08770', name: 'Hợp Lý', province_code: '25' },
+    { code: '08773', name: 'Yên Lãng', province_code: '25' },
+    { code: '08782', name: 'Hải Lựu', province_code: '25' },
+    { code: '08788', name: 'Thái Hòa', province_code: '25' },
+    { code: '08812', name: 'Liên Hòa', province_code: '25' },
+    { code: '08824', name: 'Tam Sơn', province_code: '25' },
+    { code: '08842', name: 'Tiên Lữ', province_code: '25' },
+    { code: '08848', name: 'Sông Lô', province_code: '25' },
+    { code: '08866', name: 'Sơn Đông', province_code: '25' },
+    { code: '08869', name: 'Tam Dương', province_code: '25' },
+];
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    // Seed skipped to avoid corrupted data; add data here if needed.
-  },
-  async down(queryInterface, Sequelize) {
-    // No-op
-  },
+    async up(queryInterface, Sequelize) {
+        const now = new Date();
+        const provinceCodes = [...new Set(DATA.map((d) => d.province_code))];
+
+        const provinces = await queryInterface.sequelize.query(
+            `SELECT id, code FROM provinces WHERE code IN (:codes)`,
+            { replacements: { codes: provinceCodes }, type: Sequelize.QueryTypes.SELECT },
+        );
+        const idByCode = Object.fromEntries(provinces.map((p) => [String(p.code), p.id]));
+
+        // Guard: thiếu province_id thì báo lỗi rõ ràng
+        for (const d of DATA) {
+            if (!idByCode[d.province_code]) {
+                throw new Error(`[seed wards-part7] Missing province_id for code=${d.province_code}`);
+            }
+        }
+
+        const rows = DATA.map((d) => ({
+            code: d.code,
+            name: d.name,
+            province_id: idByCode[d.province_code],
+            created_at: now,
+            updated_at: now,
+        }));
+
+        await queryInterface.bulkInsert('wards', rows, {});
+    },
+
+    async down(queryInterface) {
+        await queryInterface.bulkDelete('wards', { code: DATA.map((d) => d.code) }, {});
+    },
 };

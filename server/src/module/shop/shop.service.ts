@@ -67,7 +67,6 @@ const invalidateShopCache = async (slugs: string[] = []) => {
     }
 };
 
-// Danh sách shop đang active
 export const listPublicShops = async (query: ShopListQueryDto): Promise<ShopSummaryDto[]> => {
     const cacheKey = shopCacheKey.publicList(query);
     try {
@@ -156,7 +155,6 @@ export const listPublicShops = async (query: ShopListQueryDto): Promise<ShopSumm
     return result;
 };
 
-// lấy chi tiết shop theo slug
 export const getPublicShopDetailBySlug = async (slug: string): Promise<ShopDetailDto> => {
     const cacheKey = shopCacheKey.publicDetail(slug);
     try {
@@ -261,99 +259,96 @@ const findSellerByUserIdOrThrow = async (userId: string): Promise<Seller> => {
     return seller;
 };
 
-// lấy shop của mình
-export const getMyShop = async (userId: string): Promise<ShopDetailDto> => {
+export const getMyShop = async (userId: string): Promise<ShopDetailDto[]> => {
     const seller = await findSellerByUserIdOrThrow(userId);
 
-    const shop = (await Shop.findOne({
+    const shops = (await Shop.findAll({
         where: { seller_id: seller.id },
+        order: [['created_at', 'DESC']],
         include: [
             {
                 model: Address,
                 as: 'address',
+                required: true,
                 include: [
                     {
                         model: Ward,
                         as: 'ward',
-                        include: [{ model: Province, as: 'province' }],
+                        required: true,
+                        include: [{ model: Province, as: 'province', required: true }],
                     },
                 ],
             },
             {
                 model: Seller,
                 as: 'seller',
+                required: true,
                 include: [
                     {
                         model: User,
                         as: 'user',
+                        required: true,
                     },
                 ],
             },
         ],
-    })) as ShopWithDetail | null;
+    })) as ShopWithDetail[];
 
-    if (!shop) {
+    if (!shops || shops.length === 0) {
         throw new NotFoundError('shop:not_found');
     }
 
-    const sellerInfo = shop.seller;
-    const user = sellerInfo?.user;
-    if (!sellerInfo || !user) {
-        throw new InternalServerError('shop:seller_info_not_loaded');
-    }
+    return shops.map((shop) => {
+        const sellerInfo = shop.seller;
+        const user = sellerInfo?.user;
+        if (!sellerInfo || !user) {
+            throw new InternalServerError('shop:seller_info_not_loaded');
+        }
 
-    const address = shop.address;
-    const ward = address?.ward;
-    const province = ward?.province;
-    if (!address || !ward || !province) {
-        throw new InternalServerError('shop:address_not_loaded');
-    }
+        const address = shop.address;
+        const ward = address?.ward;
+        const province = ward?.province;
+        if (!address || !ward || !province) {
+            throw new InternalServerError('shop:address_not_loaded');
+        }
 
-    return {
-        id: shop.id,
-        name: shop.name,
-        slug: shop.slug,
-        logo_url: shop.logo_url,
-        is_featured: shop.is_featured,
-        status: shop.status,
-        rating_avg: Number(shop.rating_avg),
-        rating_count: Number(shop.rating_count),
-        seller: {
-            seller_id: sellerInfo.id,
-            user_id: sellerInfo.user_id,
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
-        },
-        description: shop.description,
-        banner_url: shop.banner_url,
-        hotline: shop.hotline,
-        address: {
-            address_line: address.address_line,
-            ward: {
-                code: ward.code,
-                name: ward.name,
-                province: {
-                    code: province.code,
-                    name: province.name,
+        return {
+            id: shop.id,
+            name: shop.name,
+            slug: shop.slug,
+            logo_url: shop.logo_url,
+            is_featured: shop.is_featured,
+            status: shop.status,
+            rating_avg: Number(shop.rating_avg),
+            rating_count: Number(shop.rating_count),
+            seller: {
+                seller_id: sellerInfo.id,
+                user_id: sellerInfo.user_id,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+            },
+            description: shop.description,
+            banner_url: shop.banner_url,
+            hotline: shop.hotline,
+            address: {
+                address_line: address.address_line,
+                ward: {
+                    code: ward.code,
+                    name: ward.name,
+                    province: {
+                        code: province.code,
+                        name: province.name,
+                    },
                 },
             },
-        },
-    };
+        };
+    });
 };
 
-// tạo shop mới
 export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Promise<ShopDetailDto> => {
     const detail = await sequelize.transaction(async (tx: Transaction) => {
         const seller = await findSellerByUserIdOrThrow(userId);
-
-        const existed = await Shop.findOne({
-            where: { seller_id: seller.id },
-            transaction: tx,
-        });
-        if (existed) {
-            throw new ValidationError('shop:already_exists');
-        }
 
         const nameExisted = await Shop.findOne({
             where: { name: dto.name },
@@ -363,7 +358,7 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
             throw new ValidationError('shop:name_exists');
         }
 
-        const baseSlug = generateSlug(dto.name);
+        const baseSlug = generateSlug(dto.slug || dto.name);
         let candidateSlug = baseSlug;
         let slugSuffix = 1;
         while (
@@ -400,9 +395,9 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
                 hotline: dto.hotline ?? null,
                 status: 'active',
                 rating_avg: 0,
-            rating_count: 0,
-            is_featured: false,
-        },
+                rating_count: 0,
+                is_featured: false,
+            },
             { transaction: tx },
         );
 
@@ -487,13 +482,16 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
     return detail;
 };
 
-// cập nhật thông tin shop
-export const updateMyShop = async (userId: string, dto: UpdateSellerShopDto): Promise<ShopDetailDto> => {
+export const updateMyShop = async (
+    userId: string,
+    shopId: string,
+    dto: UpdateSellerShopDto,
+): Promise<ShopDetailDto> => {
     const { detail, oldSlug } = await sequelize.transaction(async (tx: Transaction) => {
         const seller = await findSellerByUserIdOrThrow(userId);
 
         const shop = await Shop.findOne({
-            where: { seller_id: seller.id },
+            where: { seller_id: seller.id, id: shopId },
             transaction: tx,
         });
 
@@ -651,13 +649,16 @@ export const updateMyShop = async (userId: string, dto: UpdateSellerShopDto): Pr
     return detail;
 };
 
-// cập nhật trạng thái shop
-export const updateMyShopStatus = async (userId: string, dto: UpdateSellerShopStatusDto): Promise<ShopDetailDto> => {
+export const updateMyShopStatus = async (
+    userId: string,
+    shopId: string,
+    dto: UpdateSellerShopStatusDto,
+): Promise<ShopDetailDto> => {
     const { detail, slug } = await sequelize.transaction(async (tx: Transaction) => {
         const seller = await findSellerByUserIdOrThrow(userId);
 
         const shop = await Shop.findOne({
-            where: { seller_id: seller.id },
+            where: { seller_id: seller.id, id: shopId },
             transaction: tx,
         });
 
@@ -755,7 +756,6 @@ export const updateMyShopStatus = async (userId: string, dto: UpdateSellerShopSt
     return detail;
 };
 
-// Admin: list shop với filter
 export const adminListShops = async (query: AdminShopListQueryDto): Promise<ShopSummaryDto[]> => {
     const where: any = {};
 
@@ -897,7 +897,6 @@ export const adminGetShopDetail = async (id: string): Promise<AdminShopDetailDto
     };
 };
 
-// Admin: đổi trạng thái shop
 export const adminUpdateShopStatus = async (id: string, status: 'active' | 'suspended' | 'closed'): Promise<void> => {
     const shop = await Shop.findByPk(id);
 
@@ -912,7 +911,6 @@ export const adminUpdateShopStatus = async (id: string, status: 'active' | 'susp
     await invalidateShopCache([slug]);
 };
 
-// Admin: bật/tắt featured
 export const adminUpdateShopFeature = async (id: string, isFeature: boolean): Promise<void> => {
     const shop = await Shop.findByPk(id);
 
@@ -927,7 +925,6 @@ export const adminUpdateShopFeature = async (id: string, isFeature: boolean): Pr
     await invalidateShopCache([slug]);
 };
 
-// Admin: danh sách featured shop
 export const adminListFeaturedShops = async (): Promise<ShopSummaryDto[]> => {
     const rows = (await Shop.findAll({
         where: { is_featured: true },
@@ -977,7 +974,6 @@ export const adminListFeaturedShops = async (): Promise<ShopSummaryDto[]> => {
     });
 };
 
-// Admin: xóa shop + địa chỉ liên quan
 export const adminDeleteShop = async (id: string): Promise<void> => {
     let slugToClear: string | null = null;
 
@@ -1000,7 +996,33 @@ export const adminDeleteShop = async (id: string): Promise<void> => {
     await invalidateShopCache(slugToClear ? [slugToClear] : []);
 };
 
-// Người dùng: danh sách shop đã yêu thích
+export const deleteMyShop = async (userId: string, shopId: string): Promise<void> => {
+    let slugToClear: string | null = null;
+
+    await sequelize.transaction(async (tx: Transaction) => {
+        const seller = await findSellerByUserIdOrThrow(userId);
+
+        const shop = await Shop.findOne({ where: { id: shopId, seller_id: seller.id }, transaction: tx });
+        if (!shop) {
+            throw new NotFoundError('shop:not_found');
+        }
+
+        slugToClear = shop.slug;
+
+        await FavoriteShop.destroy({ where: { shop_id: shop.id }, transaction: tx });
+
+        const addressId = shop.address_id;
+
+        await shop.destroy({ transaction: tx });
+
+        if (addressId) {
+            await Address.destroy({ where: { id: addressId }, transaction: tx });
+        }
+    });
+
+    await invalidateShopCache(slugToClear ? [slugToClear] : []);
+};
+
 export const listMyFavoriteShops = async (userId: string): Promise<FavoriteShopListItemDto[]> => {
     const favorites = (await FavoriteShop.findAll({
         where: { user_id: userId },
@@ -1056,7 +1078,6 @@ export const listMyFavoriteShops = async (userId: string): Promise<FavoriteShopL
         });
 };
 
-// Người dùng: thêm shop vào yêu thích
 export const addMyFavoriteShop = async (userId: string, shopId: string): Promise<void> => {
     return sequelize.transaction(async (tx: Transaction) => {
         const shop = await Shop.findByPk(shopId, { transaction: tx });
@@ -1083,7 +1104,6 @@ export const addMyFavoriteShop = async (userId: string, shopId: string): Promise
     });
 };
 
-// Người dùng: bỏ yêu thích shop
 export const removeMyFavoriteShop = async (userId: string, shopId: string): Promise<void> => {
     await FavoriteShop.destroy({
         where: { user_id: userId, shop_id: shopId },

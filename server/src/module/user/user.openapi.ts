@@ -52,7 +52,7 @@ export const registerUserOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Update user information successfully',
+                description: 'Cập nhật thông tin người dùng thành công',
                 content: {
                     'application/json': { schema: UserResponseSchema },
                 },

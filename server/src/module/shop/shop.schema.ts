@@ -4,6 +4,23 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 extendZodWithOpenApi(z);
 
 const NAME_REGEX = /^[\p{L}\d\s'-]+$/u;
+const nullableUrlOptional = z.preprocess((v) => (v === '' ? null : v), z.string().url().nullable()).optional();
+const parseJsonObject = <T extends z.ZodTypeAny>(schema: T) =>
+    z.preprocess((val) => {
+        if (typeof val === 'string') {
+            if (val.trim() === '') return undefined;
+            try {
+                return JSON.parse(val);
+            } catch {
+                return val;
+            }
+        }
+        return val;
+    }, schema);
+const parseJsonObjectOptional = <T extends z.ZodTypeAny>(schema: T) => parseJsonObject(schema.optional());
+
+const optionalTrimmedString = (base: z.ZodString) =>
+    z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), base.optional());
 
 export const ShopStatusSchema = z.enum(['active', 'suspended', 'closed']).openapi('ShopStatus');
 
@@ -37,7 +54,6 @@ export const ShopListQuerySchema = z
     .object({
         search: z.string().trim().min(1).optional().openapi({
             description: 'Search by shop name or slug',
-            example: 'tiki',
         }),
         sort: z.enum(['rating', 'name', 'created_at']).optional().openapi({
             description: 'Sort field (default: created_at)',
@@ -45,7 +61,6 @@ export const ShopListQuerySchema = z
         }),
         featured: z.coerce.boolean().optional().openapi({
             description: 'Filter featured shops',
-            example: true,
         }),
     })
     .strict()
@@ -95,23 +110,28 @@ export const CreateSellerShopSchema = z
         name: z.string().trim().min(1, 'shop:name_required').max(255).regex(NAME_REGEX, 'shop:name_invalid'),
         slug: z.string().trim().max(255).optional(),
         description: z.string().trim().max(5000).optional(),
-        logo_url: z.string().url().nullable().optional(),
-        banner_url: z.string().url().nullable().optional(),
+        logo_url: nullableUrlOptional,
+        banner_url: nullableUrlOptional,
         hotline: z.string().trim().max(20).optional(),
-        address: SellerShopAddressPayloadSchema,
+        address: parseJsonObject(SellerShopAddressPayloadSchema),
     })
     .strict()
     .openapi('CreateSellerShop');
 
 export const UpdateSellerShopSchema = z
     .object({
-        name: z.string().trim().min(1, 'shop:name_required').max(255).regex(NAME_REGEX, 'shop:name_invalid').optional(),
-        slug: z.string().trim().min(1, 'shop:slug_required').max(255).optional(),
+        name: optionalTrimmedString(
+            z.string().trim().min(1, 'shop:name_required').max(255).regex(NAME_REGEX, 'shop:name_invalid'),
+        ),
+        slug: z.preprocess(
+            (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
+            z.string().trim().min(1).max(255).optional(),
+        ),
         description: z.string().trim().max(5000).nullable().optional(),
-        logo_url: z.string().url().nullable().optional(),
-        banner_url: z.string().url().nullable().optional(),
+        logo_url: nullableUrlOptional,
+        banner_url: nullableUrlOptional,
         hotline: z.string().trim().max(20).optional(),
-        address: SellerShopAddressPayloadSchema.partial().optional(),
+        address: parseJsonObjectOptional(SellerShopAddressPayloadSchema.partial()),
     })
     .strict()
     .refine((data) => Object.keys(data).length > 0, 'shop:update_body_empty')

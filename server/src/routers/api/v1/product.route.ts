@@ -88,13 +88,7 @@ router.post(
     ProductController.createStock,
 );
 
-router.post(
-    '/products/reviews',
-    authenticate,
-    restrictTo('customer', 'seller'),
-    v({ body: CreateReviewSchema }),
-    ProductController.createReview,
-);
+router.post('/products/reviews', authenticate, v({ body: CreateReviewSchema }), ProductController.createReview);
 
 router.post(
     '/products/questions',

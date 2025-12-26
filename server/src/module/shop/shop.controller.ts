@@ -29,6 +29,7 @@ import {
     UpdateSellerShopStatusDto,
 } from './shop.dto';
 import { uploadFileToMinIO } from '../../utils/upload';
+import { deleteMyShop } from './shop.service';
 
 type FileFieldMap = { [fieldname: string]: Express.Multer.File[] };
 
@@ -64,7 +65,7 @@ export const sellerShopController = {
             if (!userId) {
                 throw new ValidationError('auth:unauthenticated');
             }
-            const result: ShopDetailDto = await getMyShop(userId);
+            const result: ShopDetailDto[] = await getMyShop(userId);
             return response.ok(res, result, 'shop:get_my_shop_success');
         } catch (err) {
             next(err);
@@ -106,8 +107,12 @@ export const sellerShopController = {
     async update(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id;
+            const shopId = req.params.id;
             if (!userId) {
                 throw new ValidationError('auth:unauthenticated');
+            }
+            if (!shopId) {
+                throw new ValidationError('shop:id_invalid');
             }
             const dto = req.body as UpdateSellerShopDto;
 
@@ -128,7 +133,7 @@ export const sellerShopController = {
                 );
             }
 
-            const result: ShopDetailDto = await updateMyShop(userId, dto);
+            const result: ShopDetailDto = await updateMyShop(userId, shopId, dto);
             return response.ok(res, result, 'shop:update_success');
         } catch (err) {
             next(err);
@@ -138,12 +143,33 @@ export const sellerShopController = {
     async updateStatus(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id;
+            const shopId = req.params.id;
             if (!userId) {
                 throw new ValidationError('auth:unauthenticated');
             }
+            if (!shopId) {
+                throw new ValidationError('shop:id_invalid');
+            }
             const dto = req.body as UpdateSellerShopStatusDto;
-            const result: ShopDetailDto = await updateMyShopStatus(userId, dto);
+            const result: ShopDetailDto = await updateMyShopStatus(userId, shopId, dto);
             return response.ok(res, result, 'shop:update_status_success');
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    async deleteMine(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id;
+            const shopId = req.params.id;
+            if (!userId) {
+                throw new ValidationError('auth:unauthenticated');
+            }
+            if (!shopId) {
+                throw new ValidationError('shop:id_invalid');
+            }
+            await deleteMyShop(userId, shopId);
+            return response.ok(res, { ok: true }, 'shop:delete_success');
         } catch (err) {
             next(err);
         }

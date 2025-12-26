@@ -17,6 +17,28 @@ import {
     FavoriteShopIdParamSchema,
 } from './shop.schema';
 
+const fileBinary = z.any().openapi({ type: 'string', format: 'binary' });
+const { logo_url: _createLogoUrl, banner_url: _createBannerUrl, ...createShape } = (
+    CreateSellerShopSchema as z.ZodObject<any>
+).shape;
+const { logo_url: _updateLogoUrl, banner_url: _updateBannerUrl, ...updateShape } = (
+    UpdateSellerShopSchema as z.ZodObject<any>
+).shape;
+
+const CreateSellerShopMultipartSchema = z.object({
+    ...createShape,
+    logo: fileBinary.optional(),
+    banner: fileBinary.optional(),
+});
+
+const UpdateSellerShopMultipartSchema = z
+    .object({
+        ...updateShape,
+        logo: fileBinary.optional(),
+        banner: fileBinary.optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, 'shop:update_body_empty');
+
 export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
     // Public: list shops
     registry.registerPath({
@@ -60,7 +82,7 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // Seller: get my shop
+    // Seller: get my shop (latest)
     registry.registerPath({
         method: 'get',
         path: '/api/shop/me',
@@ -69,10 +91,10 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
         security: [{ BearerAuth: [] }],
         responses: {
             200: {
-                description: 'Chi tiết shop của tôi',
+                description: 'Danh sách shop của tôi',
                 content: {
                     'application/json': {
-                        schema: ShopDetailResponseSchema,
+                        schema: z.array(ShopDetailResponseSchema),
                     },
                 },
             },
@@ -92,6 +114,9 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
                     'application/json': {
                         schema: CreateSellerShopSchema,
                     },
+                    'multipart/form-data': {
+                        schema: CreateSellerShopMultipartSchema,
+                    },
                 },
             },
         },
@@ -107,18 +132,22 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // Seller: update my shop
+    // Seller: update my shop (by id)
     registry.registerPath({
         method: 'patch',
-        path: '/api/shop/me',
+        path: '/api/shop/me/{id}',
         tags: ['Shop'],
         summary: 'Cập nhật shop của tôi (seller)',
         security: [{ BearerAuth: [] }],
         request: {
+            params: ShopIdParamSchema,
             body: {
                 content: {
                     'application/json': {
                         schema: UpdateSellerShopSchema,
+                    },
+                    'multipart/form-data': {
+                        schema: UpdateSellerShopMultipartSchema,
                     },
                 },
             },
@@ -135,14 +164,15 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
         },
     });
 
-    // Seller: update my shop status
+    // Seller: update my shop status (by id)
     registry.registerPath({
         method: 'patch',
-        path: '/api/shop/me/status',
+        path: '/api/shop/me/{id}/status',
         tags: ['Shop'],
         summary: 'Cập nhật trạng thái shop của tôi (seller)',
         security: [{ BearerAuth: [] }],
         request: {
+            params: ShopIdParamSchema,
             body: {
                 content: {
                     'application/json': {
@@ -157,6 +187,28 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
                 content: {
                     'application/json': {
                         schema: ShopDetailResponseSchema,
+                    },
+                },
+            },
+        },
+    });
+
+    // Seller: delete my shop
+    registry.registerPath({
+        method: 'delete',
+        path: '/api/shop/me/{id}',
+        tags: ['Shop'],
+        summary: 'Xóa shop của tôi (seller)',
+        security: [{ BearerAuth: [] }],
+        request: {
+            params: ShopIdParamSchema,
+        },
+        responses: {
+            200: {
+                description: 'Xóa shop thành công',
+                content: {
+                    'application/json': {
+                        schema: z.object({ ok: z.boolean() }),
                     },
                 },
             },
@@ -317,22 +369,22 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Cập nhật trạng thái thành công',
+                description: 'Cập nhật trạng thái shop thành công',
                 content: {
                     'application/json': {
-                        schema: z.object({ ok: z.boolean() }),
+                        schema: ShopDetailResponseSchema,
                     },
                 },
             },
         },
     });
 
-    // Admin: update featured flag
+    // Admin: update shop feature
     registry.registerPath({
         method: 'patch',
         path: '/api/admin/shops/{id}/feature',
         tags: ['Shop Admin'],
-        summary: 'Admin - cập nhật nổi bật',
+        summary: 'Admin - cập nhật nổi bật shop',
         security: [{ BearerAuth: [] }],
         request: {
             params: ShopIdParamSchema,
@@ -346,7 +398,7 @@ export const registerShopOpenApi = (registry: OpenAPIRegistry) => {
         },
         responses: {
             200: {
-                description: 'Cập nhật nổi bật thành công',
+                description: 'Cập nhật nổi bật shop thành công',
                 content: {
                     'application/json': {
                         schema: z.object({ ok: z.boolean() }),

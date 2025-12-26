@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';
 import { registerUserOpenApi } from './module/user/user.openapi';
 import { registerAuthOpenApi } from './module/auth/auth.openapi';

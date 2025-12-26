@@ -58,11 +58,18 @@ export const RegisterFinalizeSchema = z
 
 export const LoginSchema = z
     .object({
-        email: z.string().trim().toLowerCase().min(1, 'auth:email_required').email('auth:email_invalid'),
+        email: z
+            .string()
+            .trim()
+            .toLowerCase()
+            .min(1, 'auth:email_required')
+            .email('auth:email_invalid')
+            .openapi({ example: 'minhtu777n@gmail.com' }),
         password: z
             .string()
             .min(1, 'auth:password_required')
-            .refine((s) => s.length >= 6, 'auth:password_min_length'),
+            .refine((s) => s.length >= 6, 'auth:password_min_length')
+            .openapi({ example: 'minhtu234' }),
     })
     .strict()
     .openapi('Login');

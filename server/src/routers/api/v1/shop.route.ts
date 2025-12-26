@@ -45,22 +45,30 @@ router.post(
     sellerShopController.create,
 );
 router.patch(
-    '/me',
+    '/me/:id',
     authenticate,
     restrictTo('seller'),
     uploadShopImages.fields([
         { name: 'logo', maxCount: 1 },
         { name: 'banner', maxCount: 1 },
     ]),
-    v({ body: UpdateSellerShopSchema }),
+    v({ params: ShopIdParamSchema, body: UpdateSellerShopSchema }),
     sellerShopController.update,
 );
 router.patch(
-    '/me/status',
+    '/me/:id/status',
     authenticate,
     restrictTo('seller'),
-    v({ body: UpdateSellerShopStatusSchema }),
+    v({ params: ShopIdParamSchema, body: UpdateSellerShopStatusSchema }),
     sellerShopController.updateStatus,
+);
+
+router.delete(
+    '/me/:id',
+    authenticate,
+    restrictTo('seller'),
+    v({ params: ShopIdParamSchema }),
+    sellerShopController.deleteMine,
 );
 
 // GET /api/shop/favorites

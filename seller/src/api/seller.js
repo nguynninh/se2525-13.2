@@ -47,6 +47,12 @@ export const updateSellerOrderDeliveryStatus = (id, payload) =>
     body: payload,
   });
 
+export const changeMyPassword = (payload) =>
+  apiRequest('/user/me/password', {
+    method: 'patch',
+    body: payload,
+  });
+
 export const updateMyAvatar = (file) => {
   const formData = new FormData();
   formData.append('avatar', file);

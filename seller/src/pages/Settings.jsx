@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { RefreshCcw, Save, Upload } from 'lucide-react';
-import { getSellerProfile, getMyShop, updateMyShop, createMyShop, updateMyAvatar } from '../api/seller';
+import { getSellerProfile, getMyShop, updateMyShop, createMyShop, updateMyAvatar, changeMyPassword } from '../api/seller';
 import { fetchProvinces, fetchWards } from '../api/shipping';
 
 const Settings = () => {
@@ -31,6 +31,10 @@ const Settings = () => {
   const [selectedWard, setSelectedWard] = useState('');
   const [loadingProvince, setLoadingProvince] = useState(false);
   const [loadingWard, setLoadingWard] = useState(false);
+  const [pwdForm, setPwdForm] = useState({ current_password: '', new_password: '', confirm_password: '' });
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
 
   const applyShopData = (s) => {
     const data = s?.data ?? s;
@@ -157,6 +161,48 @@ const Settings = () => {
   useEffect(() => {
     load();
   }, [load]);
+
+  const handleChangePassword = async () => {
+    setChangingPassword(true);
+    setPasswordError('');
+    setPasswordMessage('');
+    const { current_password, new_password, confirm_password } = pwdForm;
+    if (!current_password || current_password.trim().length < 6) {
+      setPasswordError('Current password must be at least 6 characters.');
+      setChangingPassword(false);
+      return;
+    }
+    if (!new_password || new_password.trim().length < 6) {
+      setPasswordError('New password must be at least 6 characters.');
+      setChangingPassword(false);
+      return;
+    }
+    if (new_password === current_password) {
+      setPasswordError('New password must be different from current password.');
+      setChangingPassword(false);
+      return;
+    }
+    if (new_password !== confirm_password) {
+      setPasswordError('Confirm password does not match.');
+      setChangingPassword(false);
+      return;
+    }
+    try {
+      await changeMyPassword({
+        current_password: current_password.trim(),
+        new_password: new_password.trim(),
+        confirm_password: confirm_password.trim(),
+      });
+      setPasswordMessage('Password updated successfully.');
+      setPwdForm({ current_password: '', new_password: '', confirm_password: '' });
+    } catch (err) {
+      const details =
+        err?.data && typeof err.data === 'object' ? JSON.stringify(err.data) : '';
+      setPasswordError(details ? `${err.message || 'Failed to change password.'} (${details})` : err.message || 'Failed to change password.');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   const saveShop = async () => {
     setSaving(true);
@@ -505,20 +551,78 @@ const Settings = () => {
           </div>
         </div>
 
-        <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
-          <h2 className="text-base font-semibold text-gray-900">Shop status</h2>
-          <p className="text-xs text-gray-600">Status is set by admin approval.</p>
-          <div className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50 text-gray-700">
-            {shopId ? shopStatus || 'pending' : 'Create your shop first'}
+        <div className="space-y-4">
+          <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
+            <h2 className="text-base font-semibold text-gray-900">Shop status</h2>
+            <p className="text-xs text-gray-600">Status is set by admin approval.</p>
+            <div className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50 text-gray-700">
+              {shopId ? shopStatus || 'pending' : 'Create your shop first'}
+            </div>
+            <button
+              type="button"
+              onClick={saveStatus}
+              className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition"
+              disabled
+            >
+              Status managed by admin
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={saveStatus}
-            className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition"
-            disabled
-          >
-            Status managed by admin
-          </button>
+
+          <div className="rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
+            <h2 className="text-base font-semibold text-gray-900">Change password</h2>
+            <p className="text-xs text-gray-600">Keep your seller account secure by using a strong password.</p>
+            {passwordError ? (
+              <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
+                {passwordError}
+              </div>
+            ) : null}
+            {passwordMessage ? (
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+                {passwordMessage}
+              </div>
+            ) : null}
+            <div className="space-y-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-800">Current password</label>
+                <input
+                  type="password"
+                  value={pwdForm.current_password}
+                  onChange={(e) => setPwdForm((prev) => ({ ...prev, current_password: e.target.value }))}
+                  placeholder="Enter current password"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-800">New password</label>
+                <input
+                  type="password"
+                  value={pwdForm.new_password}
+                  onChange={(e) => setPwdForm((prev) => ({ ...prev, new_password: e.target.value }))}
+                  placeholder="At least 6 characters"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-800">Confirm new password</label>
+                <input
+                  type="password"
+                  value={pwdForm.confirm_password}
+                  onChange={(e) => setPwdForm((prev) => ({ ...prev, confirm_password: e.target.value }))}
+                  placeholder="Re-enter new password"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleChangePassword}
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+              disabled={changingPassword}
+            >
+              <Save className="w-4 h-4 inline mr-1" />
+              {changingPassword ? 'Updating...' : 'Update password'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

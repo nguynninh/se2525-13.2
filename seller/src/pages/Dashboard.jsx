@@ -76,7 +76,6 @@ const Dashboard = () => {
 
   const quickActions = [
     { title: 'Products', desc: 'Products & categories', action: 'Create', to: '/product' },
-    { title: 'Orders', desc: 'Seller orders & status', action: 'Process', to: '/orders' },
     { title: 'Shipping', desc: 'Shipments & rates', action: 'Update', to: '/shipping' },
     { title: 'Q&A / Review', desc: 'Questions & product reviews', action: 'Reply', to: '/qa' },
   ];

@@ -11,6 +11,7 @@ import ShippingRates from './pages/ShippingRates';
 import UpdateStock from './pages/UpdateStock';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
 import { logoutSeller } from './api/auth';
 
 const readSession = () => {
@@ -96,13 +97,16 @@ const App = () => {
     setSession(null);
   };
 
-  if (!session) {
-    return <Login onSuccess={handleLogin} externalError={loginError} onClearError={() => setLoginError('')} />;
-  }
-
   return (
     <Router>
-      <AppContent user={session.user} onLogout={handleLogout} />
+      {session ? (
+        <AppContent user={session.user} onLogout={handleLogout} />
+      ) : (
+        <Routes>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="*" element={<Login onSuccess={handleLogin} externalError={loginError} onClearError={() => setLoginError('')} />} />
+        </Routes>
+      )}
     </Router>
   );
 };

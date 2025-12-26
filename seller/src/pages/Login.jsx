@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Lock, Shield, Mail, Loader2 } from 'lucide-react';
 import { loginSeller } from '../api/auth';
 
@@ -84,7 +85,7 @@ const Login = ({ onSuccess, externalError = '', onClearError }) => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="********"
                   className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
               </div>
@@ -105,7 +106,11 @@ const Login = ({ onSuccess, externalError = '', onClearError }) => {
               Login
             </button>
 
-            <p className="text-xs text-slate-500 text-center" />
+            <p className="text-xs text-slate-500 text-center">
+              <Link to="/forgot-password" className="font-semibold text-amber-600 hover:text-amber-700">
+                Forgot password?
+              </Link>
+            </p>
           </form>
         </div>
       </div>
@@ -114,3 +119,4 @@ const Login = ({ onSuccess, externalError = '', onClearError }) => {
 };
 
 export default Login;
+

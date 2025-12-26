@@ -97,9 +97,10 @@ mobile/
 
 ## Key Features
 
--   **Authentication**: Login, Sign Up, Forgot Password, Social Login.
+-   **Authentication**: Login, Sign Up, **Email Verification (OTP)**, Forgot Password, Social Login.
 -   **Commerce**: Product listing, Product Details, Cart, Checkout.
--   **Profile**: User settings, Address management.
+-   **Profile**: User settings, Address management, and **Seller Dashboard**.
+-   **Promotions**: Dedicated Sale Screen highlighting discounted products for users.
 -   **Navigation**: Uses `@react-navigation/native` with Stack and Tab navigators.
 -   **State Management**: Uses `@reduxjs/toolkit` for global state.
 -   **Localization**: Multi-language support (English/Vietnamese) via `react-i18next`.
@@ -111,6 +112,7 @@ The application has undergone a significant UI overhaul to adopt a modern **Clea
 -   **Profile Screen**: Redesigned with a "System Settings" style layout, featuring grouped cards, colorful icons, and clear typography.
 -   **Cart Screen**: Improved "Empty State" with visual illustrations and clean white background.
 -   **Address Management**: Refined "Add/Edit Address" screens with proper spacing and clearer input forms.
+-   **User Verification**: Added a dedicated **Verification Screen** during the valid sign-up process. Users now receive a 4-digit OTP via email to confirm their account before logging in.
 
 
 ## Screenshots
@@ -131,32 +133,98 @@ Users can navigate through the guide using "Next" or bypass it with "Skip" to ju
 </p>
 
 ### Authentication
+
+Comprehensive user management flow including secure usage instructions and error handling.
+
 <p float="left">
   <img src="readme_file/login_ui.png" width="200" />
   <img src="readme_file/signup_ui.png" width="200" />
+  <img src="readme_file/verify_user.png" width="200" />
   <img src="readme_file/forgot_password_ui.png" width="200" />
 </p>
 
+#### 1. Login
+*   **Description**: Access your account using email and password or Social Login (Google/Facebook).
+*   **Usage**: Enter credentials and tap "Sign In". Use "Remember me" to stay logged in.
+*   **Common Errors**:
+    *   *"Invalid email or password"*: Check credentials.
+    *   *"Network Error"*: Check internet connection.
+
+#### 2. Sign Up
+*   **Description**: Create a new account to start shopping.
+*   **Usage**: Provide valid Personal Info (Name, Email) and a strong Password.
+*   **Validation**: Email must be unique. Password must be min 6 chars.
+
+#### 3. Verification
+*   **Description**: Security step to valid email ownership.
+*   **Usage**: Enter the **4-digit OTP** sent to your registered email.
+*   **Troubleshooting**:
+    *   *No code received?*: Check Spam folder or wait 30s to request a new code.
+    *   *Code expired*: Request a new OTP.
+
+#### 4. Forgot Password
+*   **Description**: Recover access to your account.
+*   **Usage**: Enter registered email to receive a password reset link/OTP.
+
+
 ### Main Application
-**Home & Products**
+Explore products, manage cart, and complete purchases seamlessly.
+
 <p float="left">
   <img src="readme_file/home_ui.png" width="200" />
   <img src="readme_file/product_detail.png" width="200" />
-</p>
-
-**Shopping Cart**
-<p float="left">
   <img src="readme_file/cart.png" width="200" />
   <img src="readme_file/bill.png" width="200" />
 </p>
 
+#### 1. Home Screen
+*   **Description**: The central hub for product discovery.
+*   **Features**:
+    *   **Categories**: Quick access to different product types.
+    *   **Carousels**: Featured banners and sales.
+    *   **Search**: Find specific items instantly.
+
+#### 2. Product Detail
+*   **Description**: In-depth view of a selected item.
+*   **Usage**: Select size/color, view images, and read specifications.
+*   **Actions**: "Add to Cart" or "Buy Now".
+
+#### 3. Shopping Cart
+*   **Description**: Review selected items before purchase.
+*   **Usage**: Adjust quantities or remove items.
+*   **Empty State**: Visual prompt to start shopping if cart is empty.
+
+#### 4. Checkout (Bill)
+*   **Description**: Finalize your order.
+*   **Usage**: Select shipping address and payment method.
+*   **Confirmation**: Review total cost including shipping fees.
+
 ### User Profile & Settings
-**Profile & Address Management**
+Manage personal preferences and addresses.
+
 <p float="left">
-  <img src="readme_file/profile.png" width="200" />
+  <img src="readme_file/profile_screen.png" width="200" />
+  <img src="readme_file/tab_profile.png" width="200" />
   <img src="readme_file/address.png" width="200" />
   <img src="readme_file/address_create.png" width="200" />
 </p>
+
+#### Profile Features
+*   **Dashboard**: Access personal info, order history, and settings.
+*   **Address Management**: Add multiple delivery addresses.
+*   **Settings**: Toggle options like Language (EN/VI) or Notifications.
+
+### Sale & Seller Features
+Special offers and merchant tools.
+
+<p float="left">
+  <img src="readme_file/sale_screen.png" width="200" />
+  <img src="readme_file/seller_registration.png" width="200" />
+</p>
+
+#### Features
+*   **Sale Screen**: Curated list of discounted items.
+*   **Seller Registration**: Flow for users to apply to become a merchant.
 
 ## Troubleshooting
 

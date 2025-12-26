@@ -1,6 +1,7 @@
 import { apiRequest } from './client';
 
-export const getSellerProfile = () => apiRequest('/users/seller/me');
+// Backend route: GET /api/user/seller/me (singular "user")
+export const getSellerProfile = () => apiRequest('/user/seller/me');
 
 export const getMyShop = () => apiRequest('/shop/me');
 

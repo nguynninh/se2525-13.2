@@ -1,6 +1,6 @@
 import handleAPI from './handleApi';
 
-const url = '/products';
+const url = 'https://api.hiki.io.vn/api/products';
 
 const getMyProducts = async (params?: string) => {
     return await handleAPI(`${url}/my-products${params ? `?${params}` : ''}`, undefined, 'get');

@@ -9,10 +9,12 @@ interface AddressState {
         type: string;
         isDefault: boolean;
     } | null;
+    shippingAddresses: any[];
 }
 
 const initialState: AddressState = {
     selectedAddress: null,
+    shippingAddresses: [],
 };
 
 const addressSlice = createSlice({
@@ -27,10 +29,14 @@ const addressSlice = createSlice({
         removeAddress: (state, _action) => {
             state.addressData.selectedAddress = null;
         },
+        setAddresses: (state, action) => {
+            state.addressData.shippingAddresses = action.payload;
+        },
     },
 });
 
 export const addressReducer = addressSlice.reducer;
-export const { addAddress, removeAddress } = addressSlice.actions;
+export const { addAddress, removeAddress, setAddresses } = addressSlice.actions;
 
 export const addressSelector = (state: any) => state.addressReducer.addressData.selectedAddress;
+export const listAddressSelector = (state: any) => state.addressReducer.addressData.shippingAddresses;

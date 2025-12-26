@@ -1,72 +1,23 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Truck, Navigation, RefreshCcw, Plus, Check, X } from 'lucide-react';
-import {
-  getSellerOrders,
-  confirmSellerOrder,
-  rejectSellerOrder,
-  updateSellerOrderDeliveryStatus,
-} from '../api/seller';
-import {
-  fetchMyAddresses,
-  createMyAddress,
-  deleteMyAddress,
-  setDefaultMyAddress,
-  fetchProvinces,
-  fetchWards,
-  updateMyAddress,
-} from '../api/shipping';
-
-// Simplified shipping page for seller: manage pending orders and addresses only.
-// Shipments/rates are admin-only on backend, so we avoid calling those endpoints.
+import { Truck, RefreshCcw, Check, X } from 'lucide-react';
+import { getSellerOrders, confirmSellerOrder, rejectSellerOrder, updateSellerOrderDeliveryStatus } from '../api/seller';
+import { extractList } from '../api/client';
 
 const Shipping = () => {
-  const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [provinces, setProvinces] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [rejectingOrderId, setRejectingOrderId] = useState('');
   const [rejectReason, setRejectReason] = useState('');
   const [updatingStatusOrderId, setUpdatingStatusOrderId] = useState('');
   const [newStatus, setNewStatus] = useState('completed');
-  const [editAddrId, setEditAddrId] = useState('');
-  const [editAddrForm, setEditAddrForm] = useState({
-    receiver: '',
-    phone: '',
-    address: '',
-    province_code: '',
-    ward_code: '',
-  });
-  const [addrForm, setAddrForm] = useState({
-    receiver: '',
-    phone: '',
-    address: '',
-    province_code: '',
-    ward_code: '',
-  });
-
-  const normalizeList = (payload) => {
-    if (Array.isArray(payload)) return payload;
-    const candidates = ['items', 'data', 'provinces', 'wards', 'results', 'list'];
-    for (const key of candidates) {
-      if (Array.isArray(payload?.[key])) return payload[key];
-      if (Array.isArray(payload?.data?.[key])) return payload.data[key];
-    }
-    if (Array.isArray(payload?.data)) return payload.data;
-    return [];
-  };
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const [addressData, provinceData] = await Promise.all([fetchMyAddresses(), fetchProvinces()]);
       const allOrdersData = await getSellerOrders();
-      setOrders(normalizeList(allOrdersData));
-      setAddresses(normalizeList(addressData));
-      setProvinces(normalizeList(provinceData));
+      setOrders(extractList(allOrdersData, ['orders']));
     } catch (err) {
       setError(err.message || 'Failed to load shipping data.');
     } finally {
@@ -77,85 +28,6 @@ const Shipping = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
-
-  const activeProvince = selectedProvince || addrForm.province_code || editAddrForm.province_code || '';
-
-  useEffect(() => {
-    const fetchWardList = async () => {
-      if (!activeProvince) {
-        setWards([]);
-        return;
-      }
-      try {
-        const wardData = await fetchWards(activeProvince);
-        setWards(normalizeList(wardData));
-      } catch (err) {
-        setError(err.message || 'Failed to load wards.');
-      }
-    };
-    fetchWardList();
-  }, [activeProvince]);
-
-  const handleAddressSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    try {
-      await createMyAddress(addrForm);
-      setAddrForm({ receiver: '', phone: '', address: '', province_code: '', ward_code: '' });
-      setSelectedProvince('');
-      await loadData();
-    } catch (err) {
-      setError(err.message || 'Failed to create address.');
-    }
-  };
-
-  const handleDeleteAddress = async (id) => {
-    const ok = window.confirm('Delete this address?');
-    if (!ok) return;
-    setError('');
-    try {
-      await deleteMyAddress(id);
-      await loadData();
-    } catch (err) {
-      setError(err.message || 'Failed to delete address.');
-    }
-  };
-
-  const handleSetDefault = async (id) => {
-    setError('');
-    try {
-      await setDefaultMyAddress(id);
-      await loadData();
-    } catch (err) {
-      setError(err.message || 'Failed to set default address.');
-    }
-  };
-
-  const startEditAddress = (addr) => {
-    setEditAddrId(addr.id || addr._id);
-    setSelectedProvince(addr.province_code || addr.province?.code || '');
-    setEditAddrForm({
-      receiver: addr.receiver || '',
-      phone: addr.phone || '',
-      address: addr.address || '',
-      province_code: addr.province_code || addr.province?.code || '',
-      ward_code: addr.ward_code || addr.ward?.code || '',
-    });
-  };
-
-  const handleUpdateAddress = async (e) => {
-    e.preventDefault();
-    if (!editAddrId) return;
-    setError('');
-    try {
-      await updateMyAddress(editAddrId, editAddrForm);
-      setEditAddrId('');
-      setEditAddrForm({ receiver: '', phone: '', address: '', province_code: '', ward_code: '' });
-      await loadData();
-    } catch (err) {
-      setError(err.message || 'Failed to update address.');
-    }
-  };
 
   const handleCreateShipment = async (orderId, currentStatus) => {
     if (currentStatus && currentStatus !== 'confirmed') {
@@ -226,7 +98,7 @@ const Shipping = () => {
           <Truck className="w-5 h-5" />
         </div>
         <div className="flex-1">
-          <p className="text-sm text-gray-500">Shipping & Addresses</p>
+          <p className="text-sm text-gray-500">Shipping</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -246,217 +118,8 @@ const Shipping = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <div className="space-y-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-lg bg-gray-100 grid place-items-center">
-                <Navigation className="w-4 h-4 text-gray-800" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">Shipping addresses</p>
-                <p className="text-xs text-gray-500">Manage saved addresses</p>
-              </div>
-            </div>
-            <form className="space-y-2 mb-3" onSubmit={handleAddressSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  required
-                  placeholder="Receiver name"
-                  value={addrForm.receiver}
-                  onChange={(e) => setAddrForm((prev) => ({ ...prev, receiver: e.target.value }))}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                />
-                <input
-                  type="tel"
-                  required
-                  placeholder="Phone"
-                  value={addrForm.phone}
-                  onChange={(e) => setAddrForm((prev) => ({ ...prev, phone: e.target.value }))}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                />
-                <select
-                  value={addrForm.province_code}
-                  onChange={(e) => {
-                    setSelectedProvince(e.target.value);
-                    setAddrForm((prev) => ({ ...prev, province_code: e.target.value, ward_code: '' }));
-                  }}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                >
-                  <option value="">Select province</option>
-                  {provinces.map((p) => (
-                    <option key={p.code || p.id} value={p.code || p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={addrForm.ward_code}
-                  onChange={(e) => setAddrForm((prev) => ({ ...prev, ward_code: e.target.value }))}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  disabled={!activeProvince}
-                >
-                  <option value="">Select ward/district</option>
-                  {wards.map((w) => (
-                    <option key={w.code || w.id} value={w.code || w.id}>
-                      {w.name}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  required
-                  placeholder="Address detail"
-                  value={addrForm.address}
-                  onChange={(e) => setAddrForm((prev) => ({ ...prev, address: e.target.value }))}
-                  className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-1 rounded-lg bg-gray-900 px-3 py-2 text-sm font-semibold text-white"
-                  disabled={loading}
-                >
-                  <Plus className="w-4 h-4" /> Add address
-                </button>
-              </div>
-            </form>
-            <div className="space-y-2">
-              {loading ? (
-                <div className="border border-dashed border-gray-200 rounded-lg p-3 text-sm text-gray-600">
-                  Loading addresses...
-                </div>
-              ) : addresses.length === 0 ? (
-                <div className="border border-dashed border-gray-200 rounded-lg p-3 text-sm text-gray-600">
-                  No addresses yet.
-                </div>
-              ) : (
-                addresses.map((addr) => (
-                  <div key={addr.id || addr.address} className="border border-gray-100 rounded-lg p-3 text-sm">
-                    {editAddrId === (addr.id || addr._id) ? (
-                      <form className="space-y-2" onSubmit={handleUpdateAddress}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            required
-                            placeholder="Receiver name"
-                            value={editAddrForm.receiver}
-                            onChange={(e) => setEditAddrForm((prev) => ({ ...prev, receiver: e.target.value }))}
-                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                          />
-                          <input
-                            type="tel"
-                            required
-                            placeholder="Phone"
-                            value={editAddrForm.phone}
-                            onChange={(e) => setEditAddrForm((prev) => ({ ...prev, phone: e.target.value }))}
-                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                          />
-                          <select
-                            value={editAddrForm.province_code}
-                            onChange={(e) => {
-                              setSelectedProvince(e.target.value);
-                              setEditAddrForm((prev) => ({ ...prev, province_code: e.target.value, ward_code: '' }));
-                            }}
-                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                          >
-                            <option value="">Select province</option>
-                            {provinces.map((p) => (
-                              <option key={p.code || p.id} value={p.code || p.id}>
-                                {p.name}
-                              </option>
-                            ))}
-                          </select>
-                          <select
-                            value={editAddrForm.ward_code}
-                            onChange={(e) => setEditAddrForm((prev) => ({ ...prev, ward_code: e.target.value }))}
-                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                            disabled={!activeProvince}
-                          >
-                            <option value="">Select ward/district</option>
-                            {wards.map((w) => (
-                              <option key={w.code || w.id} value={w.code || w.id}>
-                                {w.name}
-                              </option>
-                            ))}
-                          </select>
-                          <input
-                            type="text"
-                            required
-                            placeholder="Address detail"
-                            value={editAddrForm.address}
-                            onChange={(e) => setEditAddrForm((prev) => ({ ...prev, address: e.target.value }))}
-                            className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                          />
-                        </div>
-                        <div className="flex justify-end gap-2">
-                          <button
-                            type="button"
-                            className="text-xs font-semibold text-gray-700 border border-gray-200 px-2 py-1 rounded-lg hover:bg-gray-50"
-                            onClick={() => {
-                              setEditAddrId('');
-                              setEditAddrForm({ receiver: '', phone: '', address: '', province_code: '', ward_code: '' });
-                            }}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            className="text-xs font-semibold text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg hover:bg-emerald-50"
-                            disabled={loading}
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </form>
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-between">
-                          <p className="font-semibold text-gray-900">
-                            {addr.receiver} ({addr.phone})
-                          </p>
-                          <div className="flex gap-2">
-                            <button
-                              className="text-xs font-semibold text-blue-700 border border-blue-200 px-2 py-1 rounded-lg hover:bg-blue-50"
-                              onClick={() => startEditAddress(addr)}
-                              disabled={loading}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="text-xs font-semibold text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg hover:bg-emerald-50"
-                              onClick={() => handleSetDefault(addr.id)}
-                              disabled={loading}
-                            >
-                              Set default
-                            </button>
-                            <button
-                              className="text-xs font-semibold text-rose-700 border border-rose-200 px-2 py-1 rounded-lg hover:bg-rose-50"
-                              onClick={() => handleDeleteAddress(addr.id)}
-                              disabled={loading}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                        <p className="text-gray-700">{addr.address}</p>
-                        {addr.default && (
-                          <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block mt-1">
-                            Default
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-4 xl:col-span-2">
+      <div className="grid grid-cols-1">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="font-semibold text-gray-900">Seller orders</p>

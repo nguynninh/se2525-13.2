@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileMenuModal } from '../../modals';
 import { MenuItem } from '../../modals/ProfileMenuModal';
 import { fontFamilies } from '../../constants/fontFamilies';
+import userApi from '../../apis/userApi';
 
 const ProfileScreen = ({ navigation }: any) => {
   const { t } = useTranslation(['profile', 'common']);
@@ -23,6 +24,11 @@ const ProfileScreen = ({ navigation }: any) => {
 
   const dispatch = useDispatch();
   const user = useSelector(userSelector);
+
+  console.log('User from selector:', user);
+  if (user) {
+    console.log('User role:', user.role);
+  }
 
   const onRefresh = async () => {
     setIsRefreshing(true);
@@ -78,7 +84,7 @@ const ProfileScreen = ({ navigation }: any) => {
       <RowComponent styles={{ paddingVertical: 12 }}>
         <View style={{
           width: 40, height: 40, borderRadius: 12,
-          backgroundColor: color ? color + '15' : appColors.primary + '10', // Light background
+          backgroundColor: color ? color + '15' : appColors.primary + '10',
           justifyContent: 'center', alignItems: 'center'
         }}>
           {icon}
@@ -113,7 +119,7 @@ const ProfileScreen = ({ navigation }: any) => {
           <SpaceComponent width={16} />
           <View style={{ flex: 1 }}>
             <TextComponent
-              text={user?.store?.store_name || `${user?.lastname || ''} ${user?.firstname || ''}`}
+              text={`${user?.last_name || ''} ${user?.first_name || ''}`}
               title
               size={20}
               font={fontFamilies.bold}
@@ -159,6 +165,30 @@ const ProfileScreen = ({ navigation }: any) => {
             renderMenuRow(<Shop size={22} color={appColors.primary} />, t('profile:register_seller', { defaultValue: 'Đăng ký bán hàng' }), () => navigation.navigate('SellerRegistrationScreen'))
           )}
 
+          {renderMenuRow(<Shop size={22} color={appColors.link} />, user?.role === 'seller' ? t('profile:convert_to_personal') : t('profile:convert_to_seller'), async () => {
+            if (user?.role === 'seller') {
+              Alert.alert(t('common:notification'), t('profile:not_authorized_feature'));
+            } else {
+              Alert.alert(t('profile:confirm'), t('profile:confirm_register_seller'), [
+                { text: t('common:cancel'), style: 'cancel' },
+                {
+                  text: t('common:agree'), onPress: async () => {
+                    try {
+                      const res = await userApi.registerSellerApplication();
+                      if (res) {
+                        Alert.alert('Thành công', 'Đăng ký thành công!');
+                        dispatch(getProfile() as any);
+                      }
+                    } catch (error: any) {
+                      console.log(error);
+                      Alert.alert('Lỗi', error.message || 'Gửi yêu cầu thất bại');
+                    }
+                  }
+                }
+              ]);
+            }
+          })}
+
           {renderMenuRow(<ArchiveBook size={22} color={'#FF9F43'} variant='Bold' />, t('profile:favorites', { defaultValue: 'Yêu thích' }), () => { })}
 
           {renderMenuRow(
@@ -166,9 +196,9 @@ const ProfileScreen = ({ navigation }: any) => {
             t('auth:btn_log_out'),
             async () => {
               Alert.alert(t('auth:confirm_logout'), t('auth:logout_message'), [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common:cancel'), style: 'cancel' },
                 {
-                  text: 'Logout', style: 'destructive', onPress: async () => {
+                  text: t('auth:btn_log_out'), style: 'destructive', onPress: async () => {
                     await GoogleSignin.signOut();
                     await LoginManager.logOut();
                     await AsyncStorage.removeItem('auth');

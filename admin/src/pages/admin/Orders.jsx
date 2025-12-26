@@ -10,11 +10,6 @@ const Orders = () => {
   const [error, setError] = useState('');
   const [statsError, setStatsError] = useState('');
   const [statsLoading, setStatsLoading] = useState(false);
-  const [orderIdInput, setOrderIdInput] = useState('');
-  const [orderStatus, setOrderStatus] = useState('pending');
-  const [acting, setActing] = useState(false);
-  const [actionMsg, setActionMsg] = useState('');
-  const isUUID = (val) => typeof val === 'string' && val.trim().length === 36 && val.includes('-');
 
   const load = async (signal) => {
     setLoading(true); setError('');
@@ -50,89 +45,9 @@ const Orders = () => {
     }
   };
 
-  const withAction = async (fn) => {
-    setActing(true);
-    setActionMsg('');
-    try {
-      await fn();
-      await reload();
-      setActionMsg('Action executed successfully.');
-    } catch (err) {
-      setActionMsg(err?.message || 'Action failed.');
-    } finally {
-      setActing(false);
-    }
-  };
-
-  const handleUpdateStatus = () => {
-    if (!orderIdInput) return setActionMsg('Enter order ID to update.');
-    if (!isUUID(orderIdInput)) return setActionMsg('Order ID must be a valid UUID (36 chars).');
-    withAction(() => api.patch(`/api/user/admin/orders/${orderIdInput}/status`, { status: orderStatus }));
-  };
-
-  const handleRefund = () => {
-    if (!orderIdInput) return setActionMsg('Enter order ID to refund.');
-    if (!isUUID(orderIdInput)) return setActionMsg('Order ID must be a valid UUID (36 chars).');
-    withAction(() => api.post(`/api/user/admin/orders/${orderIdInput}/refund`));
-  };
-
   return (
     <PanelShell>
-      <SectionHeader title="Orders (admin)" subtitle="List, update status, refund" />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <div className="border border-slate-800 rounded-xl p-3 bg-slate-900/50 space-y-2 md:col-span-2">
-          <p className="text-sm font-semibold text-white">Update order status</p>
-          <div className="flex flex-wrap gap-2">
-            <input
-              value={orderIdInput}
-              onChange={(e) => setOrderIdInput(e.target.value)}
-              placeholder="Order ID"
-              className="flex-1 rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100"
-            />
-            <select
-              value={orderStatus}
-              onChange={(e) => setOrderStatus(e.target.value)}
-              className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-2 text-sm text-slate-100"
-            >
-              <option value="pending">pending</option>
-              <option value="confirmed">confirmed</option>
-              <option value="shipping">shipping</option>
-              <option value="completed">completed</option>
-              <option value="cancelled">cancelled</option>
-            </select>
-            <button
-              onClick={handleUpdateStatus}
-              disabled={acting}
-              className="px-3 py-2 rounded-lg text-sm font-semibold bg-emerald-500 text-slate-950 disabled:opacity-60"
-            >
-              Update status
-            </button>
-          </div>
-        </div>
-        <div className="border border-slate-800 rounded-xl p-3 bg-slate-900/50 space-y-2">
-          <p className="text-sm font-semibold text-white">Refund order</p>
-          <input
-            value={orderIdInput}
-            onChange={(e) => setOrderIdInput(e.target.value)}
-            placeholder="Order ID"
-            className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-2 text-sm text-slate-100"
-          />
-          <button
-            onClick={handleRefund}
-            disabled={acting}
-            className="px-3 py-2 rounded-lg text-sm font-semibold bg-rose-500 text-slate-50 disabled:opacity-60"
-          >
-            Refund
-          </button>
-        </div>
-      </div>
-
-      {actionMsg ? (
-        <div className="text-sm text-emerald-200 bg-emerald-500/10 border border-emerald-400/40 rounded-xl px-3 py-2 mb-3">
-          {actionMsg}
-        </div>
-      ) : null}
+      <SectionHeader title="Orders (admin)"/>
 
       <div className="flex items-center gap-2 mb-2">
         <button
@@ -152,7 +67,7 @@ const Orders = () => {
         <StatCard icon={Activity} label="Total orders" value={stats?.totalOrders ?? orders.length ?? '—'} desc="order stats" tone="bg-purple-400" />
         <StatCard icon={ClipboardList} label="Processing" value={stats?.processing ?? '—'} desc="status=processing" tone="bg-amber-400" />
         <StatCard icon={ShieldCheck} label="Completed" value={stats?.completed ?? '—'} desc="status=completed" tone="bg-emerald-400" />
-        <StatCard icon={RefreshCcw} label="Refunded" value={stats?.refunded ?? '—'} desc="POST /orders/:id/refund" tone="bg-rose-300" />
+        <StatCard icon={RefreshCcw} label="Refunded" value={stats?.refunded ?? '—'} tone="bg-rose-300" />
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">

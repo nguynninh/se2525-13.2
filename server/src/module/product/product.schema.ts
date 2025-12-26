@@ -35,7 +35,7 @@ export const CreateProductSchema = z
         slug: z.string().trim().max(255).optional(),
         sku: z.string().trim().regex(/^[A-Z0-9-_.]+$/, 'product:sku_invalid').max(100).optional(),
         description: z.string().trim().optional(),
-        status: ProductStatusSchema.default('draft'),
+        status: ProductStatusSchema.default('active'),
         price: z.number().min(1000, 'product:price_min_1000'),
         quantity: z.number().int().nonnegative('product:quantity_negative'),
     })

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { uploadProductImage, createVariantAttribute, createVariantOption, createProductStock } from "../api/product";
+import { uploadProductImage } from "../api/product";
 
 const EditProductModal = ({ product, onClose, onSave, onReload, categories }) => {
   if (!product) return null;
@@ -14,9 +14,6 @@ const EditProductModal = ({ product, onClose, onSave, onReload, categories }) =>
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [variantName, setVariantName] = useState("");
-  const [optionForm, setOptionForm] = useState({ variant_id: "", value: "" });
-  const [stockForm, setStockForm] = useState({ sku: "", quantity: "", price: "", attributes: "" });
 
   useEffect(() => {
     setForm({
@@ -62,56 +59,6 @@ const EditProductModal = ({ product, onClose, onSave, onReload, categories }) =>
       await onReload?.();
     } catch (err) {
       setError(err?.message || "Upload failed.");
-    }
-  };
-
-  const handleCreateVariant = async (e) => {
-    e.preventDefault();
-    if (!variantName) return;
-    setError("");
-    setMessage("");
-    try {
-      await createVariantAttribute({ product_id: product.id || product._id, name: variantName });
-      setMessage("Variant attribute created.");
-      setVariantName("");
-      await onReload?.();
-    } catch (err) {
-      setError(err?.message || "Create variant failed.");
-    }
-  };
-
-  const handleCreateOption = async (e) => {
-    e.preventDefault();
-    if (!optionForm.variant_id || !optionForm.value) return;
-    setError("");
-    setMessage("");
-    try {
-      await createVariantOption({ variant_id: optionForm.variant_id, value: optionForm.value });
-      setMessage("Variant option created.");
-      setOptionForm({ variant_id: "", value: "" });
-      await onReload?.();
-    } catch (err) {
-      setError(err?.message || "Create option failed.");
-    }
-  };
-
-  const handleCreateStock = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-    try {
-      await createProductStock({
-        product_id: product.id || product._id,
-        sku: stockForm.sku,
-        quantity: Number(stockForm.quantity),
-        price: Number(stockForm.price),
-        attributes: stockForm.attributes,
-      });
-      setMessage("Stock created.");
-      setStockForm({ sku: "", quantity: "", price: "", attributes: "" });
-      await onReload?.();
-    } catch (err) {
-      setError(err?.message || "Create stock failed.");
     }
   };
 
@@ -216,90 +163,7 @@ const EditProductModal = ({ product, onClose, onSave, onReload, categories }) =>
           </form>
         </div>
 
-        <div className="mt-4 space-y-4 rounded-lg border border-gray-200 p-4">
-          <p className="text-sm font-semibold text-gray-900">Variants</p>
-          <form className="flex flex-col md:flex-row gap-2" onSubmit={handleCreateVariant}>
-            <input
-              type="text"
-              placeholder="Variant name (e.g. Color)"
-              value={variantName}
-              onChange={(e) => setVariantName(e.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
-              disabled={saving}
-            >
-              Create variant
-            </button>
-          </form>
-
-          <form className="flex flex-col md:flex-row gap-2" onSubmit={handleCreateOption}>
-            <input
-              type="text"
-              placeholder="Variant ID"
-              value={optionForm.variant_id}
-              onChange={(e) => setOptionForm((prev) => ({ ...prev, variant_id: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Option value (e.g. Red)"
-              value={optionForm.value}
-              onChange={(e) => setOptionForm((prev) => ({ ...prev, value: e.target.value }))}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
-              disabled={saving}
-            >
-              Create option
-            </button>
-          </form>
-        </div>
-
-        <div className="mt-4 space-y-4 rounded-lg border border-gray-200 p-4">
-          <p className="text-sm font-semibold text-gray-900">Stock (SKU)</p>
-          <form className="grid grid-cols-1 md:grid-cols-4 gap-2" onSubmit={handleCreateStock}>
-            <input
-              type="text"
-              placeholder="SKU"
-              value={stockForm.sku}
-              onChange={(e) => setStockForm((prev) => ({ ...prev, sku: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={stockForm.quantity}
-              onChange={(e) => setStockForm((prev) => ({ ...prev, quantity: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <input
-              type="number"
-              placeholder="Price"
-              value={stockForm.price}
-              onChange={(e) => setStockForm((prev) => ({ ...prev, price: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <input
-              type="text"
-              placeholder='Attributes (e.g. "Color: Red, Size: M")'
-              value={stockForm.attributes}
-              onChange={(e) => setStockForm((prev) => ({ ...prev, attributes: e.target.value }))}
-              className="md:col-span-2 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            />
-            <button
-              type="submit"
-              className="md:col-span-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
-              disabled={saving}
-            >
-              Create stock
-            </button>
-          </form>
-        </div>
+        {/* Variant/stock management removed */}
       </div>
     </div>
   );

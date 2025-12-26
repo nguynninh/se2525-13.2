@@ -100,7 +100,7 @@ export const ShopDetailResponseSchema = ShopSummaryResponseSchema.extend({
 export const SellerShopAddressPayloadSchema = z
     .object({
         address_line: z.string().trim().min(1, 'shop:address_line_required'),
-        ward_id: z.string().uuid('shop:ward_id_invalid'),
+        ward_id: z.string().trim().min(1, 'shop:ward_id_invalid'),
     })
     .strict()
     .openapi('SellerShopAddressPayload');
@@ -108,10 +108,7 @@ export const SellerShopAddressPayloadSchema = z
 export const CreateSellerShopSchema = z
     .object({
         name: z.string().trim().min(1, 'shop:name_required').max(255).regex(NAME_REGEX, 'shop:name_invalid'),
-        slug: z.preprocess(
-            (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
-            z.string().trim().min(1).max(255).optional(),
-        ),
+        slug: z.string().trim().max(255).optional(),
         description: z.string().trim().max(5000).optional(),
         logo_url: nullableUrlOptional,
         banner_url: nullableUrlOptional,

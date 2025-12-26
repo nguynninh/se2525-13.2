@@ -96,7 +96,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
     const handleSubmit = async () => {
         // Validation: store_name, address, phone are mandatory. Province/Ward should heavily be encouraged or mandatory.
         if (!formData.store_name || !formData.address || !formData.phone || !formData.province_code || !formData.ward_code) {
-            Alert.alert(t('common:error'), 'Vui lòng điền các thông tin bắt buộc (Tên, SĐT, Địa chỉ, Tỉnh, Xã)');
+            Alert.alert(t('common:error'), t('profile:fill_required_fields'));
             return;
         }
 
@@ -132,7 +132,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
             await storeApi.registerStore(formDataObject);
             await dispatch(getProfile() as any);
 
-            Alert.alert(t('common:success'), 'Đăng ký thành công! Vui lòng chờ duyệt.', [
+            Alert.alert(t('common:success'), t('profile:registration_success_message'), [
                 {
                     text: 'OK', onPress: () => {
                         navigation.goBack();
@@ -154,18 +154,18 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                         <ArrowLeft size={24} color={appColors.text} />
                     </TouchableOpacity>
                     <SpaceComponent width={12} />
-                    <TextComponent text="Đăng ký bán hàng" title size={20} />
+                    <TextComponent text={t('profile:register_seller')} title size={20} />
                 </RowComponent>
             </SectionComponent>
 
             <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
 
-                <TextComponent text="Thông tin cửa hàng" title size={16} styles={{ marginBottom: 16 }} />
+                <TextComponent text={t('profile:shop_info')} title size={16} styles={{ marginBottom: 16 }} />
 
                 <InputComponent
                     value={formData.store_name}
                     onChange={val => handleChange('store_name', val)}
-                    placeholder="Tên cửa hàng *"
+                    placeholder={t('profile:shop_name_placeholder')}
                     allowClear
                 />
                 <SpaceComponent height={16} />
@@ -173,7 +173,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                 <InputComponent
                     value={formData.phone}
                     onChange={val => handleChange('phone', val)}
-                    placeholder="Số điện thoại liên hệ *"
+                    placeholder={t('profile:contact_phone_placeholder')}
                     type="number-pad"
                     allowClear
                 />
@@ -184,7 +184,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                         <InputComponent
                             value={selectedProvince ? selectedProvince.name : ''}
                             onChange={() => { }}
-                            placeholder="Tỉnh/Thành phố *"
+                            placeholder={t('profile:province_placeholder')}
                             suffix={<ArrowDown2 size={20} color={appColors.text} />}
                             disabled
                             onPress={() => handleOpenModal('province')}
@@ -195,12 +195,12 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                         <InputComponent
                             value={selectedWard ? selectedWard.name : ''}
                             onChange={() => { }}
-                            placeholder="Phường/Xã *"
+                            placeholder={t('profile:ward_placeholder')}
                             suffix={<ArrowDown2 size={20} color={appColors.text} />}
                             disabled
                             onPress={() => {
                                 if (selectedProvince) handleOpenModal('ward');
-                                else Alert.alert('Lưu ý', 'Vui lòng chọn Tỉnh/Thành phố trước');
+                                else Alert.alert(t('common:notification'), t('profile:select_province_first'));
                             }}
                         />
                     </View>
@@ -210,7 +210,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                 <InputComponent
                     value={formData.address}
                     onChange={val => handleChange('address', val)}
-                    placeholder="Số nhà, tên đường *"
+                    placeholder={t('profile:address_placeholder')}
                     allowClear
                     multiline
                     numberOfLines={3}
@@ -220,17 +220,17 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                 <InputComponent
                     value={formData.tax_code}
                     onChange={val => handleChange('tax_code', val)}
-                    placeholder="Mã số thuế"
+                    placeholder={t('profile:tax_code_placeholder')}
                     allowClear
                 />
                 <SpaceComponent height={24} />
 
-                <TextComponent text="Hình ảnh" title size={16} />
+                <TextComponent text={t('profile:images')} title size={16} />
                 <SpaceComponent height={12} />
 
                 <RowComponent justify="space-between" styles={{ alignItems: 'flex-start' }}>
                     <View style={{ flex: 1, marginRight: 8 }}>
-                        <TextComponent text="Logo" size={14} styles={{ marginBottom: 8 }} />
+                        <TextComponent text={t('profile:logo')} size={14} styles={{ marginBottom: 8 }} />
                         <TouchableOpacity
                             onPress={() => handleChooseImage('logo')}
                             style={{
@@ -253,7 +253,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                     </View>
 
                     <View style={{ flex: 1, marginLeft: 8 }}>
-                        <TextComponent text="Ảnh bìa" size={14} styles={{ marginBottom: 8 }} />
+                        <TextComponent text={t('profile:cover_image')} size={14} styles={{ marginBottom: 8 }} />
                         <TouchableOpacity
                             onPress={() => handleChooseImage('cover_image')}
                             style={{
@@ -279,7 +279,7 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                 <SpaceComponent height={32} />
 
                 <ButtonComponent
-                    text="Gửi đăng ký"
+                    text={t('profile:submit_registration')}
                     type="primary"
                     onPress={handleSubmit}
                     disable={isLoading}
@@ -299,10 +299,10 @@ const SellerRegistrationScreen = ({ navigation }: any) => {
                         maxHeight: '80%'
                     }}>
                         <RowComponent justify="space-between">
-                            <TextComponent text={selectionType === 'province' ? 'Chọn Tỉnh/Thành phố' : 'Chọn Phường/Xã'} title size={18} font={fontFamilies.bold} color={appColors.text} />
+                            <TextComponent text={selectionType === 'province' ? t('profile:select_province') : t('profile:select_ward')} title size={18} font={fontFamilies.bold} color={appColors.text} />
                             <TouchableOpacity onPress={() => setIsVisible(false)}>
                                 <View style={{ padding: 4 }}>
-                                    <TextComponent text="Đóng" color={appColors.gray} />
+                                    <TextComponent text={t('profile:close')} color={appColors.gray} />
                                 </View>
                             </TouchableOpacity>
                         </RowComponent>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { MessageCircleQuestion, Star, Check, Clock, RefreshCcw, Send, X, Loader2 } from 'lucide-react';
 import {
   fetchProductQuestions,
@@ -6,13 +6,17 @@ import {
   answerProductQuestion,
   createProductQuestion,
   createProductReview,
+  fetchProducts,
 } from '../api/product';
+import { extractList } from '../api/client';
 
 const QA = () => {
   const [productId, setProductId] = useState('');
+  const [products, setProducts] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [newQuestion, setNewQuestion] = useState('');
@@ -33,6 +37,26 @@ const QA = () => {
     );
   };
 
+  const loadProducts = useCallback(async () => {
+    setProductsLoading(true);
+    try {
+      const data = await fetchProducts();
+      const list = extractList(data, ['products']);
+      setProducts(list);
+      if (!productId && list.length) {
+        setProductId(list[0].id || list[0]._id || '');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load product list.');
+    } finally {
+      setProductsLoading(false);
+    }
+  }, [productId]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
   const handleLoad = async () => {
     if (!productId.trim()) {
       setError('Nhập Product ID trước khi load.');
@@ -43,10 +67,8 @@ const QA = () => {
     setMessage('');
     try {
       const [qData, rData] = await Promise.all([fetchProductQuestions(productId), fetchProductReviews(productId)]);
-      const listQ = Array.isArray(qData?.items) ? qData.items : Array.isArray(qData) ? qData : [];
-      const listR = Array.isArray(rData?.items) ? rData.items : Array.isArray(rData) ? rData : [];
-      setQuestions(listQ);
-      setReviews(listR);
+      setQuestions(extractList(qData, ['questions']));
+      setReviews(extractList(rData, ['reviews']));
     } catch (err) {
       setError(err.message || 'Failed to load Q&A.');
       setQuestions([]);
@@ -132,25 +154,30 @@ const QA = () => {
           </div>
         </div>
         <div className="flex gap-2 items-center flex-wrap">
-          <input
-            type="text"
+          <select
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
-            placeholder="Product ID"
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            style={{ minWidth: 180 }}
-          />
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white min-w-[200px]"
+            disabled={productsLoading}
+          >
+            <option value="">{productsLoading ? 'Đang tải sản phẩm...' : 'Chọn sản phẩm'}</option>
+            {products.map((p) => (
+              <option key={p.id || p._id} value={p.id || p._id}>
+                {p.name || p.title || 'Product'} ({p.id || p._id})
+              </option>
+            ))}
+          </select>
           <button
             className="text-sm font-semibold text-white bg-gray-900 px-3 py-2 rounded-lg disabled:opacity-60"
             onClick={handleLoad}
-            disabled={loading}
+            disabled={loading || productsLoading || !productId}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load'}
           </button>
           <button
             className="text-sm font-semibold text-gray-700 border px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-1"
             onClick={handleLoad}
-            disabled={loading}
+            disabled={loading || productsLoading || !productId}
           >
             <RefreshCcw className="w-4 h-4" />
             Refresh

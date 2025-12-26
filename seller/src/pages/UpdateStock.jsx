@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { extractList } from '../api/client';
 import { fetchProducts, fetchProductDetail, createProductStock, updateProductStock } from '../api/product';
 
 const UpdateStock = () => {
@@ -10,13 +11,14 @@ const UpdateStock = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [editModal, setEditModal] = useState({ open: false, id: '', quantity: '', price: '', attributes: '' });
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
       const data = await fetchProducts();
-      const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+      const list = extractList(data, ['products']);
       setProducts(list);
       if (list.length) {
         setSelectedProductId(list[0].id || list[0]._id);
@@ -57,7 +59,20 @@ const UpdateStock = () => {
 
   const handleCreateStock = async (e) => {
     e.preventDefault();
-    if (!selectedProductId) return;
+    if (!selectedProductId) {
+      setError('Please select a product before creating stock.');
+      return;
+    }
+    const quantityNum = Number(form.quantity);
+    const priceNum = Number(form.price);
+    if (!Number.isFinite(quantityNum) || quantityNum < 0) {
+      setError('Quantity must be a non-negative number.');
+      return;
+    }
+    if (!Number.isFinite(priceNum) || priceNum < 1000) {
+      setError('Price must be a number and at least 1000.');
+      return;
+    }
     setSaving(true);
     setError('');
     setMessage('');
@@ -65,9 +80,8 @@ const UpdateStock = () => {
       await createProductStock({
         product_id: selectedProductId,
         sku: form.sku,
-        quantity: Number(form.quantity),
-        price: Number(form.price),
-        attributes: form.attributes,
+        quantity: quantityNum,
+        price: priceNum,
       });
       setMessage('Stock created.');
       setForm({ sku: '', quantity: '', price: '', attributes: '' });
@@ -79,19 +93,35 @@ const UpdateStock = () => {
     }
   };
 
-  const handleUpdateStock = async (stockId) => {
-    const quantity = window.prompt('New quantity:');
-    const price = window.prompt('New price:');
-    if (quantity === null && price === null) return;
+  const openEditModal = (stock) => {
+    setEditModal({
+      open: true,
+      id: stock.id || stock._id,
+      quantity: stock.quantity ?? stock.stock ?? '',
+      price: stock.price ?? '',
+      attributes:
+        (Array.isArray(stock.attributes)
+          ? stock.attributes.map((a) => `${a.name}: ${a.value}`).join(', ')
+          : stock.attributes || stock.attrs) || '',
+    });
+  };
+
+  const closeEditModal = () => {
+    setEditModal({ open: false, id: '', quantity: '', price: '', attributes: '' });
+  };
+
+  const submitEdit = async () => {
+    if (!editModal.id) return;
     setSaving(true);
     setError('');
     setMessage('');
     try {
-      await updateProductStock(stockId, {
-        quantity: quantity === null ? undefined : Number(quantity),
-        price: price === null ? undefined : Number(price),
+      await updateProductStock(editModal.id, {
+        quantity: editModal.quantity === '' ? undefined : Number(editModal.quantity),
+        price: editModal.price === '' ? undefined : Number(editModal.price),
       });
       setMessage('Stock updated.');
+      closeEditModal();
       await loadStocks(selectedProductId);
     } catch (err) {
       setError(err.message || 'Failed to update stock.');
@@ -216,7 +246,7 @@ const UpdateStock = () => {
                     <td className="px-3 py-2">
                       <button
                         className="text-xs font-semibold text-gray-700 border border-gray-200 px-2 py-1 rounded-lg hover:bg-gray-50"
-                        onClick={() => handleUpdateStock(s.id || s._id)}
+                        onClick={() => openEditModal(s)}
                         disabled={saving}
                       >
                         Update
@@ -229,6 +259,68 @@ const UpdateStock = () => {
           </table>
         </div>
       </div>
+
+      {editModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-xl bg-white border border-gray-200 shadow-xl p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-gray-900">Update stock</h3>
+              <button className="text-gray-500 hover:text-gray-700" onClick={closeEditModal}>
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-800">Attributes</label>
+                <input
+                  type="text"
+                  value={editModal.attributes}
+                  readOnly
+                  className="mt-2 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700"
+                  placeholder='e.g. "Color: Red, Size: M"'
+                />
+                <p className="text-xs text-gray-500 mt-1">Attributes are shown for reference.</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-800">Quantity</label>
+                <input
+                  type="number"
+                  value={editModal.quantity}
+                  onChange={(e) => setEditModal((prev) => ({ ...prev, quantity: e.target.value }))}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  placeholder="Enter quantity"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-800">Price</label>
+                <input
+                  type="number"
+                  value={editModal.price}
+                  onChange={(e) => setEditModal((prev) => ({ ...prev, price: e.target.value }))}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  placeholder="Enter price"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                onClick={closeEditModal}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-2 text-sm font-semibold text-white rounded-lg bg-gray-900 hover:bg-gray-800 disabled:opacity-60"
+                onClick={submitEdit}
+                disabled={saving}
+              >
+                {saving ? 'Saving...' : 'Update'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

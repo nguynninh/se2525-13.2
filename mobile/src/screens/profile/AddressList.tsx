@@ -1,15 +1,17 @@
-import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Platform, ImageBackground, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addAddress, addressSelector } from '../../redux/reducers/addressReducer';
 import { useTranslation } from '../../../node_modules/react-i18next';
 import { ContainerComponent, GlassView, RowComponent, SectionComponent, SpaceComponent, TextComponent, ButtonComponent } from '../../components';
 import { Add, ArrowLeft, Edit2, Location, TickCircle, Trash } from 'iconsax-react-native';
-import { Swipeable } from 'react-native-gesture-handler';
+import { Swipeable, TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import userApi from '../../apis/userApi';
 import addressApi from '../../apis/addressApi';
+import { addAddress, addressSelector, setAddresses } from '../../redux/reducers/addressReducer';
 
 const AddressList = () => {
     const navigation = useNavigation();
@@ -34,11 +36,30 @@ const AddressList = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const res = await addressApi.getAllAddresses();
-            if (res && res.data) {
-                setAddresses(res.data);
-                if (selectedAddress) {
+            const res = await userApi.getShippingAddresses();
+            if (res) {
+                const addressList = Array.isArray(res) ? res : (res.data || []);
+                setAddresses(addressList);
+                dispatch(setAddresses(addressList));
+
+                // Check Async Storage for persistent selection
+                const savedAddressId = await AsyncStorage.getItem('selectedAddressId');
+
+                if (savedAddressId) {
+                    const savedAddress = addressList.find((a: any) => a.id === savedAddressId);
+                    if (savedAddress) {
+                        setSelectedId(savedAddressId);
+                        dispatch(addAddress(savedAddress));
+                    }
+                } else if (selectedAddress) {
                     setSelectedId(selectedAddress.id);
+                } else {
+                    // Fallback to default address if available
+                    const defaultAddress = addressList.find((a: any) => a.is_default);
+                    if (defaultAddress) {
+                        setSelectedId(defaultAddress.id);
+                        dispatch(addAddress(defaultAddress));
+                    }
                 }
             }
         } catch (error) {
@@ -48,30 +69,57 @@ const AddressList = () => {
         }
     };
 
-    const handleSelectAddress = (id: string) => {
+    const handleSelectAddress = async (id: string) => {
         const item = addresses.find(i => i.id === id);
         if (item) {
             setSelectedId(id);
             dispatch(addAddress(item));
+            await AsyncStorage.setItem('selectedAddressId', id);
         }
     };
 
     const handleDelete = async (id: string) => {
-        setIsLoading(true);
-        try {
-            await addressApi.deleteAddress(id);
-            fetchData();
-        } catch (error) {
-            console.log('Error deleting address:', error);
-            setIsLoading(false);
-        }
+        Alert.alert(
+            t('profile:confirm'),
+            t('profile:delete_confirm_message') || 'Are you sure you want to delete this address?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                    onPress: () => console.log('Delete cancelled')
+                },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        setIsLoading(true);
+                        try {
+                            console.log('Deleting address with ID:', id);
+                            await addressApi.deleteAddress(id);
+
+                            if (id === selectedId) {
+                                await AsyncStorage.removeItem('selectedAddressId');
+                                setSelectedId('');
+                            }
+
+                            console.log('Delete success');
+                            fetchData();
+                        } catch (error: any) {
+                            console.log('Error deleting address:', error);
+                            Alert.alert(t('profile:error'), error.message || 'Could not delete address');
+                            setIsLoading(false);
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const renderAddressLabel = (item: any) => {
         try {
-            const ward = item.ward ? (typeof item.ward === 'string' ? JSON.parse(item.ward) : item.ward) : null;
-            const province = item.province ? (typeof item.province === 'string' ? JSON.parse(item.province) : item.province) : null;
-            return [ward?.name, province?.name].filter(Boolean).join(', ');
+            const ward = item.address?.ward?.name;
+            const province = item.address?.ward?.province?.name;
+            return [ward, province].filter(Boolean).join(', ');
         } catch (error) {
             return '';
         }
@@ -106,14 +154,14 @@ const AddressList = () => {
             ) : (
                 <View style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}>
-                        {addresses.map((item) => {
+                        {(addresses || []).map((item) => {
                             const isSelected = item.id === selectedId;
                             return (
                                 <Swipeable
                                     key={item.id}
                                     renderRightActions={() => (
                                         <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
-                                            <TouchableOpacity
+                                            <GHTouchableOpacity
                                                 onPress={() => (navigation as any).navigate('AddNewAddress', { addressData: item })}
                                                 style={{
                                                     backgroundColor: appColors.primary,
@@ -125,8 +173,8 @@ const AddressList = () => {
                                                     marginRight: 10
                                                 }}>
                                                 <Edit2 size={22} color={appColors.white} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
+                                            </GHTouchableOpacity>
+                                            <GHTouchableOpacity
                                                 onPress={() => handleDelete(item.id)}
                                                 style={{
                                                     backgroundColor: appColors.danger,
@@ -137,7 +185,7 @@ const AddressList = () => {
                                                     alignItems: 'center'
                                                 }}>
                                                 <Trash size={22} color={appColors.white} />
-                                            </TouchableOpacity>
+                                            </GHTouchableOpacity>
                                         </View>
                                     )}
                                 >
@@ -158,7 +206,7 @@ const AddressList = () => {
                                             <RowComponent justify="space-between" styles={{ alignItems: 'center' }}>
                                                 <View style={{ flex: 1 }}>
                                                     <RowComponent justify="flex-start">
-                                                        <TextComponent text={item.name} font={fontFamilies.bold} size={18} color={appColors.text} />
+                                                        <TextComponent text={item.receiver_name} font={fontFamilies.bold} size={18} color={appColors.text} />
                                                         {item.is_default && (
                                                             <View style={{
                                                                 marginLeft: 12,
@@ -172,9 +220,9 @@ const AddressList = () => {
                                                         )}
                                                     </RowComponent>
                                                     <SpaceComponent height={8} />
-                                                    <TextComponent text={item.phone} size={14} color={appColors.gray} font={fontFamilies.medium} />
+                                                    <TextComponent text={item.receiver_phone} size={14} color={appColors.gray} font={fontFamilies.medium} />
                                                     <SpaceComponent height={4} />
-                                                    <TextComponent text={item.address} size={14} color={appColors.text} numberOfLine={2} styles={{ lineHeight: 20 }} />
+                                                    <TextComponent text={item.address?.address_line} size={14} color={appColors.text} numberOfLine={2} styles={{ lineHeight: 20 }} />
                                                     <TextComponent text={renderAddressLabel(item)} size={13} color={appColors.gray4} numberOfLine={1} />
                                                 </View>
 

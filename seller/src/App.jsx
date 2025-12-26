@@ -5,9 +5,7 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import Product from './pages/Product';
 import AddProduct from './pages/AddProduct';
-import AddCategory from './pages/AddCategory';
 import QA from './pages/QA';
-import Notification from './pages/Notification';
 import Shipping from './pages/Shipping';
 import ShippingRates from './pages/ShippingRates';
 import UpdateStock from './pages/UpdateStock';
@@ -34,12 +32,8 @@ const AppContent = ({ user, onLogout }) => {
     title = 'Products';
   } else if (location.pathname === '/add-product') {
     title = 'Add Product';
-  } else if (location.pathname === '/add-category') {
-    title = 'Add Category';
   } else if (location.pathname === '/qa') {
     title = 'Q&A';
-  } else if (location.pathname === '/notifications') {
-    title = 'Notifications';
   } else if (location.pathname === '/shipping') {
     title = 'Shipping';
   } else if (location.pathname === '/shipping/rates') {
@@ -61,9 +55,7 @@ const AppContent = ({ user, onLogout }) => {
             <Route path="/products" element={<Product />} />
             <Route path="/product" element={<Product />} />
             <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/add-category" element={<AddCategory />} />
             <Route path="/qa" element={<QA />} />
-            <Route path="/notifications" element={<Notification />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/shipping/rates" element={<ShippingRates />} />
             <Route path="/stock/update" element={<UpdateStock />} />

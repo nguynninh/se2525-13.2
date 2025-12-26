@@ -4,11 +4,10 @@ import { getSellerProfile, getMyShop, updateMyShop, createMyShop, updateMyAvatar
 import { fetchProvinces, fetchWards } from '../api/shipping';
 
 const Settings = () => {
-  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', profile_url: '' });
+  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', phone: '', profile_url: '' });
   const [shop, setShop] = useState({
     name: '',
     slug: '',
-    email: '',
     address: '',
     description: '',
     hotline: '',
@@ -18,6 +17,7 @@ const Settings = () => {
   const [shopId, setShopId] = useState(null);
   // Status is managed by admin, keep local for display only
   const [shopStatus, setShopStatus] = useState('pending');
+  const [shopLoadError, setShopLoadError] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -32,50 +32,66 @@ const Settings = () => {
   const [loadingProvince, setLoadingProvince] = useState(false);
   const [loadingWard, setLoadingWard] = useState(false);
 
+  const applyShopData = (s) => {
+    const data = s?.data ?? s;
+    if (!data) return;
+    const addressLine =
+      typeof data.address === 'string'
+        ? data.address
+        : data.address?.address_line || data.location || data.address_line || '';
+    const hasAddress = Boolean(addressLine);
+    setShop((prev) => ({
+      ...prev,
+      name: data.name || prev.name,
+      slug: data.slug || prev.slug,
+      address: hasAddress ? addressLine : prev.address,
+      description: data.description ?? prev.description,
+      hotline: data.hotline ?? prev.hotline,
+      logo_url: data.logo_url ?? prev.logo_url,
+      banner_url: data.banner_url ?? prev.banner_url,
+    }));
+    const wardId = data.address?.ward?.id || data.address?.ward_id || data.address?.ward?.code || data.ward_id || '';
+    const provinceCode = data.address?.ward?.province?.code || data.address?.province_code || '';
+    if (provinceCode) setSelectedProvince(provinceCode);
+    if (wardId) setSelectedWard(wardId);
+    setShopId(data.id || data._id || null);
+    setShopStatus(data.status || 'pending');
+    setShopLoadError('');
+  };
+
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const [p, s] = await Promise.all([
+      const [pRes, sRes] = await Promise.all([
         getSellerProfile(),
         getMyShop().catch((err) => {
-          if (err?.status === 404) return null; // no shop yet -> treat as null
+          if (err?.status === 404) {
+            setShopLoadError('No shop found yet.');
+            return null; // no shop yet -> treat as null
+          }
+          setShopLoadError(err?.message || 'Failed to load shop.');
           throw err;
         }),
       ]);
+      const p = pRes?.data ?? pRes;
+      const s = sRes?.data ?? sRes;
       if (p?.user) {
         setProfile({
           first_name: p.user.first_name || '',
           last_name: p.user.last_name || '',
           email: p.user.email || '',
+          phone: p.user.phone || '',
           profile_url: p.user.profile_url || '',
         });
         setAvatarPreview(p.user.profile_url || '');
       }
       if (s) {
-        const addressLine =
-          typeof s.address === 'string' ? s.address : s.address?.address_line || s.location || s.address_line || '';
-        setShop({
-          name: s.name || '',
-          slug: s.slug || '',
-          email: s.email || s.contact_email || '',
-          address: addressLine,
-          description: s.description || '',
-          hotline: s.hotline || '',
-          logo_url: s.logo_url || '',
-          banner_url: s.banner_url || '',
-        });
-        const wardCode = s.address?.ward?.id || s.address?.ward?.code || s.address?.ward_code || s.ward_id || '';
-        const provinceCode = s.address?.ward?.province?.code || s.address?.province_code || '';
-        setSelectedWard(wardCode);
-        setSelectedProvince(provinceCode);
-        setShopId(s.id || s._id || null);
-        setShopStatus(s.status || 'pending');
-      } else {
+        applyShopData(s);
+      } else if (!shopId) {
         setShop({
           name: '',
           slug: '',
-          email: '',
           address: '',
           description: '',
           hotline: '',
@@ -86,6 +102,7 @@ const Settings = () => {
         setShopStatus('pending');
         setSelectedWard('');
         setSelectedProvince('');
+        setShopLoadError(shopLoadError || 'No shop found yet.');
       }
     } catch (err) {
       setError(err.message || 'Failed to load settings.');
@@ -146,40 +163,66 @@ const Settings = () => {
     setError('');
     setMessage('');
     try {
+      if (!shop.name.trim()) {
+        setError('Store name is required.');
+        setSaving(false);
+        return;
+      }
+      if (!selectedProvince) {
+        setError('Please select province.');
+        setSaving(false);
+        return;
+      }
       if (!shop.address.trim()) {
         setError('Address is required.');
         setSaving(false);
         return;
       }
-      const ward = selectedWard || shop.address?.ward_id;
-      if (!ward) {
+      // Prefer ward.id from list to ensure UUID sent even if dropdown value is code
+      const wardMatch = wards.find((w) => String(w.id) === String(selectedWard));
+      const wardValue = wardMatch?.id || selectedWard || shop.address?.ward_id;
+      if (!wardValue) {
         setError('Please select ward.');
         setSaving(false);
         return;
       }
-      const wardValue = (selectedWard || shop.address?.ward_id || '').toString().trim();
+      const wardValueStr = wardValue.toString().trim();
       const payload = {
         name: shop.name?.trim(),
-        slug: shop.slug?.trim(),
         description: shop.description || '',
-        hotline: shop.hotline || '',
+        hotline: shop.hotline?.trim() || undefined,
         address: {
           address_line: shop.address,
-          ward_id: wardValue,
+          ward_id: wardValueStr,
         },
       };
+      const slugValue = shop.slug?.trim();
+      if (slugValue) payload.slug = slugValue;
       if (shop.logo_url) payload.logo_url = shop.logo_url;
       if (shop.banner_url) payload.banner_url = shop.banner_url;
       if (shopId) {
-        await updateMyShop(payload);
+        const updated = await updateMyShop(payload);
+        const updatedData = updated?.data ?? updated;
+        if (updatedData) {
+          applyShopData(updatedData);
+        }
         setMessage('Shop info saved.');
       } else {
         const created = await createMyShop(payload);
-        setShopId(created?.id || created?._id || null);
+        const createdData = created?.data ?? created;
+        if (createdData) {
+          applyShopData(createdData);
+        }
         setMessage('Shop created.');
       }
-      await load();
+      try {
+        const latest = await getMyShop();
+        if (latest) applyShopData(latest);
+      } catch (e) {
+        // ignore if still not available
+      }
     } catch (err) {
+      const msg = err?.message || '';
       const errorsObj = err?.data?.errors;
       const details =
         errorsObj && typeof errorsObj === 'object'
@@ -187,7 +230,22 @@ const Settings = () => {
           : err?.data
             ? JSON.stringify(err.data)
             : '';
-      setError(details ? `${err.message || 'Failed to save shop info.'} (${details})` : err.message || 'Failed to save shop info.');
+      // If backend says shop already exists, reload existing shop instead of blocking
+      if (msg.toLowerCase().includes('already_exists') || msg.toLowerCase().includes('already exists')) {
+        setMessage('Shop already exists. Loading current shop info.');
+        try {
+          const existing = await getMyShop();
+          if (existing) {
+            applyShopData(existing);
+          } else {
+            setShopLoadError('Shop exists but could not load details.');
+          }
+        } catch (e2) {
+          setError(e2?.message || 'Failed to load existing shop.');
+        }
+        return;
+      }
+      setError(details ? `${msg || 'Failed to save shop info.'} (${details})` : msg || 'Failed to save shop info.');
     } finally {
       setSaving(false);
     }
@@ -195,33 +253,6 @@ const Settings = () => {
 
   const saveStatus = async () => {
     setMessage('Shop status is managed by admin approval.');
-  };
-
-  const handleSelectAvatar = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setAvatarFile(file);
-    setAvatarPreview(URL.createObjectURL(file));
-  };
-
-  const saveAvatar = async () => {
-    if (!avatarFile) {
-      setError('Choose an image before uploading.');
-      return;
-    }
-    setUploadingAvatar(true);
-    setError('');
-    setMessage('');
-    try {
-      await updateMyAvatar(avatarFile);
-      setMessage('Avatar updated.');
-      setAvatarFile(null);
-      await load();
-    } catch (err) {
-      setError(err.message || 'Failed to update avatar.');
-    } finally {
-      setUploadingAvatar(false);
-    }
   };
 
   return (
@@ -265,23 +296,22 @@ const Settings = () => {
               )}
             </div>
             <div className="flex-1 space-y-2">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm bg-white hover:bg-gray-50 cursor-pointer w-fit">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Choose image
-                  <input type="file" accept="image/*" className="hidden" onChange={handleSelectAvatar} />
-                </label>
-                <button
-                  type="button"
-                  onClick={saveAvatar}
-                  disabled={uploadingAvatar || !avatarFile}
-                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-md bg-gray-900 text-white shadow-sm hover:bg-gray-800 disabled:opacity-60"
-                >
-                  {uploadingAvatar ? 'Uploading...' : 'Save avatar'}
-                </button>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs text-gray-500">Name</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {[profile.first_name, profile.last_name].filter(Boolean).join(' ') || '--'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-semibold text-gray-900">{profile.email || '--'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Phone</p>
+                  <p className="text-sm font-semibold text-gray-900">{profile.phone || '--'}</p>
+                </div>
               </div>
-              {avatarFile && <p className="text-xs text-gray-600">Selected: {avatarFile.name}</p>}
-              <p className="text-xs text-gray-500">Recommended: square image, max 5MB.</p>
             </div>
           </div>
         </div>
@@ -290,6 +320,11 @@ const Settings = () => {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-xl bg-white border border-gray-200 p-4 shadow-sm space-y-3">
           <h2 className="text-base font-semibold text-gray-900">Store information</h2>
+          {shopLoadError ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+              {shopLoadError}
+            </div>
+          ) : null}
           <div className="grid gap-3 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-800">Store name</label>
@@ -298,16 +333,6 @@ const Settings = () => {
                 value={shop.name}
                 onChange={(e) => setShop((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="Store name"
-                className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-800">Contact email</label>
-              <input
-                type="email"
-                value={shop.email}
-                onChange={(e) => setShop((prev) => ({ ...prev, email: e.target.value }))}
-                placeholder="you@example.com"
                 className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400"
               />
             </div>
@@ -406,7 +431,7 @@ const Settings = () => {
                 >
                   <option value="">{loadingWard ? 'Loading...' : 'Select ward'}</option>
                   {wards.map((w) => (
-                    <option key={w.id || w.code} value={(w.id || w.code || '').toString()}>
+                    <option key={w.id || w.code} value={(w.id || '').toString()}>
                       {w.name}
                     </option>
                   ))}

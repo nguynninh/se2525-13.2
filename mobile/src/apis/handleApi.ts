@@ -12,7 +12,7 @@ class HandleAPI {
   handleApi = async (
     url: string,
     data?: any,
-    method: 'get' | 'post' | 'put' | 'delete' = 'get'
+    method: 'get' | 'post' | 'put' | 'delete' | 'patch' = 'get'
   ) => {
     try {
       const accessToken = this.getAccessToken();
@@ -20,7 +20,10 @@ class HandleAPI {
 
       const isFormData = data instanceof FormData;
 
-      const response = await axiosClient(`${appInfo.BASE_URL}${url}`, {
+      const isAbsoluteUrl = url.startsWith('http://') || url.startsWith('https://');
+      const finalUrl = isAbsoluteUrl ? url : `${appInfo.BASE_URL}${url}`;
+
+      const response = await axiosClient(finalUrl, {
         method,
         data: requestData,
         headers: {

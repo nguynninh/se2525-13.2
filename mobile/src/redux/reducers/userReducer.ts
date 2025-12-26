@@ -10,12 +10,13 @@ interface UserState {
     last_name?: string;
     avatar?: string;
     profile_url?: string;
-    photoUrl?: string; // Add this too since it was referenced
+    photoUrl?: string;
     seller_request_status?: string;
     store?: {
         store_name: string;
         status: string;
     };
+    role: string;
 }
 
 const initialState: UserState = {
@@ -24,7 +25,8 @@ const initialState: UserState = {
     firstname: '',
     lastname: '',
     avatar: '',
-    seller_request_status: 'none'
+    seller_request_status: 'none',
+    role: '',
 };
 
 export const getProfile = createAsyncThunk(
@@ -32,8 +34,10 @@ export const getProfile = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await userApi.getProfile();
+            console.log('API Response in getProfile:', response);
             return response.data;
         } catch (error: any) {
+            console.log('Error in getProfile:', error);
             return rejectWithValue(error.message);
         }
     }
@@ -55,7 +59,7 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(getProfile.fulfilled, (state, action) => {
-            state.userData = action.payload.data.user;
+            state.userData = action.payload;
         });
     }
 });

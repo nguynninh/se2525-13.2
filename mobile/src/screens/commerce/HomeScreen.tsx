@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { View, StatusBar, Platform, Image, ScrollView, ImageBackground, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StatusBar, Platform, Image, ScrollView, ImageBackground, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { globalStyles } from '../../styles/globalStyles';
 import { AvatarComponent, InputComponent, RowComponent, SpaceComponent, TextComponent, GlassView } from '../../components';
 import { appColors } from '../../constants/appColors';
@@ -12,6 +12,7 @@ import { appInfo } from '../../constants/appInfos';
 import categoryApi from '../../apis/categoryApi';
 import productApi from '../../apis/productApi';
 import { fontFamilies } from '../../constants/fontFamilies';
+import { Category } from '../../models/Category';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { cartCountSelector, getCart } from '../../redux/reducers/cartReducer';
@@ -20,7 +21,7 @@ const HomeScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const cartCount = useSelector(cartCountSelector);
   const { t } = useTranslation();
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [banner, setBanner] = useState<Banner[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,129 +71,36 @@ const HomeScreen = ({ navigation }: any) => {
     return () => clearInterval(iconInterval);
   }, []);
 
-  const bgImage = { uri: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop' };
-
   const fetchInitialData = async () => {
     setIsLoading(true);
     try {
       const [catRes, prodRes, bannerRes]: any[] = await Promise.all([
-        categoryApi.getList(),
-        productApi.getProducts('page=1&limit=10'),
-        handleApi('/banners', {}, 'get')
+        categoryApi.getList().catch(error => { console.log('Category API error:', error); return { categories: [] }; }),
+        productApi.getProducts('page=1&limit=10').catch(error => { console.log('Product API error:', error); return { products: [] }; }),
+        handleApi('/banners', {}, 'get').catch(error => { console.log('Banner API error:', error); return { banners: [] }; })
       ]);
 
       const fetchedCategories = catRes.categories || (Array.isArray(catRes) ? catRes : []);
       if (fetchedCategories.length > 0) {
         setCategories(fetchedCategories);
       } else {
-        setCategories([
-          { id: '1', name: 'Thời trang', image_url: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=200' },
-          { id: '2', name: 'Đồ điện tử', image_url: 'https://images.unsplash.com/photo-1498049381960-a45bd3d135e7?w=200' },
-          { id: '3', name: 'Giày dép', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200' },
-          { id: '4', name: 'Phụ kiện', image_url: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=200' },
-          { id: '5', name: 'Gia dụng', image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=200' },
-        ]);
+        setCategories([]);
       }
 
       const fetchedProducts = prodRes.products || (Array.isArray(prodRes) ? prodRes : []);
       if (fetchedProducts.length > 0) {
         setProducts(fetchedProducts);
       } else {
-        // Fallback Mock Data as requested
-        setProducts([
-          {
-            "id": "b68818dc-b938-4aef-b66f-962bc0898bf4",
-            "name": "Nhà Giả Kim (Tái Bản)",
-            "price": "79000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" }]
-          },
-          {
-            "id": "0a685995-ed05-470b-9856-087cd88d3e94",
-            "name": "Áo Polo Nam Coolmate Basic",
-            "price": "299000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500" }]
-          },
-          {
-            "id": "f33a59b4-481e-44d8-8c42-8da9463a7a94",
-            "name": "MacBook Air M2 2024",
-            "price": "26990000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1517336714731-489689fd1ca4?w=500" }]
-          },
-          {
-            "id": "0d058232-f524-4c94-8555-cc566d28670c",
-            "name": "Son Kem Lì 3CE Cloud Lip Tint",
-            "price": "250000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=500" }]
-          },
-          {
-            "id": "e5877c97-55ac-4603-9404-22fb955a70ac",
-            "name": "Combo 5 Gói Snack Lay's",
-            "price": "45000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500" }]
-          },
-          {
-            "id": "6",
-            "name": "Tai Nghe Sony WH-1000XM5",
-            "price": "6490000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=500" }]
-          },
-          {
-            "id": "7",
-            "name": "Giày Nike Air Jordan 1",
-            "price": "3500000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=500" }]
-          },
-          {
-            "id": "8",
-            "name": "Đồng Hồ Apple Watch Series 9",
-            "price": "9990000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500" }]
-          },
-          {
-            "id": "9",
-            "name": "Kính Mát Rayban Aviator",
-            "price": "3200000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500" }]
-          },
-          {
-            "id": "10",
-            "name": "Cà Phê Highlands Phin Sữa Đá",
-            "price": "29000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=500" }]
-          },
-          {
-            "id": "11",
-            "name": "Kem Chống Nắng Anessa",
-            "price": "450000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500" }]
-          },
-          {
-            "id": "12",
-            "name": "Bàn Phím Cơ Keychron K2",
-            "price": "1800000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1587829741301-dc798b91a603?w=500" }]
-          },
-          {
-            "id": "13",
-            "name": "Bàn Phím Cơ Keychron K2",
-            "price": "1800000.00",
-            "images": [{ "image_url": "https://images.unsplash.com/photo-1587829741301-dc798b91a603?w=500" }]
-          }
-        ]);
+        setProducts([]);
       }
 
       setBanner(bannerRes.banners || (Array.isArray(bannerRes) ? bannerRes : []));
 
-    } catch (error) {
+    } catch (error: any) {
       console.log('Error fetching home data:', error);
+      Alert.alert('Error fetching data', error?.message || 'Unknown error');
       // Fallback on error too
-      setCategories([
-        { id: '1', name: 'Thời trang', image_url: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=200' },
-        { id: '2', name: 'Đồ điện tử', image_url: 'https://images.unsplash.com/photo-1498049381960-a45bd3d135e7?w=200' },
-        { id: '3', name: 'Giày dép', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200' },
-        { id: '4', name: 'Phụ kiện', image_url: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=200' },
-        { id: '5', name: 'Gia dụng', image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=200' },
-      ]);
+      setCategories([]);
       setProducts([
         { id: "1", name: "Nhà Giả Kim (Tái Bản)", price: "79000", images: [{ image_url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" }] },
         { id: "2", name: "Áo Polo Nam", price: "299000", images: [{ image_url: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500" }] },
@@ -232,7 +140,7 @@ const HomeScreen = ({ navigation }: any) => {
   const renderCategoryItem = ({ item }: { item: any }) => (
     <TouchableOpacity onPress={() => console.log('Category press:', item.name)} style={{ marginRight: 12 }}>
       <View style={[globalStyles.shadow, { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 100, flexDirection: 'row', alignItems: 'center', backgroundColor: appColors.white, marginBottom: 4, marginLeft: 4 }]}>
-        {item.image_url && <Image source={{ uri: item.image_url }} style={{ width: 20, height: 20, marginRight: 8, borderRadius: 4 }} />}
+        {item.icon_url && <Image source={{ uri: item.icon_url }} style={{ width: 20, height: 20, marginRight: 8, borderRadius: 4 }} />}
         <TextComponent text={item.name} color={appColors.text} size={14} font={fontFamilies.medium} />
       </View>
     </TouchableOpacity>

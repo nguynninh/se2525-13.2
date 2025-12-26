@@ -350,6 +350,14 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
     const detail = await sequelize.transaction(async (tx: Transaction) => {
         const seller = await findSellerByUserIdOrThrow(userId);
 
+        const existed = await Shop.findOne({
+            where: { seller_id: seller.id },
+            transaction: tx,
+        });
+        if (existed) {
+            return getMyShop(userId);
+        }
+
         const nameExisted = await Shop.findOne({
             where: { name: dto.name },
             transaction: tx,
@@ -370,7 +378,15 @@ export const createMyShop = async (userId: string, dto: CreateSellerShopDto): Pr
             candidateSlug = `${baseSlug}-${slugSuffix++}`;
         }
 
-        const wardRecord = await Ward.findByPk(dto.address.ward_id, { transaction: tx });
+        // Accept ward_id as UUID or ward code
+        let wardRecord: Ward | null = null;
+        const wardId = dto.address.ward_id;
+        const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
+        if (uuidRegex.test(wardId)) {
+            wardRecord = await Ward.findByPk(wardId, { transaction: tx });
+        } else {
+            wardRecord = await Ward.findOne({ where: { code: wardId }, transaction: tx });
+        }
         if (!wardRecord) {
             throw new NotFoundError('shop:ward_not_found');
         }
@@ -550,11 +566,15 @@ export const updateMyShop = async (
             }
 
             if (dto.address.ward_id) {
-                const ward = await Ward.findByPk(dto.address.ward_id, { transaction: tx });
+                const wardId = dto.address.ward_id;
+                const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
+                const ward = uuidRegex.test(wardId)
+                    ? await Ward.findByPk(wardId, { transaction: tx })
+                    : await Ward.findOne({ where: { code: wardId }, transaction: tx });
                 if (!ward) {
                     throw new NotFoundError('shop:ward_not_found');
                 }
-                addr.ward_id = dto.address.ward_id;
+                addr.ward_id = ward.id;
             }
 
             if (dto.address.address_line !== undefined) {

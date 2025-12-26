@@ -101,8 +101,8 @@ const DrawerCustom = ({ navigation }: any) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover" blurRadius={Platform.OS === 'ios' ? 10 : 3}>
-        <View style={[localStyles.container, { backgroundColor: 'rgba(0,0,0,0.3)' }]}>
+      <View style={{ flex: 1, backgroundColor: appColors.gray3 }}>
+        <View style={localStyles.container}>
           <TouchableOpacity
             onPress={() => {
               navigation.closeDrawer();
@@ -118,7 +118,7 @@ const DrawerCustom = ({ navigation }: any) => {
             />
             <View style={{ gap: 4, marginTop: 10 }}>
               <RowComponent justify="flex-start" styles={{ alignItems: 'center', gap: 6 }}>
-                <TextComponent text={getTimeBasedGreeting()} font={fontFamilies.medium} color={appColors.gray2} size={14} />
+                <TextComponent text={getTimeBasedGreeting()} font={fontFamilies.medium} color={appColors.white} size={14} />
                 {new Date().getHours() < 12
                   ? <SunFog variant="Bold" size={16} color={appColors.warning} />
                   : <Moon variant="Bold" size={16} color={appColors.white} />}
@@ -198,7 +198,7 @@ const DrawerCustom = ({ navigation }: any) => {
             )}
           />
         </View>
-      </ImageBackground>
+      </View>
     </View>
   );
 };
